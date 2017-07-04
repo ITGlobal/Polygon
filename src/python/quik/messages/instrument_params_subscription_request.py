@@ -1,5 +1,4 @@
-from polygon.quik.messages.message import QLMessage
-
+from ..messages.message import QLMessage
 
 class QLInstrumentParamsSubscriptionRequest(QLMessage):
     def __init__(self, instrument):

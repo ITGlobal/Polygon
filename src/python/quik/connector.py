@@ -86,7 +86,9 @@ class QuikConnector:
                 env = self.receivedQueue.get()
 
                 for message in env.body:
-                    print(message)
+                    for callback in self.callbacks:
+                        callback(message)
+
         except:
             self.__log_last_errors__("Error while dispatching messages")
 
