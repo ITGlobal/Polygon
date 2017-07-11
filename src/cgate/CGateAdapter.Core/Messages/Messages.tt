@@ -1,0 +1,339 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ output extension=".cs" #>
+<#@ include file="../../common.tt" #>
+using System;  
+using System.Diagnostics;  
+using System.Text;
+using JetBrains.Annotations;
+using ProtoBuf;
+
+<#
+    var streams    = StreamSet.Load(this.Host.ResolvePath(@"../../ini/scheme/"));
+	var fieldNames = new Dictionary<string, string>();
+
+	foreach(var stream in streams.Streams)
+	{
+		foreach(var table in stream.Tables)
+		{
+			var uniqueFieldNames = new HashSet<string>();
+			foreach(var field in table.Fields)
+			{
+				var name     = field.Name;
+				var keyName  = Normalize(name);
+				var normName = NormalizeAlt(name);
+
+				if(!uniqueFieldNames.Add(normName))
+				{
+					throw new Exception(string.Format("Non-unique field name '{0}' in {1}::{2}", name, stream.Name, table.Name));
+				}
+
+				fieldNames[keyName] = normName;
+			}
+		}
+	}
+#>
+namespace CGateAdapter.Messages
+{
+    /// <summary>
+    ///     Типы потоков
+    /// </summary>
+    [PublicAPI]
+	public enum CGateStreamType
+    {
+        /// <summary>
+        ///    Системный псевдопоток
+        /// </summary>
+        Preudo,
+<#
+    foreach(var stream in streams.Streams)
+    {
+#>
+
+        /// <summary>
+        ///    Поток <#=stream.Name #>
+        /// </summary>
+        <#=Normalize(stream.Name) #>,
+<#
+    }
+#>
+    }
+
+	/// <summary>
+	///     Константы с названиями полей для преобразования сообщений в строку
+	/// </summary>
+	[PublicAPI]
+	public static class CGateFieldNames
+	{
+		/// <summary>
+		///     Константа для поля StreamName
+		/// </summary>
+		public const string StreamName = "str";
+
+		/// <summary>
+		///     Константа для поля StreamRegime
+		/// </summary>
+		public const string StreamRegime = "st";
+
+		/// <summary>
+		///     Константа для поля MessageTypeName
+		/// </summary>
+		public const string MessageTypeName = "mtname";
+
+		/// <summary>
+		///     Константа для поля UserId
+		/// </summary>
+		public const string UserId = "user_id";
+<#
+	foreach(var pair in fieldNames)
+	{
+#>
+		/// <summary>
+		///     Константа для поля <#=pair.Key#>
+		/// </summary>
+		public const string <#=pair.Key#> = "<#=pair.Value#>";
+<#
+	}
+#>
+	}
+}
+<#
+    var fieldTag = 100;
+    foreach(var stream in streams.Streams)
+    {
+#>
+
+namespace CGateAdapter.Messages.<#=Normalize(stream.Name) #>
+{
+<#
+    foreach(var table in stream.Tables)
+    {
+#>
+    /// <summary>
+    ///     Сообщение cgm_<#=table.Name #>
+    /// </summary>
+    [PublicAPI, ProtoContract]
+    public sealed class Cgm<#=Normalize(table.Name) #> : CGateMessage
+    {
+        /// <inheritdoc />
+        [ProtoIgnore]
+        public override string MessageTypeName => "<#=table.Name #>";
+		
+        /// <inheritdoc />
+        [ProtoIgnore]
+        public override CGateMessageType MessageType => CGateMessageType.<#=Normalize(stream.Name) + "_" + Normalize(table.Name)#>;
+		
+        /// <inheritdoc />
+        [ProtoIgnore]
+        public override CGateStreamType StreamType => CGateStreamType.<#=Normalize(stream.Name)#>;
+
+<#
+        foreach(var field in table.Fields)
+        {
+#>
+<#
+            if(field.Name == "msgid" || field.Name =="request" || field.Name =="reply")
+            {
+#>
+
+        /// <summary>
+        ///     Поле <#=field.Name #>
+        /// </summary>
+        [ProtoIgnore]
+        public <#=field.Type #> <#=Normalize(field.Name) #> => <#=field.MsgId #>;
+
+<# } else { 
+fieldTag++;
+#>
+        /// <summary>
+        ///     Поле <#=field.Name #>
+        /// </summary>
+        [ProtoMember(<#=fieldTag#>)]
+        public <#=field.Type #> <#=Normalize(field.Name) #> { get; set; }
+
+<#
+        }}
+#>
+
+        /// <inheritdoc />
+        [DebuggerStepThrough]
+        public override string ToString()
+        {
+            var builder = new CGateMessageTextBuilder(this);
+<#
+        foreach(var field in table.Fields)
+        {            
+#>
+            builder.Add(global::CGateAdapter.Messages.CGateFieldNames.<#=Normalize(field.Name) #>, <#=Normalize(field.Name) #>);
+<#
+        }
+#>
+            
+            return builder.ToString();
+        }
+		
+        /// <inheritdoc />
+        public override void Accept(ICGateMessageVisitor visitor) => visitor.Handle(this);
+    }
+
+<#
+    }
+        #>}
+<#
+}
+#>
+
+namespace CGateAdapter.Messages
+{
+    /// <summary>
+    ///		Типы сообщений. Состоит из имени потока (ini файла, с которым открывается поток) и имени типа сообщения через подчёркивание.
+    ///		С помощью этого енама можно фильтровать на клиенте (в обработчике события) только те сообщения, которые интересуют.
+    /// </summary>
+    [PublicAPI]
+	public enum CGateMessageType
+    {
+<#
+    foreach(var typeName in ExtraMessageTypes())
+    {
+#>
+        /// <summary>
+        ///		Системное сообщение <#=typeName#>
+        /// </summary>
+        <#=typeName#>,
+
+<#
+    }
+
+    foreach(var stream in streams.Streams)
+    {
+        foreach(var table in stream.Tables)
+        {
+#>
+        /// <summary>
+        ///     Сообщение <#=table.Name #> из потока <#=stream.Name #>
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        [CGateMessageType("<#=stream.Name #>", "<#=table.Name #>")]
+        <#=Normalize(stream.Name) + "_" + Normalize(table.Name) #>,
+
+<#
+        }
+    }
+#>
+    }
+    
+    /// <summary>
+    ///     Посетитель для иерархии классов <see cref="CGateMessage" />
+    /// </summary>
+    [PublicAPI]
+	public interface ICGateMessageVisitor
+    {
+<#
+        foreach(var typeName in ExtraMessageTypes())
+        {
+#>
+        /// <summary>
+        ///     Обработать сообщение типа <see cref="<#=typeName#>"/>
+        /// </summary>
+        void Handle([NotNull] <#=typeName#> message);
+
+<#
+        }
+
+        foreach(var stream in streams.Streams)
+        {
+            foreach(var table in stream.Tables)
+            {
+            
+#>
+        /// <summary>
+        ///     Обработать сообщение типа <see cref="<#=Normalize(stream.Name) #>.Cgm<#=Normalize(table.Name) #>"/>
+        /// </summary>
+        void Handle([NotNull] <#=Normalize(stream.Name) #>.Cgm<#=Normalize(table.Name) #> message);
+
+<#
+            }
+        }
+#>
+    }
+
+    /// <summary>
+    ///     Посетитель для иерархии классов <see cref="CGateMessage" />
+    /// </summary>
+    [PublicAPI]
+	public abstract class CGateMessageVisitor : ICGateMessageVisitor
+    {
+        /// <summary>
+        ///     Обработчик сообщений по умолчанию
+        /// </summary>
+        public virtual void HandleDefault(CGateMessage message) { }
+
+<#
+        foreach(var typeName in ExtraMessageTypes())
+        {
+#>
+        /// <summary>
+        ///     Обработать сообщение типа <see cref="<#=typeName#>"/>
+        /// </summary>
+        public virtual void Handle(<#=typeName#> message)
+        { 
+            HandleDefault(message);
+        }
+
+<#
+        }
+
+        foreach(var stream in streams.Streams)
+        {
+            foreach(var table in stream.Tables)
+            {
+#>
+        /// <summary>
+        ///     Обработать сообщение типа <see cref="<#=Normalize(stream.Name) #>.Cgm<#=Normalize(table.Name) #>"/>
+        /// </summary>
+        public virtual void Handle(<#=Normalize(stream.Name) #>.Cgm<#=Normalize(table.Name) #> message)
+        { 
+            HandleDefault(message);
+        }
+
+<#
+            }
+        }
+#>
+    }
+}
+
+namespace CGateAdapter.Messages
+{
+    // Системные сообщения
+<#
+var messageTag = 1000;
+foreach(var typeName in ExtraMessageTypes())
+{
+    messageTag++;
+#>
+    [ProtoInclude(<#=messageTag#>, typeof(CGateAdapter.Messages.<#=typeName #>))]
+<#
+}
+#>
+    // Сообщения CGate
+<#
+messageTag = 1100;
+foreach(var stream in streams.Streams)
+{
+    foreach(var table in stream.Tables)
+    {
+        messageTag++;
+#>
+    [ProtoInclude(<#=messageTag#>, typeof(CGateAdapter.Messages.<#=Normalize(stream.Name) #>.Cgm<#=Normalize(table.Name) #>))]
+<#
+    }
+}
+#>
+    partial class CGateMessage { }
+}
+

@@ -1,0 +1,1582 @@
+
+// Protocol Buffer messages description file for Futures Trading System
+// $Id$
+//
+package FTE;
+
+option java_package = "se.highex.core2CF.server.ft.fmt.protobuf";
+option java_outer_classname = "FTEProtos";
+option optimize_for = SPEED;
+
+// Набор типов возможных сообщений
+// Префикс REQ_* используется для запросов
+// Префикс REP_* используется для ответов на соответствующие запросы
+// 
+enum MsgType
+{
+    REQ_UNKNOWN							= -1;
+    /* Requests */
+    REQ_NEW_PARTICIPANT					= 1;	// Запрос на создание нового участника
+    REQ_NEW_USER						= 2;	// Запрос на создание нового пользователя
+    REQ_NEW_CLIENT						= 3;	// Запрос на создание нового клиента
+    REQ_NEW_ACCOUNT						= 4;	// Запрос на создание нового счета
+    REQ_NEW_SECTION						= 5;	// Запрос на создание новой секции
+    REQ_NEW_BOARD						= 6;	// Запрос на создание нового режима торгов
+    REQ_NEW_SECTYPE						= 7;	// Запрос на создание нового типа срочного контракта
+    REQ_NEW_SECURITY					= 8;	// Запрос на создание нового срочного контракта
+
+    REQ_LOGON							= 9;	// Регистрация в информационной или транзакционной подсистеме
+    REQ_LOGOFF							= 10;	// Завершение работы в информационной или транзакционной подсистеме
+
+    REQ_ORDER							= 11;	// Посылка заявки
+    REQ_CANCEL_ORDER					= 12;	// Запрос на сняние заявки
+
+    REQ_OPEN_SECBOARD					= 13;	// Открытие режима торгов
+    REQ_CLOSE_SECBOARD					= 14;	// Закрытие режима торгов
+    REQ_SUSPEND_SECBOARD				= 15;	// Приостановка режима торгов
+    REQ_RESUME_SECBOARD					= 16;	// Продолжение нормального функционирования режима торгов
+    
+    REQ_SUBSCRIBE						= 17;	// Подпись на определенную информационную таблицу
+    REQ_UNSUBSCRIBE						= 18;	// Запрос на завершение получения данных по определенной информационной таблицы
+    
+    REQ_ORDER_ALARM						= 19;	// Сообщение о необычной заявке
+    REQ_TRADE_ALARM						= 20;	// Сообщение о необычной сделке
+    
+    REQ_CLOSE_DAY						= 21;	// Запрос на закрытие торгового дня
+    
+    REQ_SUSPEND_PARTICIPANT				= 22;	// Блокировка участника
+    REQ_RESUME_PARTICIPANT				= 23;	// Разблокировка участника
+    
+    REQ_SUSPEND_USER					= 24;	// Блокировка пользователя
+    REQ_RESUME_USER						= 25;	// Разблокировка пользователя
+    
+    REQ_SUSPEND_CLIENT					= 26;	// Блокировка клиента
+    REQ_RESUME_CLIENT					= 27;	// Разблокировка клиента
+    
+    REQ_SUSPEND_ACCOUNT					= 28;	// Блокировка регистра
+    REQ_RESUME_ACCOUNT					= 29;	// Разбокировка регистра
+    
+    REQ_SUSPEND_SECTION					= 30;	// Блокировка секции
+    REQ_RESUME_SECTION					= 31;	// Разблокировка секции
+    
+    REQ_MEDDELANDE						= 32;	// Посылки текстового сообщения
+    
+    REQ_CLR_TRADE						= 33;	// Запрос на регистрацию сделки в клиринговой системе
+    REQ_CLR_SETTLE_PRICE				= 34;	// Запрос на регистрацию новой расчетной цены в клиринговой системе
+    
+    REQ_ACCEPT_ORDER					= 35;	// Посылка аксепта из клиринговой системы 
+    
+    REQ_CLR_ORDER_REESTR				= 36;	// Запрос на пересылку в клиринговую систему реестра заявок
+    REQ_CLR_TRADE_REESTR				= 37;	// Запрос на пересылку в клиринговую систему реестра сделок
+    
+    REQ_CLR_ORDER_CANC_REESTR			= 38;	// Запрос на пересылку в клиринговую систему реестра снятых заявок
+    
+    REQ_BRD_SECURITIES					= 39;	// Запрос на подготовку данных для открыти торгов по серии срочного контракта					
+    REQ_OPEN_BOARD						= 40;	// Запрос на открытия для торгов режима торгов				
+    REQ_CLOSE_BOARD_FOR_ORDERS			= 41;	// Запрос на закрытие приема заявок и "заморозка" принятых заявокдля режима торгов
+    REQ_CLOSE_BOARD						= 42;	// Запрос на закрытие режима торгов
+    REQ_HOLDING							= 43;	// Запрос на передачу данных по холдингу из клиринговой системы
+    REQ_BD_STATE						= 44;	// Зарезервировано. В текущей версии не используется				
+    REQ_OPEN_BOARD_FOR_ORDERS			= 45;	// Запрос на повторное открытие режима торгов для приема заявок
+
+    REQ_CLR_ORDER_REESTR_RFQ			= 46;	// Запрос на пересылку в клиринговую систему реестра заявок RFQ
+    REQ_CLR_TRADE_REESTR_RFQ			= 47;	// Запрос на пересылку в клиринговую систему реестра сделок RFQ
+    REQ_CLR_ORDER_REESTR_DELI			= 48;	// Запрос на пересылку в клиринговую систему реестра заявок на физ. исполнение
+    REQ_CLR_TRADE_REESTR_DELI			= 49;	// Запрос на пересылку в клиринговую систему реестра сделок на физ. исполнение
+    REQ_CLR_ORDER_REESTR_SPEC			= 50;	// Запрос на пересылку в клиринговую систему реестра заявок специальной торговой сессии
+    REQ_CLR_TRADE_REESTR_SPEC			= 51;	// Запрос на пересылку в клиринговую систему реестра сделок специальной торговой сессии
+
+    REQ_CLR_ORDER						= 52;	// Запрос на проверку заявки в клиринговой системе
+    REQ_CLR_ORDER_RFQ					= 53;	// Запрос на проверку заявки во время ликвидационной сессии
+    REQ_CLR_ORDER_DELI					= 54;	// Запрос на проверку заявки на физическое исполнение
+    REQ_CLR_ORDER_SPEC					= 55;	// Запрос на проверку заявки во время специальной сессии
+    
+    REQ_CLR_DELI_MATCH					= 56;	// Запрос на регистрацию сделки во время предпоставочной сессии
+    
+    REQ_CLR_TRADE_RFQ					= 57;	// Запрос на регистрацию сделки в клиринговой системе во время RFQ сессии
+    REQ_CLR_TRADE_DELI					= 58;	// Запрос на регистрацию сделки на физическую поставку в клиринговой системе
+    REQ_CLR_TRADE_SPEC					= 59;	// Запрос на регистрацию сделки в клиринговой системе во воремя специальной сессии
+    
+    REQ_BD_SCHEDULE_UPDATE				= 60;	// Запрос на изменение расписания бизнес-дня
+    
+    REQ_FORCE_LOGOFF					= 61;	// Принудительное завершение работы в информационной или транзакционной подсистеме
+    
+    REQ_CHANGE_PASSWORD					= 62;	// Запрос на изменение пароля
+    
+    REQ_CANC_ORDERS_BY_PARTICIPANT		= 63;	// Запрос на снятие всех заявок партисипанта 
+    REQ_CANC_ORDERS_BY_USER				= 64;	// Запрос на снятие всех заявок пользователя 
+    REQ_CANC_ORDERS_BY_CLIENT			= 65;	// Запрос на снятие всех заявок клиента 
+    REQ_CANC_ORDERS_BY_ACCOUNT			= 66;	// Запрос на снятие всех заявок по счету 
+    REQ_CANC_ORDERS_BY_SECURITY			= 67;	// Запрос на снятие всех заявок по инструменту 
+    REQ_CANC_ORDERS_BY_BOARD			= 68;	// Запрос на снятие всех заявок по борду 
+    REQ_CANC_ORDERS_BY_SECBOARD			= 69;	// Запрос на снятие всех заявок по секборду 
+    
+    REQ_UPDATE_USER_ACC_RIGHTS			= 70;	// Запрос на изменения прав пользователя для счетов
+    REQ_UPDATE_USER_ACC_RIGHTS_OVER		= 71;	// Запрос на изменения прав пользователя для счета
+
+    REQ_UPDATE_USER_SECBOARD_RIGHTS		= 72;	// Запрос на изменения прав пользователя для секборда
+    
+    REQ_FORCE_LOGOFF_EX					= 73;	// Принудительное завершение работы в информационной или транзакционной подсистеме
+                        
+    REQ_CHANGE_SECBOARD_STATUS			= 74;	// Изменение сосотояния режима торгов вместо( REQ_CLOSE_SECBOARD, REQ_SUSPEND_SECBOARD, REQ_RESUME_SECBOARD )
+    
+    REQ_EXCHANGE_RATE					= 75;   // Запрос на изменение курса валют
+    
+    REQ_SERVER_TIME                     = 98;	// Запрос времени сервера	
+    REQ_ORDER_TRADE_ID					= 99;   // стартовые номера	
+            
+    REQ_TABS_PARAMS						= 100;	// Запрос на пересылку параметров внутренних таблиц 
+    REQ_CALC_MARKET_PRICE				= 101;	// Запрос на вычисление расчетной цены
+    
+    
+    REQ_SERIE_ACCOUNTS_LIST				= 9996; // Список "Котируемых серии"
+    
+    REQ_SUSPEND_SESSION					= 9997;	// Блокировка сессии
+    REQ_RESUME_SESSION					= 9998;	// Разбокировка сессии
+    
+    REQ_SAVE2DB                         = 9999; // сброс данных в БД
+    
+    /*Replies*/
+    REP_OK								= 10000;	// Успешное завершение запроса
+    
+    REP_BAD_UNKNOWN_REQ_TYPE			= 10001;	// Неизвестный тип запроса
+    REP_BAD_USER_NOT_FOUND				= 10002;	// Пользователь не найден
+    REP_BAD_USER_NOT_LOGGED_ON			= 10003;	// Пользователь не зарегистрирован в системе
+    REP_BAD_USER_SUSPENDED				= 10004;	// Пользователь заблокирован
+    REP_BAD_PARTICIPANT_SUSPENDED		= 10005;	// Участник заблокирован
+    REP_BAD_USER_ALREADY_LOGGED_ON		= 10006;	// Пользователь уже зарегистрирован в системе
+    REP_BAD_INVALID_PASSWORD			= 10007;	// Неправильный пароль
+    REP_BAD_BOARD_NOT_FOUND				= 10008;	// Режим торгов не найден
+    REP_BAD_SECBOARD_OVERFLOW			= 10009;	// Таблица серий срочных контрактов переполнена
+    REP_BAD_SECURITY_NOT_FOUND			= 10010;	// Серия срочного контракта не найдена
+    REP_BAD_SECBOARD_EXISTS				= 10011;	// Серия срочного контракта уже существует
+    REP_BAD_ORDER_OVERFLOW				= 10012;	// Таблица заявок переполнена
+    REP_BAD_SECBOARD_NOT_FOUND			= 10013;	// Серия срочного контракта не найдена
+    REP_BAD_SECBOARD_NOT_OPEN			= 10014;	// Торги по данной серии срочных контрактов не открыты
+    REP_BAD_ACCOUNT_NOT_FOUND			= 10015;	// Позиционный регистр не найден
+    REP_BAD_ACCOUNT_NOT_OWNED			= 10016;	// Неверный идентификатор позиционного регистра
+    REP_BAD_ORDER_NOT_FOUND				= 10017;	// Заявка не найдена
+    REP_BAD_INVALID_ORDER_STATUS		= 10018;	// Неверное состояние заявки
+    REP_BAD_CLIENT_NOT_FOUND			= 10019;	// Клиент не найден
+    REP_BAD_CLIENT_NOT_OWNED			= 10020;	// Неверный идентификатор клиента
+    REP_BAD_PARTICIPANT_NOT_FOUND		= 10021;	// Участник торгов не найден
+    REP_BAD_PARTICIPANT_OVERFLOW		= 10022;	// Таблица Участников торгов переполнена
+    REP_BAD_USER_OVERFLOW				= 10023;	// Таблица пользователей переполнена
+    REP_BAD_CLIENT_OVERFLOW				= 10024;	// Таблица клиентов переполнена
+    REP_BAD_SECTION_OVERFLOW			= 10025;	// Таблица секций переполнена
+    REP_BAD_INVALID_SECBOARD_STATUS		= 10026;	// Неверное состояние серии срочного контракта
+    REP_BAD_BOARD_OVERFLOW				= 10027;	// Таблица режимов торгов переполнена
+    REP_BAD_SECTION_NOT_FOUND			= 10028;	// Секция не найдена
+    REP_BAD_SECTYPE_OVERFLOW			= 10029;	// Таблица типов срочных контрактов переполнена
+    REP_BAD_SECURITY_OVERFLOW			= 10030;	// Таблица срочных контрактов переполнена
+    REP_BAD_SECTYPE_NOT_FOUND			= 10031;	// Тип срочных контрактов не найден
+    REP_BAD_TRADE_OVERFLOW				= 10032;	// Таблица сделок переполнена
+    REP_BAD_ACCOUNT_OVERFLOW			= 10033;	// Таблица позиционных регистров переполнена
+    REP_BAD_CLOWN_NE_ACCOWN				= 10034;	// Клиент не является владельцем счета
+    REP_BAD_INMSG_OVERFLOW				= 10035;	// Таблица сообщений переполнена
+    REP_BAD_INVALID_PRICE				= 10036;	// Ошибка в указании цены
+    REP_BAD_WRONG_PARTICIPANT			= 10037;	// Ошибка в идентификаторе участника
+    REP_BAD_CLEARING_NOT_AVAILABLE		= 10038;	// Клиринговая система недоступна
+    
+    REP_BAD_CLIENT_SUSPENDED			= 10039;	// Участие клиента приостановлено
+    REP_BAD_ACCOUNT_SUSPENDED			= 10040;	// Допуск к осуществлению операций с данного позиционного регистра приостановлен
+    REP_BAD_SECTION_SUSPENDED			= 10041;	// Работа Секции приостановлена
+    
+    REP_BAD_PARTICIPANT_NOT_SUSPENDED	= 10042;	// Допуск Участника торгов не приостановлен
+    REP_BAD_USER_NOT_SUSPENDED			= 10043;	// Допуск пользователя к торгам не приостановлен
+    REP_BAD_CLIENT_NOT_SUSPENDED		= 10044;	// Участие клиента не приостановлено
+    REP_BAD_ACCOUNT_NOT_SUSPENDED		= 10045;	// Допуск к осуществлению операций с данного позиционного регистра не приостановлен
+    REP_BAD_SECTION_NOT_SUSPENDED		= 10046;	// Работа Секции не приостановлена
+    
+    REP_BAD_TXTMSG_OVERFLOW				= 10047;	// Таблица сообщений переполнена
+    
+    REP_BAD_ACCESS_RIGHTS				= 10048;	// Доступ запрещен
+    // Ответы из клиринга
+    REP_CLR_LOGON_OK					= 10049;	// Регистрация в клиринговой системе завершилось успешно
+    REP_CLR_LOGON_BAD					= 10050;	// Регистрация в клиринговой системе была отклонена
+    REP_CLR_ORDER_OK					= 10051;	// Заявка может участвововать в мэтчинге
+    REP_CLR_ORDER_BAD					= 10052;	// Заявка должна быть отклонена торговой системой
+    REP_CLR_ORDER_CANCEL_OK				= 10053;	// Подтверждение снятия заявки в клиринговой системе
+    REP_CLR_ORDER_CANCEL_BAD			= 10054;	// Снятие заявки невозможно(***)
+    REP_CLR_TRADE_OK					= 10055;	// Подтверждение регистрации сделки в клиринговой системе
+    REP_CLR_TRADE_BAD					= 10056;	// Регистрация сделки невозможна (***)
+    REP_CLR_SETTLE_PRICE_OK				= 10057;	// Подтверждение регистрации новой расчетной цены
+    REP_CLR_SETTLE_PRICE_BAD			= 10058;	// Регистрация расчетной цены невозможна (***)
+    
+    REP_BAD_UNKNOWN_REQUEST				= 10059;	// Неизвестный запрос
+    REP_BAD_INVALID_QTY					= 10060;	// Неверно указано количество
+    REP_BAD_ACCOUNT_TYPE				= 10061;	// Ошибка в спецификации типа счета
+    REP_BAD_NO_BOARD_SECURITIES			= 10062;	// Ни одна серия срочных контрактов не представлена для режима торгов
+    REP_BAD_INVALID_SEC_PARAMS			= 10063;	// Зарезервировано. Не используется в текущей версии
+    
+    REP_BAD_OPERDAY_CLOSED				= 10064;	// Торги закрыты
+    
+    REP_BAD_NO_BOARD_POSITIONS			= 10065;	// Ни один из регистров не представлен в данном режиме торгов
+    REP_BAD_ACCOUNT_NOT_ALLOWED			= 10066;	// Регистр  не может использоваться в данном режиме торгов
+    
+    REP_CLR_ORDER_REESTR_OK				= 10067;	// Подтверждение приема и сверки реестра заявок
+    REP_CLR_ORDER_REESTR_ERROR			= 10068;	// Ошибка приема или сверки реестра заявок
+    REP_CLR_TRADE_REESTR_OK				= 10069;	// Подтверждение приема и сверки реестра сделок
+    REP_CLR_TRADE_REESTR_ERROR			= 10070;	// Ошибка приема или сверки реестра сделок
+    
+    REP_BAD_STATION_NOT_FOUND			= 10071;	// Неверный код станции
+    REP_BAD_WRONG_STATION				= 10072;	// Неверная станция для указаного направления платежа
+    
+    REP_BAD_NOT_NEGDEALS				= 10073;	// Тип заявки не адресная... поле Контрагент заполнено...
+    
+    REP_BAD_NOT_ALL_MANDATORY_FIELDS	= 10074;	// Не все обязательные поля заполнены
+    REP_BAD_INVALID_ADDRESSEE			= 10075;	// Неверный адресат
+    REP_BAD_CLIENT_ISNOT_ACC_OWNER		= 10076;	// Клиент не является владельцем счета
+    
+    REP_BAD_CROSSTRADE_PROHIBITED		= 10077;	// Кросс-сделки запрещены
+    
+    REP_BAD_MESSAGE_NOT_CRYPTED			= 10080;	// Сообщение не зашифровано
+    REP_BAD_MESSAGE_NOT_SIGNED			= 10081;	// Сообщение не подписано
+    REP_BAD_INVALID_SIGNATURE			= 10082;	// Ошибка проверки подписи
+    REP_BAD_CERTIFICATE_NOT_FOUND		= 10083;	// Сертификат не зарегистрирован на пользователя
+    
+    REP_BAD_ORDER_TYPE_UNDEFINED		= 10084;	// Не задан тип заявки
+    REP_BAD_ORDER_PARAMS_UNDEFINED		= 10085;	// Не заданы параметры заявки
+    REP_BAD_ORDER_BS_UNDEFINED			= 10086;	// Не задано направление заявки
+    REP_BAD_COUNTERPARTY_UNDEFINED		= 10087;	// Не задан контрагент
+    REP_BAD_INVALID_MMF					= 10088;	// Флаг Маркет-мейкера можно указывать только для лимитированной заявки
+    REP_BAD_ORDER_INVALID_PARAMS		= 10089;	// Неверные параметры заявки
+    
+    REP_BAD_ACCOUNT_CANNOT_BUY			= 10090;	// Нет прав на использование счета для покупки
+    REP_BAD_ACCOUNT_CANNOT_SELL			= 10091;	// Нет прав на использование счета для продажи
+    REP_BAD_INVALID_ORDER_TYPE			= 10092;	// Указанный тип заявки неверен для выбранного режима торгов
+
+    REP_BAD_SECBOARD_CANNOT_BUY			= 10093;	// Нет прав для покупки на указанном секборде
+    REP_BAD_SECBOARD_CANNOT_SELL		= 10094;	// Нет прав для продажи на указанном секборде
+
+    REP_BAD_INVALID_BS_FLAG				= 10095;	// Неверное направление платежа
+    
+    REP_BAD_TRADESYSTEM_NOT_AVAILABLE	= 10096;	// Торговая система недоступна
+    
+    REP_BAD_INVALID_CP_ACCOUNT			= 10097;	// Неверный код поз.регистра контрагента
+    REP_BAD_TRN_IS_TOO_BIG				= 10098;	// Длина TRN > 32
+    REP_BAD_SEC_IS_INVALID				= 10099;	// Инструмент недействителен на текущую дату 
+    
+    REP_BAD_EXCANGE_RATE_OVERFLOW		= 10100;    // Таблица курсов валют переполнена
+    REP_BAD_CURRENCY_NOT_FOUND			= 10101;    // Неверный код валюты
+    
+    REP_TABS_PARAMS						= 10999;	// Подтверждение получения параметров таблиц
+    
+    OK_CHANGES							= 11000;	// Новые данные по подписке на информационную таблицу
+    
+    REP_BAD_SESSION_SUSPENDED			= 12999;    // Торговая	сессия приостановлена
+    REP_BAD_FATAL_ERROR					= 13000;	// Внутренняя ошибка
+    
+}
+
+enum EncryptStatus {
+    UNENCRYPTED = 0;	// Сообщение не зашифровано
+    CPRO = 1;			// Сообщение зашифровано Crypto PRO
+}
+
+enum SignStatus {
+    UNSIGNED = 0;		// Без подписи
+    CPRO_COMBINED = 1;	// Подпись комбинирована с сообщением
+    CPRO_SEPARATE = 2;	// Подпись отдельно от сообщения
+}
+
+enum SignCheckResult {
+    SCHECK_OK = 0;		// Подпись проверена успешно
+    SCHECK_OTHER = 1;	// Подпись не валидна
+    SCHECK_NOCERT = 2;	// Нет сертификата
+    SCHECK_EXPIRED = 3;	// Сертификат просрочен
+    SCHECK_NOTRUST = 4;	// Сертификат подписан неизвестным центром сертификации
+    SCHECK_NOSIGN = 5;	// Не подписано
+}
+
+message CryptoEnvelope
+{
+   required int32 ver = 1;					// Номер версии протокола
+   required EncryptStatus encrypted = 2;	// Признак использования шифрования
+   required SignStatus signed = 3;			// Признак использования подписи
+
+   optional bytes data = 4;					// Контейнер для пакета сообщений
+   optional bytes signature = 5;			// Контейнер для подписи, в случае SignStatus == CPRO_SEPARATE
+}
+
+// Обрамляющее сообщение "конверт" для всех прочих типов сообщений
+// внутреннее сообщение помещается в поле data как сериализованное
+//
+message Envelope
+{
+   optional int32 ver = 1;			// Версия
+
+   optional string uid = 2;			// Идентификатор пользователя
+   optional string sid = 3;			// Идентификатор сессии пользователя
+   optional uint64 reqid = 4;		// Идентификатор запроса. 
+                                    // В ответе на данный запрос сервер поместит в данное поле 
+                                    // значение указанное клиентом в соответстующем запросе.
+                                    // Клиент может использовать данное поле для реализации алгоритмов
+                                    // связи запросов и ответов
+   optional uint64 cryptoMsgid = 7; // Служебное поле подситемы криптозащиты
+   optional uint64 timestamp = 8;   // Служебное поле подситемы криптозащиты
+   optional string cryptoUid = 9;	// Служебное поле подситемы криптозащиты
+   optional SignCheckResult cryptoresult = 10; // Результат проверки подписи
+   optional bool origEncrypted = 11;     // Исходное сообщение было зашифровано
+   optional bool origSigned = 12;		// Исходное сообщение было подписано
+   repeated MsgType type = 5;		// Тип сообщения
+   repeated bytes data = 6;			// Внутреннее сообщение
+}
+
+// Набор возможных статусов объектов системы
+//
+enum RowStatus
+{
+    ACTIVE							= 1;	// Активный
+    SUSPENDED						= 2;	// Приостановленный
+    DEFAULTED						= 3;	// Удаленный
+}
+
+// Набор возможных статусов режимов торгов
+//
+enum SBStatus
+{
+    SB_OPENED						= 1;	// Открыт
+    SB_SUSPENDED					= 2;	// Приостановлен
+    SB_CLOSED						= 3;	// Закрыт
+    SB_CLOSED_FOR_ORDERS			= 4;	// Закрыт для заявок
+}
+
+// Набор возможных типов заявок
+//
+enum OrderType 
+{
+    LIMIT							= 0;	// Лимитированная
+    MARKET							= 1;	// Рыночная
+    NEGDEALS						= 2;	// Адресная
+    LIQUIDATION						= 3;	// Ликвидационная
+    DELIVERY						= 4;	// Поставочная
+    DELI_SPECIAL					= 5;	// Специальная
+}
+
+// Набор возможных типов сделок
+//
+enum TradeType
+{
+    TRD_ORDINARY					= 0;	// Безадресная
+    TRD_ADDRESS						= 1;	// Адресная
+    TRD_RFQ							= 2;	// Ликвидационная
+    TRD_DELIVERY					= 3;	// Поставочная
+    TRD_DELI_SPEC					= 4;	// Поставочная специальной сессии
+    TRD_ORDINARY_SPREAD_LEG1		= 5;	// Безадресная «Спред» «первая нога»				
+    TRD_ORDINARY_SPREAD_LEG2		= 6;	// Безадресная «Спред» «вторая нога»				
+    TRD_ADDRESS_SPREAD_LEG1			= 7;	// Адресная «Спред» «первая нога»				
+    TRD_ADDRESS_SPREAD_LEG2			= 8;	// Адресная «Спред» «вторая нога»				
+}
+
+// Набор возможных типов режимов торгов
+//
+enum BoardType
+{
+    BRD_NORMAL						= 0;	// Нормальный 
+    BRD_RFQ							= 1;	// Ликвидационный
+    BRD_DELIVERY					= 2;	// Предпоставочный
+    BRD_DELI_SPECIAL				= 3;	// Специальный предпоставочный
+    BRD_CLSESSION                   = 4;    // Адресный по рачетной цене
+}
+
+// Набор возможных типов позиционных регистров
+//
+enum AccountType
+{
+    ACC_NORMAL						= 0;	// Нормальный 
+    ACC_RFQ							= 1;	// Ликвидационный
+    ACC_DELIVERY					= 2;	// Поставочный
+    ACC_GARANT						= 3;	// Гарантирующий
+}
+
+
+// Набор возможных параметров заявок
+//
+enum OrderParams 
+{
+    PIQ								= 0;	// put-in-queue, поставить в очередь
+    IOC								= 1;	// immediate-or-cancel, немедленно или отклонить 
+    FOK								= 2;	// fill-or-kill, все или отклонить
+}
+
+// Набор возможных статусов заявок
+//
+enum OrderStatus 
+{
+    QUEUED							= 0;	// Помещена в очередь
+    MATCHED							= 1;	// Удовлетворена
+    CANCELED						= 2;	// Отменена
+    WAIT_APPROVAL					= 3;	// Ждет подтверждения
+    FREEZED							= 4;	// Заморожена (пользователь не может снять заявку)
+}
+
+// Набор возможных направлений заявок
+//
+enum BuySell
+{
+    BUY								= 1;	// Купить 
+    SELL							= 2;	// Продать
+}  
+    
+// Набор возможных типов пользователей
+//
+enum UserType 
+{
+    TRADER							= 0;	// Трейдер(через гейтвей)
+    MAKLER							= 1;	// Маклер
+    CLEARING						= 2;	// Клиринг
+    GATEWAY							= 3;	// Гейтвей
+    STRADER							= 4;	// Трейдер(через шлюз)
+}
+    
+
+enum AddresseeType
+{
+    ADDR_USER						= 0;	// Пользователь
+    ADDR_FIRM						= 1;	// Фирма
+    ADDR_BROADCAST					= 2;	// Всем пользователям
+}
+
+
+    
+// Набор возможных типов информационных таблиц
+//
+enum Table
+{
+    PARTICIPANTS					= 1;	// Участники
+    USERS							= 2;	// Пользователи
+    CLIENTS							= 3;	// Клиенты
+    ACCOUNTS						= 4;	// Регистры
+    SECTIONS						= 5;	// Секции
+    BOARDS							= 6;	// Режимы
+    SECTYPES						= 7;	// Типы инструментов
+    SECURITIES						= 8;	// Инструменты
+    SECBOARDS						= 9;	// Доступные для операций инструменты для определенных режимов торгов
+    HOLDINGS						= 10;	// Открытые позиции
+    ORDERS							= 11;	// Заявки
+    TRADES							= 12;	// Сделки
+    INMSGS							= 13;	// Входные сообщения (недоступно через шлюз)	
+    EVENTS							= 14;	// События (недоступно через шлюз)
+    SCHEDULE						= 15;	// Расписание
+    PRICE_HISTORY					= 16;	// История изменений рыночной цены (недоступно через шлюз)
+    TEXT_MESSAGES					= 17;	// Текстовые сообщения
+    STATIONS						= 18;	// Станции назначения
+    DELIVERYBASIS					= 19;	// Базисы поставки
+    CERTIFICATES					= 20;	// пользовательские сертификаты (недоступно через шлюз)
+    USER_ACC_RIGHTS					= 21;	// права пользователя по счетам (недоступно через шлюз)
+    USER_SECBOARD_RIGHTS			= 22;	// права пользователя по секбордам (недоступно через шлюз)
+    CURRENCIES                      = 23;   // Валюты
+    EXCHANGE_RATES                  = 24;   // Котировки валют
+    MARKET_MAKERS_CONTRACTS			= 25;	//
+    MMC_SECURITIES					= 26;
+}	
+
+// Типы событий в подсистеме наблюдения за нестандартными заявками и сделками
+enum EventType
+{
+    EVENT_ORDER_ALARM	= 1;	// Нестандартная заявка
+    EVENT_TRADE_ALARM	= 2;	// Нестандартная сделка
+}
+
+// Типы шифрования
+enum EncryptType
+{
+    ENCRYPT_NO			= 1; // Не шифровать
+    ENCRYPT_ALL			= 2; // Шифровать все сообщения	
+    ENCRYPT_LOG_ON_OFF	= 3; // Шифровать только Logon и Logoff	
+}
+
+// Типы подписи
+enum SignType
+{
+    SIGN_NO				= 1; // Не подписывать
+    SIGN_ALL			= 2; // Подписывать все сообщения	
+    SIGN_LOG_ON_OFF		= 3; // Подписывать только Logon и Logoff	
+}
+
+
+//Requests
+
+// Рассылка информации о текстовых сообщениях
+//
+message Meddelande 
+{
+    optional string					addressee		= 1; // Адресат
+    optional string					text			= 2; // Текст сообщения 
+    optional uint32					priority		= 3; // Приоритет
+    optional AddresseeType			addr_type		= 4 [default = ADDR_USER]; // Тип адресата
+}
+
+// Рассылка информации об участниках
+//
+message Participant
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+    optional string					inn				= 3; // Код ИНН
+    optional string					kpp				= 4; // Код КПП
+    optional string					ogrn			= 5; //	Код ОГРН
+    optional string					okpo			= 6; //	Код ОКПО
+    optional RowStatus				status			= 7; // Статус
+}
+
+
+// Рассылка информации о пользователях
+//
+message User
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+    optional string					firm			= 3; // Участник торгов
+    optional string					password		= 4; // Пароль
+    optional UserType				type			= 5; // Тип пользователя
+    optional EncryptType			encrypt			= 6; // Тип шифрования
+    optional SignType				sign			= 7; // Тип подписи
+    optional RowStatus				status			= 8; // Статус
+}
+
+// Запрос на изменение прав доступа пользователя для счетов
+message UserAccRights
+{
+    optional string					code			= 1; // Код пользователя
+    optional string					zone			= 2; // Зона права
+    optional bool					view			= 3; // Право просмотра
+    optional bool					buy				= 4; // Право покупки
+    optional bool					sell			= 5; // Право продажи
+}
+
+// Запрос на изменение прав доступа пользователя для счета
+message UserAccRightsOver
+{
+    optional string					user			= 1; // Код пользователя
+    optional string					account			= 2; // Код счета
+    optional bool					view			= 3; // Право просмотра
+    optional bool					buy				= 4; // Право покупки
+    optional bool					sell			= 5; // Право продажи
+}
+
+// Запрос на изменение прав доступа пользователя для секборда
+message UserSecBoardRights
+{
+    optional string					user			= 1; // Код пользователя
+    optional string					board			= 2; // борд
+    optional string					security		= 3; // инструмент
+    optional bool					view			= 4; // Право просмотра
+    optional bool					buy				= 5; // Право покупки
+    optional bool					sell			= 6; // Право продажи
+}
+
+
+// Рассылка информации о клиентах
+//
+message Client
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+    optional string					firm			= 3; // Участник торгов
+    optional string					inn				= 4; // Код ИНН
+    optional RowStatus				status			= 5; // Статус
+    optional string					clearing_firm	= 6; // Участник клиринга	
+}
+
+// Рассылка информации о позиционных регистрах
+//
+message Account
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+    optional string					firm			= 3; // Участник торгов
+    optional string					client			= 4; // Клиент
+    optional AccountType			type			= 5; //	Тип регистра
+    optional RowStatus				status			= 6; // Статус
+}
+
+// Рассылка информации о секциях
+//
+message Section
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+    optional RowStatus				status			= 3; // Статус
+}
+
+// Рассылка информации о режимах торгов
+//
+message Board
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+    optional string					section			= 3; // Секция
+    optional BoardType				type			= 4; //	Тип режима торгов
+}
+
+// Рассылка информации о типах срочных контрактов
+//
+message SecType
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+}
+
+// Рассылка информации о срочных контрактах
+//
+message Security
+{
+    optional string					code			= 1; // Код
+    optional string					name			= 2; // Наименование
+    optional string					sec_type		= 3; // Тип срочного контракта
+    optional uint32					lot_size		= 4; // Размер лота		
+    optional uint64					price_step		= 5; // Шаг цены	
+    optional string					currency_code	= 6; // Код валюты
+    optional string					currency_name	= 7; // Наименование валюты			
+    optional int64					price_move_limit	 			= 8; // Абсолютное значение предела движения цены
+    optional uint32					price_move_limit_prc			= 9; // Процентное значение предела движения цены
+    optional uint32					limit_market_share				= 10; // Процентное значение лимита на долю рынка
+    optional int64					limit_market_share_threshold	= 11; // Порог срабатывания лимита на долю рынка
+    optional string					delivery_basis					= 12; // Наименование базиса поставки
+    optional string					delivery_basis_id				= 13; // Код базиса поставки
+    
+    optional uint32					delivery_min_qty				= 14; // Минимальное кол-во поставки
+    optional uint32					delivery_qty_step				= 15; // Шаг кол-ва поставки
+    optional uint32					delivery_max_distance			= 16; // Максимальное удаление станций от базиса поставки
+    optional int64					open_price						= 17; // Цена открытия
+    
+    optional string					first_trade_day					= 18; // Первый день торгов		
+    optional string					last_trade_day					= 19; // Последний день торгов		
+    optional string					execution_day					= 20; // День исполнения	
+}
+
+// Запрос на изменение пароля пользователя
+//
+message ChangePassword
+{
+   optional string user_name							= 1; // Идентификатор пользователя
+   optional string old_password							= 2; // Старый пароль
+   optional string new_password							= 3; // Новый пароль
+}
+
+
+// информации о периоде бизнес-дня
+//
+message BDState
+{
+    required uint32					code				= 1; // Код
+    optional string					name				= 2; // Название периода
+    optional string					handle				= 3; // Режим периода
+    optional string					start_time			= 4; // Время начала периода
+    optional string					act_start_time		= 5; // Актуальное время начала периода
+    optional string					status				= 6; //	Состояние
+    optional string					bday				= 7; // Бизнес день
+}
+
+
+// Запрос изменения расписания бизнес-дня
+//
+message BDScheduleUpdate
+{
+    repeated BDState				state				= 1; // периоды бизнес-дня			
+}
+
+// Регистрация в информационном или транзакционном фиде
+//
+message Logon 
+{
+    optional uint64 item_id = 1;						// Идентификатор сообщения
+    optional string uid = 2;							// Идентификатор пользователя
+    optional string password = 3;						// Пароль
+    optional uint32 decimal_scale = 4 [default = 2];	// Количество десятичных знаков после запятой
+    optional string info = 5;							// Дополнительная информация
+}	
+
+// Завершение работы с информационным или транзакционным фидом
+//
+message Logoff 
+{
+   optional uint64 item_id = 1;		// Идентификатор сообщения
+   optional string uid = 2;			// Идентификатор пользователя
+   optional string sid = 3;			// Идентификатор сессии
+}
+
+
+message ForceLogoff
+{
+    repeated string uid = 1;			// Идентификатор пользователя
+}
+
+// Открытие режима торгов
+//
+message OpenSecBoard
+{
+    required string					board				= 1; // Режим
+    required string					security			= 2; // Инструмент
+//For Normal Board	
+    optional uint64					open_price			= 3; //	Зарезервировано. 	
+    optional uint64					prev_market_price	= 4; //	Расчетная цена предыдушей сессии	
+    optional string					order_metrix		= 5; // Метрики для выявления необычных заявок
+    optional string					trade_metrix		= 6; // Метрики для выявления необычных сделок
+//For RFQ Board	
+    optional uint32					qty					= 7; //	Количество ликвидируемых контрактов
+    optional uint64					price_min			= 8; // Минимальная цена
+    optional uint64					price_max			= 9; //	Максимальная цена
+//Common
+    optional uint64					event_id			= 10; // Идентификатор события
+    optional int64                  actual_time         = 99; //Фактическое время исполнения						
+}
+
+
+// Изменение состояния режима торгов
+//
+message ChangeSecBoardStatus
+{
+    required string					board				= 1; // Режим
+    required string					security			= 2; // Инструмент
+    required SBStatus				status				= 3; // Статус( кроме SB_OPENED )
+    optional int64                  actual_time         = 99; //Фактическое время исполнения						
+}
+
+// Посылка заявки
+//
+message Order 
+{
+    optional uint64					item_id			= 1; // Идентификатор сообщения
+    optional string					trn				= 2; // Номер транзакции. Формируется клиентом и должен быть уникальным в рамках сессии				
+    required OrderType				type			= 3; // Тип заявки
+    required OrderParams			params			= 4; // Параметры заявки
+    required BuySell				buy_sell		= 5; // Направление заявки
+    optional string					board			= 6; // Режим торгов
+    optional string					security		= 7; // Инструмент
+    optional string					account			= 8; // Регистр
+    optional int64					price			= 9; // Цена
+    optional uint32					qty				= 10;// Количество
+    optional uint64					time_in_force	= 11 [default = 0];	// values from 0 to 10 are reserved, 0 good-for-day
+    optional string					firm			= 12; // Фирма
+    optional string					client			= 13; // Клиент
+    optional string					cp_firm			= 14; // Контрагент для адресной заявки
+    optional string					comment			= 15; // Комментарий
+    optional string					id				= 16; // Идентификатор заявки. Формируется торговым сервером. Заполняется только при отправлении из торговой системы в клиринговую.
+    optional uint64					time_stamp		= 17; // Время поступления заявки. Формируется торговым сервером. Заполняется только при отправлении из торговой системы в клиринговую.
+    optional bool					isMarketMaker	= 18 [default = false];	// Флаг принадлежности заявки маркет мейкеру
+    optional string					destination		= 19; // Код Станция отправления/назначения. Заполняется клиентом только для поставочных заявок.
+    optional string					cp_account		= 20; // Регистр контрагента для адресной заявки режима BRD-CLSESSION
+}
+
+// Ответ на посылку заявки
+//
+message OrderRepOK
+{
+    optional string					code			= 1; // Идентификатор заявки 
+    optional OrderStatus			status			= 2; // Статус 
+    optional uint32					qty				= 3; // Количество
+    optional uint32					qtyLeft			= 4; // Количество неудовлетворенных инструментов
+    optional uint32					qty_executed	= 5; // Количество удовлетворенных инструментов
+    optional string					info			= 6; // Дополнительная информация. Заполняется только если статус заявки = Отменена 					
+}
+
+// Запрос на акцепт заявки (только Клиринговая система может послать такой запрос)
+//
+message AcceptOrder
+{
+    optional string					order_id		= 1; // Идентификатор заявки
+    optional uint32					qty				= 2; // Количество
+}
+
+// Запрос на сняние заявки
+//
+message CancelOrder
+{
+    optional uint64					item_id  = 1;	// Идентификатор сообщения
+    optional string					order_id = 2;	// Идентификатор заявки
+    optional uint64					time_stamp = 3;	// Штамп времени
+    optional bool					system = 4;     // если true то инициатор система 
+}
+
+// Ответ на сняние заявки
+//
+message CancelOrderRepOK
+{
+    optional string					code			= 1; // Идентификатор заявки 
+    optional uint32					qty				= 2; // Количество
+    optional uint32					qtyLeft			= 3; // Количество неудовлетворенных инструментов
+    optional uint32					qty_executed	= 4; // Количество удовлетворенных инструментов
+}
+
+
+
+// Подписка на определенную информационную таблицу
+//
+message Subscribe
+{
+    required Table					tab_id			= 1; // Идентификатор таблицы
+    optional int32					max_row_id		= 2; // Зарезервировано. Не используется в текущей версии
+    optional uint32					last_change_id	= 3; // Идентификатор последнего полученного обновления данной таблицы
+                                                         // Используется при необходимости получения данных с определенного 
+                                                         // момента, а не с начала учета обновлений по данной таблице
+}
+
+// Запрос на отмену подписки
+//
+message Unsubscribe
+{
+    required Table					tab_id			= 1; // Идентификатор таблицы
+}	
+
+// Информация о позиционном счете, допущенному к торговле серией срочного контракта (BoardSecurity)
+//
+message BoardAccount
+{
+    optional string					account			= 1; // Код позиционного регистра
+    optional uint32 				buy_qty 		= 2; // Количество контрактов на покупку
+    optional uint32 				sell_qty 		= 3; // Количество контрактов на продажу
+    optional string					bday		    = 4; // Бизнес день
+}
+
+// Информация о серии срочного контракта допущенного к торговле 
+//
+message BoardSecurity
+{
+    optional string					security			= 1; // Серия срочного контракта
+    
+//For Normal Board		
+    optional uint64					open_price			= 2; //	Зарезервировано
+    optional uint64					prev_market_price	= 3; //	Расчетная цена предыдушей сессии	
+    optional string					order_metrix		= 4; // Метрики для выявления необычных заявок
+    optional string					trade_metrix		= 5; // Метрики для выявления необычных сделок
+    
+//For RFQ Board	
+    optional uint32					qty					= 6; //	Количество ликвидируемых контрактов
+    optional uint64					price_min			= 7; // Минимальная цена
+    optional uint64					price_max			= 8; //	Максимальная цена
+    
+    repeated BoardAccount			board_account		= 100; // Информация о позиционном регистре
+}
+
+// Запрос на загрузку серий срочных документов с набором допущенных позиционных регистров для режима торгов
+//
+message BoardSecurities
+{
+    optional string					board_name			= 1; // Режим торгов
+    repeated BoardSecurity			security			= 2; // Информация о серии срочного контракта и регистрах
+    optional uint64					event_id			= 3; // Идентификатор события
+}
+
+
+//Replies
+// 
+//
+message TabParams
+{
+    required Table					tab_id			= 1; // Идентификатор таблицы
+    required uint32					size			= 2; // Размер в записях
+}
+
+message OrderAlarm
+{
+    optional string					order_id		= 1; // Идентификатор заявки
+    optional string					metrix			= 2; // Метрика, которая сработала
+    optional string					info			= 3; // Расширенная информация
+}
+
+message TradeAlarm
+{
+    optional string					trade_id		= 1; // Идентификатор сделки
+    optional string					metrix			= 2; // Метрика, которая сработала
+    optional string					info			= 3; // Расширенная информация
+}
+
+// Новые данные по подписке на информационную таблицу
+// Данное сообщение является обрамляющим для сообщений типа Info*
+// Сообщение типа Info* помещается в поле rowData как сериализованное.
+//
+message RowChange
+{
+    required Table					tabId			= 1; // Тип таблицы
+    required uint32					rowId			= 2; // Идентификатор строки
+    required uint32					changeId		= 3; // Идентификатор обновления
+    optional bytes					rowData			= 4; // Новые или измененные строки информационной таблицы 
+                                                         // в виде сериализованного сообщения типа Info*
+}
+
+// Новые данные по подпискам на информационные таблицы
+// Данное сообщение является обрамляющим для сообщения типа RowChange
+// Сообщения типа RowChange помещаются в поле row как сериализованные.
+//
+message Changes
+{
+    required int32					ver				= 1; // Номер версии
+    repeated bytes					row				= 2; // Набор сериализованных сообщений типа RowChange
+}
+
+// Строка данных для информационной таблицы "Заявки"
+//
+message InfoOrder 
+{
+    optional string					code			= 1; // Идентификатор заявки
+    optional OrderStatus			status			= 2; // Статус
+    optional OrderType				type			= 3; // Тип
+    optional OrderParams			params			= 4; // Параметры
+    optional BuySell				buy_sell		= 5; // Направление
+    optional string					board			= 6; // Режим
+    optional string					security		= 7; // Инструмент
+    optional string					account			= 8; // Регистр		
+    optional int64					price			= 9; // Цена
+    optional uint32					qty				= 10; // Количество
+    optional uint32					qtyLeft			= 11; // Количество неудовлетворенных инструментов
+    optional uint64					time_in_force	= 12 [default = 0];	// Время действия заявки. 0 - до конца торговой сессии
+    optional string					user			= 13; // Пользователь			
+    optional string					firm			= 14; // Участник				
+    optional string					client			= 15; // Клиент				
+    optional string					cp_firm			= 16; // Контрагент для адресной заявки				
+    optional uint64					entry_time		= 17; // Время ввода
+    optional uint64					cancel_time		= 18 [default = 0];	// Время отмены
+    optional string					res_code		= 19; // Код результата
+    optional bytes					res_descr		= 20; // Описание результата
+    optional string					res_info		= 21; // Информация результата
+    optional string					comment			= 22; // Комментарий
+    optional string					trn				= 23; // Номер транзакции
+    optional uint32					qty_executed	= 24; // Количество удовлетворенных инструментов
+    optional bool					isMarketMaker	= 25 [default = false]; // Флаг принадлежности заявки маркет мейкеру
+    optional OrderStatus			prev_status		= 26; // Предыдущий статус
+    optional string					destination		= 27; // Код станция отправления/назначения. Заполняется клиентом только для поставочных заявок.	
+    optional string					dest_name		= 28; // Наименование станции отправления/назначения. Заполняется клиентом только для поставочных заявок.	
+    optional int32					acc_id			= 29; // Только для GATEWAY
+    
+    optional uint64					clr_req_time	= 30; // Время отправки в клиринг
+    optional uint64					clr_rep_time	= 31; // Время приема ответа из клиринга
+    optional uint64					te_rep_time		= 32; // Время отправки ответа пользователю
+    
+    optional int32					board_id		= 33; // Только для GATEWAY
+    optional int32					security_id		= 34; // Только для GATEWAY
+    
+    optional string					cp_account		= 35; // Счет контрагента для адресной заявки борда BRD_CLSESSION	
+}
+
+// Строка данных для информационной таблицы "Сделки"
+//
+message InfoTrade
+{
+    required string					code			= 1; // Код
+    optional BuySell				buy_sell		= 2; // Направление
+    optional string					board			= 3; // Режим
+    optional string					security		= 4; // Инструмент
+    optional uint64					price			= 5; // Цена
+    optional uint32					qty				= 6; // Количество
+    optional string					order_id		= 7; // Идентификатор заявки
+    optional uint64					trade_time		= 8; // Время сделки
+    optional string					firm			= 9; // Фирма
+    optional uint64					match_id		= 10; // Идентификатор спаривания	
+    optional TradeType				trade_type		= 11; // Тип сделки	
+    optional string					cp_firm			= 12; // Контрагент для адресной сделки						
+    optional int32					acc_id			= 13; // Только для GATEWAY
+    optional int32					board_id		= 14; // Только для GATEWAY
+    optional int32					security_id		= 15; // Только для GATEWAY
+}
+
+// Строка данных для таблицы событий
+//
+message InfoEvent
+{
+    required string					code			= 1; // Код
+    required EventType				type			= 2; // Тип события
+    optional string					info			= 3; // Развернутая информация о событии
+}
+
+// Строка данных для информационной таблицы "Участники"
+//
+message InfoParticipant
+{
+    required string					code			= 1; // Код
+    optional string					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+    
+}
+
+// Строка данных для информационной таблицы "Пользователи"
+//
+message InfoUser	
+{
+    required string					code			= 1; // Код
+    optional string					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+    optional string					firm			= 4; // Участник
+    optional UserType				type			= 5; // Тип
+    optional uint64					logon_time		= 6; // Время последней регистрации с системе
+    optional uint64					logoff_time		= 7; // Время последнего завершения работы с системой
+    optional string					password		= 8; // Пароль
+    optional bytes					data			= 9; // Дополнительная информация. Передается только в GATEWAY.
+    optional bytes					data1			= 10; // Дополнительная информация. Передается только в GATEWAY.
+    optional bytes					data2			= 11; // Дополнительная информация. Передается только в GATEWAY.
+    optional EncryptType			encrypt			= 12; // Тип шифрования. Передается только в GATEWAY.
+    optional SignType				sign			= 13; // Тип подписи. Передается только в GATEWAY.
+}
+
+// Строка данных для информационной таблицы "Клиенты"
+//
+message InfoClient
+{
+    required string					code			= 1; // Код
+    optional bytes					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+    optional string					firm			= 4; // Участник торгов
+    optional string					clearing_firm	= 5; // Участник клиринга
+    optional string					inn				= 6; // Код ИНН	
+}
+
+// Строка данных для информационной таблицы "Регистры"
+//
+message InfoAccount
+{
+    required string					code			= 1; // Код
+    optional bytes					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+    optional string					firm			= 4; // Участник
+    optional string					client			= 5; // Клиент
+    optional AccountType			type			= 6; // Тип
+}
+
+// Строка данных для информационной таблицы "Открытые позиции"
+//
+message InfoHolding
+{
+   optional string					code = 1;					// Код
+   optional string					account = 2;				// Регистр
+   optional string					security = 3;				// Серия срочного контракта
+   optional uint32					trade_income_buy_qty = 4;	// Входящие Покупка
+   optional uint32					trade_income_sell_qty = 5;	// Входящие Продажа
+   optional uint32					trade_buy_qty = 6;			// Текущая Покупка
+   optional uint32					trade_sell_qty = 7;			// Текущая Продажа
+   optional uint64					trade_buy_value = 8;		// Сумма затраченная на покупку
+   optional uint64					trade_sell_value = 9;		// Сумма вырученная при продаже
+   optional uint32					order_buy_qty = 10;			// План Покупка
+   optional uint32					order_sell_qty = 11;		// План Продажа
+   optional uint64					order_buy_value = 12;		// План трат на покупку
+   optional uint64					order_sell_value = 13;		// План выручки при продаже
+   optional uint64					settle_price = 14;			// Не используется
+   optional string					firm = 15;					// Участник
+   optional int32					acc_id = 16;				// Только для GATEWAY
+}
+
+// Строка данных для информационной таблицы "Секции"
+//
+message InfoSection
+{
+    required string					code			= 1; // Код
+    optional string					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+}
+
+// Строка данных для информационной таблицы "Режимы"
+//
+message InfoBoard
+{
+    required string					code			= 1; // Код
+    optional string					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+    optional string					section			= 4; // Секция
+    optional BoardType				type			= 5; // Тип
+}
+
+// Строка данных для информационной таблицы "Типы инструментов"
+//
+message InfoSectype
+{
+    required string					code			= 1; // Код
+    optional string					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+    optional bool					spread			= 4; // Спред	
+}
+
+
+// Строка данных для информационной таблицы "Базисы поставки"
+//
+message InfoDeliveryBasis
+{	
+    required string					code			= 1; // Код
+    optional string					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+}
+
+
+// Строка данных для информационной таблицы "Инструменты"
+//
+message InfoSecurity
+{
+    required string					code			= 1; // Код
+    optional bytes					name			= 2; // Имя
+    optional RowStatus				status			= 3; // Статус
+    optional string					sec_type		= 4; // Тип
+    optional uint32					lot_size		= 5; // Размер лота
+    optional uint64					price_step		= 6; // Шаг цены
+    optional string					currency_code	= 7; // Код валюты
+    optional string					currency_name	= 8; // Наименование валюты
+    optional uint64					price_move_limit				= 9; // Абсолютное значение предела движения цены
+    optional uint64					price_move_limit_prc			= 10; // Процентное значение предела движения цены
+    optional uint64					limit_market_share				= 11; // Процентное значение лимита на долю рынка
+    optional uint64					limit_market_share_threshold	= 12; // Порог срабатывания лимита на долю рынка
+    optional string					delivery_basis_code				= 13; // Код базиса поставки
+    optional bytes					delivery_basis_name				= 14; // Название базиса поставки
+    optional uint32					delivery_min_qty				= 15; // минимальное кол-во поставки
+    optional uint32					delivery_qty_step				= 16; // шаг кол-ва поставки (вагонная норма)
+    optional string					first_trade_day					= 17; // первый торговый день для инструмента
+    optional string					last_trade_day					= 18; // последний торговый день для инструмента
+    optional string					execution_day					= 19; // день исполнения инструмента	
+    
+    optional uint32					income_qty		= 20; // Сумма входных позиций
+    optional uint32					current_qty		= 21; // Сумма текущих позиций
+}
+
+// Строка данных для информационной таблицы "Доступные для операций инструменты для определенных режимов торгов"
+//
+message InfoSecboard
+{
+    optional string					code				= 1; // Код
+    optional string					security			= 2; // Инструмент
+    optional string					board				= 3; // Режим
+    
+    optional uint64					best_buy			= 4; // Лучшая покупка
+    optional uint32					buy_orders			= 5; // Заявок на покупку
+    optional uint64					best_sell			= 6; // Лучшая продажа
+    optional uint32					sell_orders			= 7; // Заявок на продажу
+    
+    optional uint64					value_today			= 8; // Объем в деньгах сегодня
+    optional uint64					volume_today		= 9; // Объем в инструментах сегодня
+             
+    optional uint64					open_price			= 10; // Цена открытия
+    optional uint64					prev_market_price	= 11; // Предыдущая расчетная цена
+    optional uint64					market_price		= 12; // Расчетная цена
+    optional int64					market_price_change	= 13; // Изменение расчетной цены
+    
+    optional uint64					last_trade_price	= 14; // Цена последней сделки
+    optional uint32					last_trade_qty		= 15; // Количество последней сделки
+    optional uint64					last_trade_time		= 16; // Время последней сделки
+    
+    
+    optional uint64					high_trade_price	= 17; // Наибольшая цена сделки
+    optional uint64					low_trade_price		= 18; // Наименьшая цена сделки
+    
+    optional uint32					num_of_orders		= 19; // Количество заявок
+    optional uint32					num_of_active_orders= 20; // Количество активных заявок
+    
+    optional uint32					num_of_trades		= 21; // Количество сделок
+    
+    optional SBStatus				status				= 22; // Статус
+        
+    optional BoardType				board_type			= 23; // Тип режима
+
+    optional uint32					qty					= 24; // Количество (Поле для режима RFQ)
+    optional uint64					price_min			= 25; // Минимальная цена
+    optional uint64					price_max			= 26; // Максимальная цена
+    
+    optional uint64					addr_value_today	= 27; // Объем в деньгах сегодня по адресным сделкам
+    optional uint64					addr_volume_today	= 28; // Объем в инструментах сегодня по адресным сделкам
+    
+    optional uint64					sell_order_value	= 29; // Объем в деньгах по активным заявкам на продажу
+    optional uint64					sell_order_volume	= 30; // Объем в инструментах по активным заявкам на продажу
+    optional uint64					buy_order_value		= 31; // Объем в деньгах по активным заявкам на покупку
+    optional uint64					buy_order_volume	= 32; // Объем в инструментах по активным заявкам на покупку
+    
+    optional uint32					num_of_addr_trades	= 33; // Количество адресных сделок
+    
+    optional int32					board_id			= 34; // Только для GATEWAY
+    optional int32					security_id			= 35; // Только для GATEWAY
+    
+    optional uint32					income_qty			= 36; // Сумма входных позиций
+    optional uint32					current_qty			= 37; // Сумма текущих позиций
+    
+    
+    optional uint64					shcedule_trade_time	= 38; // Теоретическая продолжительность торговой сессии в минутах
+    optional uint64					start_trade_time	= 39; // Время начала торговой сессии( =0 торговая сесиия не открыта )	
+    optional uint64					finish_trade_time	= 40; // Время окончания торговой сессии( =0 торговая сесиия не закрыта )	
+    
+}
+
+// Строка данных для информационной таблицы "Расписание"
+//
+message InfoState
+{
+    required string					code				= 1; // Код
+    optional string					name				= 2; // Название периода
+    optional string					bday				= 3; // Бизнес день
+    optional string					handle				= 4; // Режим торгов
+    optional string					start_time			= 5; // Время начала периода
+    optional string					act_start_time		= 6; // Актуальное время начала периода
+    optional string					finish_time			= 7; // Время окончания периода
+    optional string					act_finish_time		= 8; // Актуальное время окончания периода
+    optional string					status				= 9; //	Состояние
+}
+
+// Строка данных для информационной таблицы "Текстовые сообщения"
+//
+message InfoMeddelande
+{
+    optional string					code			= 1;	// Код
+    optional string					from			= 2;	// Отправитель
+    optional string					to				= 3;	// Получатель
+    optional string					text			= 4;	// Текст сообщения
+    optional uint64					entry_time		= 5;	// Время посылки сообщения
+    optional uint32					priority		= 6;	// Приоритет
+    optional string					to_firm			= 7;	// фирма получатель
+}
+
+// Строка данных для информационной таблицы "Станции назначения"
+//
+message InfoStation
+{
+    optional string					basis_code		= 1;	// Код станции базиса поставки
+    optional string					code			= 2;	// Код станции
+    optional string					name			= 3;	// Наименование станции
+    optional uint32					distance		= 4;	// Расстояние от базиса поставки до станции
+    optional string					security		= 5;    // Инструмент
+    optional BuySell				buy_sell		= 6;	// доставка/отгрузка
+}
+
+// Строка данных для информационной таблицы "Валюты"
+//
+message InfoCurrency
+{
+    required uint32					id			    = 1; // Идентификатор
+    required string					code			= 2; // Код
+    optional string					name			= 3; // Имя
+}
+
+
+// Запрос на изменение курса валют
+//
+message ReqExchangeRate
+{
+    optional string					trade_day 	    = 1; // торговый день 	
+    optional string					curr_code_from	= 2; // Код валюты "из"
+    optional string					curr_code_to	= 3; // Код валюты "в"
+    optional uint64					rate			= 4; // Курс
+    optional bool					is_actual       = 5; // 
+}
+
+
+// Строка данных для информационной таблицы "Курсы валют"
+//
+message InfoExchangeRate
+{
+    required string					code			= 1; // Код
+    optional string					trade_day 	    = 2; // торговый день 	
+    optional string					curr_code_from	= 3; // Код валюты "из"
+    optional string					curr_code_to	= 4; // Код валюты "в"
+    optional uint64					rate			= 5; // Курс
+    optional bool					is_actual       = 6; // 
+}
+
+
+
+//Clearing requests. Запросы отправляемые в Клиринговую систему
+
+// Запрос на регистрацию сделки
+//
+message Trade 
+{ 
+    optional uint64					item_id			= 1; // Идентификатор сообщения
+    optional string					trade_id		= 2; // Идентификатор сделки
+    optional string					order_id		= 3; // Идентификатор заявки
+    optional uint64					time_stamp		= 4; // Штамп времени сделки
+    optional uint32					exec_qty		= 5; // Количество
+    optional uint64					exec_price		= 6; // Цена
+    optional uint64					match_id		= 7; // Идентификатор спаривания
+    optional uint64					transport_cost	= 8; // Цена доставки
+   
+    optional BuySell				buy_sell		= 9;  // Направление заявки
+    optional string					security		= 10; // Инструмент  
+}
+
+// Запрос на регистрацию расчетной цены
+//
+message SettlementPrice 
+{
+   optional uint64 item_id = 1;		// Идентификатор сообщения
+   optional uint64 time_stamp = 2;	// Штамп времени изменения расчетной цены
+   optional string board = 3;		// Режим 
+   optional string seccode = 4;		// Серия срочного контракта
+   optional uint64 price = 5;		// Цена
+   optional uint64 price_id = 6;	// Идентификатор цены
+   optional uint32 id = 7;			// Идентификатор изменения
+}
+
+//Clearing Replies. Ответы Клиринговой системы
+
+// Описание причины отклонения заявки
+//
+message Reason
+{
+    optional string code = 1; // Код ошибки
+    optional string desc = 2; // Описание ошибки
+    optional string info = 3; // Расширеная информация об ошибке
+}
+
+// Регистрация в системе завершилась успешно
+//
+message LogonOK 
+{
+    optional uint64 item_id = 1;		// Идентификатор сообщения
+    optional string sid = 2;			// Иденификатор сессии
+    optional uint64 last_item_id = 3;	// Идентификатор последнего сообщения
+    optional uint64 last_order_id = 4;	// Идентификатор последней заявки
+    optional uint64 last_trade_id = 5;	// Идентификатор последней сделки
+    optional uint64 last_price_id = 6;	// Идентификатор последнего изменения цены
+}
+
+// Регистрация в системе была отклонена
+//
+message LogonBAD 
+{
+   optional uint64 item_id = 1; // Идентификатор сообщения
+   optional Reason reason = 2;  // Описание ошибки
+}
+
+// Загрузка данных о позиционных регистрах
+//
+message Holding
+{
+   optional string account = 1;					// Регистр
+   optional string security = 2;				// Серия срочного контракта
+   optional uint32 trade_income_buy_qty = 3;	// Входящие Покупка
+   optional uint32 trade_income_sell_qty = 4;	// Входящие Продажа
+   optional uint32 trade_buy_qty = 5;			// Текущая Покупка
+   optional uint32 trade_sell_qty = 6;			// Текущая Продажа
+   optional uint64 trade_buy_value = 7;			// Сумма затраченная на покупку
+   optional uint64 trade_sell_value = 8;		// Сумма вырученная при продаже
+   optional uint32 order_buy_qty = 9;			// План Покупка
+   optional uint32 order_sell_qty = 10;			// План Продажа
+   optional uint64 order_buy_value = 11;		// План трат на покупку
+   optional uint64 order_sell_value = 12;		// План выручки при продаже
+}
+
+// Клиринговая система разрешает заявке участие в мэтчинге
+//
+message OrderOK
+{
+   optional uint64 item_id = 1;				// Идентификатор сообщения
+   optional string order_id = 2;			// Идентификатор заявки   
+   optional uint32 order_buy_qty = 3;		// План Покупка
+   optional uint32 order_sell_qty = 4;		// План Продажа
+   optional uint64 order_buy_value = 5;		// План трат на покупку
+   optional uint64 order_sell_value = 6;	// План выручки при продаже
+   optional uint64 order_settle_price = 7;	// Не используется
+   optional uint32 trade_buy_qty = 8;		// Текущая Покупка
+   optional uint32 trade_sell_qty = 9;		// Текущая Продажа
+   optional uint64 trade_buy_value = 10;	// Сумма затраченная на покупку
+   optional uint64 trade_sell_value = 11;	// Сумма вырученная при продаже
+   
+   repeated Holding holding_list = 12;		// Данные о позиционных регистрах 
+}
+
+// Клиринговая система отклоняет заявку
+//
+message OrderBAD
+{
+   optional uint64 item_id = 1;		// Идентификатор сообщения
+   optional string order_id = 2;	// Идентификатор заявки
+   optional Reason reason = 3;		// Описание причины
+   optional bool   nak = 4 [default=false]; // отвергнута КС
+}
+
+// Клиринговая система успешно зарегистрировала снятие заявки
+//
+message OrderCancOK
+{
+   optional uint64 item_id = 1;				// Идентификатор сообщения
+   optional string order_id = 2;			// Идентификатор заявки
+   optional uint32 order_buy_qty = 3;		// План Покупка
+   optional uint32 order_sell_qty = 4;		// План Продажа
+   optional uint64 order_buy_value = 5;		// План трат на покупку
+   optional uint64 order_sell_value = 6;	// План выручки при продаже
+   optional uint64 order_settle_price = 7;	// Не используется
+   optional uint32 trade_buy_qty = 8;		// Текущая Покупка
+   optional uint32 trade_sell_qty = 9;		// Текущая Продажа
+   optional uint64 trade_buy_value = 10;	// Сумма затраченная на покупку
+   optional uint64 trade_sell_value = 11;	// Сумма вырученная при продаже
+   
+   repeated Holding holding_list = 12;		// Данные о позиционных регистрах 
+   
+}
+
+// Клиринговая система не зарегистрировала снятие заявки
+//
+message OrderCancBAD
+{
+   optional uint64 item_id = 1;		// Идентификатор сообщения
+   optional string order_id = 2;	// Идентификатор заявки
+   optional Reason reason = 3;		// Описание причины
+}
+
+// Клиринговая система успешно зарегистрировала сделку 
+//
+message TradeOK
+{
+   optional uint64 item_id = 1;				// Идентификатор сообщения
+   optional string trade_id = 2;			// Идентификатор сделки
+   optional uint32 trade_buy_qty = 3;		// Текущая Покупка
+   optional uint32 trade_sell_qty = 4;		// Текущая Продажа
+   optional uint64 trade_buy_value = 5;		// Сумма затраченная на покупку
+   optional uint64 trade_sell_value = 6;	// Сумма вырученная при продаже
+   optional uint32 order_buy_qty = 7;		// План Покупка
+   optional uint32 order_sell_qty = 8;		// План Продажа
+   optional uint64 order_buy_value = 9;		// План трат на покупку
+   optional uint64 order_sell_value = 10;	// План выручки при продаже
+   optional uint64 trade_settle_price = 11;	// Не используется
+   
+   repeated Holding holding_list = 12;		// Данные о позиционных регистрах 
+}
+
+// Клиринговая система не зарегистрировала сделку
+//
+message TradeBAD
+{
+   optional uint64 item_id = 1;		// Идентификатор сообщения
+   optional string trade_id = 2;	// Идентификатор сделки
+   optional Reason reason = 3;		// Описание причины
+}
+
+// Клиринговая система успешно приняла и проверила реестр заявок
+//
+message OrderReestrOK
+{
+   optional uint64 item_id = 1;	// Идентификатор сообщения
+}
+
+// Клиринговая система отвергла реестр заявок
+//
+message OrderReestrBAD
+{
+   optional uint64 item_id = 1;	// Идентификатор сообщения
+   optional Reason reason = 2;	// Описание причины
+}
+
+// Клиринговая система успешно приняла и проверила реестр сделок
+//
+message TradeReestrOK
+{
+   optional uint64 item_id = 1;	// Идентификатор сообщения
+}
+
+// Клиринговая система отвергла реестр сделок
+//
+message TradeReestrBAD
+{
+   optional uint64 item_id = 1;	// Идентификатор сообщения
+   optional Reason reason = 2;	// Описание причины
+}
+
+// Клиринговая система успешно зарегистрировала изменение расчетной цены 
+//
+message SettlePriceOK
+{
+   optional uint64 item_id = 1;	// Идентификатор сообщения
+   optional string board = 2;	// Режим торгов
+   optional string seccode = 3;	// Серия срочного контракта
+   optional uint64 price_id = 4;// Идентификатор цены
+   optional uint32 id = 5;		// идентификатор изменения 
+}
+
+// Клиринговая система не зарегистрировала изменение рачетной цены
+//
+message SettlePriceBAD
+{
+   optional uint64 item_id = 1;	// Идентификатор сообщения
+   optional string board = 2;	// Режим торгов
+   optional string seccode = 3;	// Серия срочного контракта
+   optional Reason reason = 4;	// Описание причины
+   optional uint64 price_id = 5;// Идентификатор цены
+   optional uint32 id = 6;		// идентификатор изменения
+}
+
+// Запрос на снятие заявок по списку (Принимается только от Клиринговой системы)
+//
+message OrderCancReestr
+{
+   repeated string order_id = 1;	// Идентификатор заявки
+}
+
+// Реестр заявок
+// 
+message OrderReestr
+{
+   optional uint64 item_id = 1;		// Идентификатор сообщения
+   repeated InfoOrder order = 2;	// Информация по заявке
+}
+
+// Реестр сделок
+//
+message TradeReestr
+{
+   optional uint64 item_id = 1;		// Идентификатор сообщения
+   repeated InfoTrade trade = 2;	// Информация по сделке
+}
+
+
+message ReqOrderTradeId
+{
+    required int64					order_id					= 1; //Стартовый идентификатор заявки
+    required int64					trade_id					= 2; //Стартовый идентификатор сделки
+    required int64					price_id					= 3; //Стартовый идентификатор цены
+    required int64					item_id						= 4; //Стартовый идентификатор сообщения
+}
+
+//Договоры маркет майкера
+//
+message InfoMarketMakersContracts 
+{
+    required string					code				= 1; // Номер договора ММ
+    required string					firm				= 2; // Код Участника торгов
+    optional string					start_date			= 3; // Дата заключения договора ММ
+    optional string					finish_date			= 4; // Дата расторжения договора ММ
+    optional string					fact_finish_date	= 5; // Фактическая дата прекращения Договора ММ	
+    optional RowStatus				status				= 6; // Статус
+}
+
+
+enum QuotationMethod 
+{
+    QM_SPREAD = 0;	// Спред
+    QM_BUY = 1;		// Спрос
+    QM_SELL = 2;	// Предложение
+    QM_VOLUME = 3;	// Объем
+}
+
+//Котируемые серии
+//
+message InfoMMCSecurities 
+{
+    required string					code				= 1;  // Код серии
+    required string					contract_code		= 2;  // Номер договора ММ
+    required string					security			= 3;  // Код инструмента
+    required QuotationMethod		quotation_method	= 4;  // Способ котирования
+    repeated string					account				= 5;  // Набор позиционных регистров
+    optional uint64					spread				= 6;  // Предельный спрэд, валюта срочного контракта
+    optional uint64					mdo					= 7;  // Минимально допустимый объем заявок, контрактов
+    optional uint64					thr_pc				= 8;  // Порог исполнения обязательств по поддержанию котировок в процентах от продолжительности торговой сессии
+    optional uint64					vol					= 9;  // Достаточный объем сделок, контрактов
+    optional uint64					payment_rate		= 10; // Ставка вознаграждения, рублей
+    optional RowStatus				status				= 11; // Статус
+    
+    optional uint64					fact_t_min			= 12; // Фактическое время исполнения обязательств по поддержанию котировок
+    optional uint64					fact_vol			= 13; // Фактический объем сделок
+    optional uint64					start_timer_time	= 14; // Время старта таймера
+}	
+
+message RepServerTime
+{
+    optional uint64                  server_time        = 1; //Время на сервере
+}
+
+
+//Счета "Котируемой серии"
+//
+message SerieAccounts 
+{
+    required string					code				= 1; // Код серии
+    repeated string					account				= 2; // Счета
+}
+
+//Список "Котируемых серии"
+//
+message SerieAccountsList 
+{
+    repeated SerieAccounts			serie_accounts		= 1;
+}

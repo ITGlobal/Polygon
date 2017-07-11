@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LUA/*.lua" PackagePath="content/LUA" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Polygon.Connector\Polygon.Connector.csproj" />
+  </ItemGroup>
+</Project>

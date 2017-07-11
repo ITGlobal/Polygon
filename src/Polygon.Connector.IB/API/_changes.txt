@@ -1,0 +1,37 @@
+﻿Изменения в исходниках IB API по сравнению с оригиналом
+======================================================
+
+Здесь описываются все изменения в IB API, чтобы было проще при необходимости смержиться с новой версией API.
+
+
+1. AccountSummaryTags:
+----------------------
+* типы полей изменены со static readonly string на const string
++ добавлена константа RealizedPnL
++ добавлена константа UnrealizedPnL
++ добавлена константа TotalCashBalance
+
+2. EReader:
+-----------
++ в метод ReadAndProcessMessages() добавлен try-catch вокруг ProcessIncomingMessage()
++ в метод ReadAndProcessMessages() во внешний try-catch добавлена пустая ветка для ThreadAbortException
++ в метод ReadString() влеплен более человеческий цикл чтения строки, старый закомментирован.
++ добавлена условная компиляция для netstandard 1.6 и netframework 4.5
+
+3. IBParamsList:
+----------------
+* BUGFIX в методы AddParameter(this List<byte> source, int value) и AddParameter(this List<byte> source, double value) добавлены CultureInfo.InvariantCulture
+
+4. Execution:
+-------------
++ добавлен метод ToString()
+
+5. Contract:
+------------
++ добавлен метод ToString()
+
+6. EClientSocket
+----------------
++ добавлена условная компиляция для netstandard 1.6 и netframework 4.5
+
+7. Все классы сделаны internal

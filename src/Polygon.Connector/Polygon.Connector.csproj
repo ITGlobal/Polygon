@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ITGlobal.DeadlockDetection" Version="1.0.1" />
+    <PackageReference Include="ITGlobal.Polygon.Diagnostics" Version="1.0.4" />
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Polygon.Messages/Polygon.Messages.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.Net.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>True</IncludeSymbols>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Polygon.Connector/Polygon.Connector.csproj"/>
+        <ProjectReference Include="../spimex/SpimexAdapter/SpimexAdapter.csproj"/>
+    </ItemGroup>
+</Project>

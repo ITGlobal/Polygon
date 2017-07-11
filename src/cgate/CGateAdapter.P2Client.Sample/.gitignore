@@ -1,0 +1,4 @@
+*.dll
+*.ini
+cgate/**
+config.user.json

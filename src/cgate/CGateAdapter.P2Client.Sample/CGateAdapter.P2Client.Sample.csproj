@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net45</TargetFrameworks>
+    <OutputType>exe</OutputType>
+    <OutputTypeEx>exe</OutputTypeEx>
+    <RootNamespace>CGateAdapter.P2Client.Sample</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="*.json" opyToOutputDirectory="Always" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../CGateAdapter.P2Client/CGateAdapter.P2Client.csproj" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>powershell -noprofile -noninteractive -executionpolicy unrestricted -command "&amp; { $dir = Get-Location; while((Get-ChildItem $dir -File -Filter '*.csproj' | Measure-Object).Count -eq 0) { $dir = Split-Path $dir; } $script = Join-Path $dir 'postbuild.ps1'; Invoke-Expression '&amp; $script'; }"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

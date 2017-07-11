@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.Net.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>True</IncludeSymbols>
+    <PackageId>ITGlobal.SpimexAdapter</PackageId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="../libs/win-x86/*.dll" PackagePath="runtimes/win/native/" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
+    <PackageReference Include="protobuf-net" Version="2.2.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="src\InfoCommClient.Events.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>InfoCommClient.Events.tt</DependentUpon>
+    </Compile>
+    <None Include="**/*.proto" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="src\InfoCommClient.Events.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>InfoCommClient.Events.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+</Project>

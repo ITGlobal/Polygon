@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>IT Global LLC</Authors>
+    <Description>Adapter for MOEX CGate interface.</Description>
+    <PackageProjectUrl>http://www.itglobal.ru</PackageProjectUrl>
+    <PackageIconUrl>http://www.itglobal.ru</PackageIconUrl>
+    <Copyright>IT Global LLC</Copyright>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageTags></PackageTags>
+    <IncludeSymbols>True</IncludeSymbols>
+  </PropertyGroup>
+</Project>

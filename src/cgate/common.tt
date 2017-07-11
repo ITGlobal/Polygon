@@ -1,0 +1,300 @@
+﻿<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+
+<#+
+    public class FieldInfo
+    {
+        private readonly string name;
+        private readonly string type;
+        private readonly string msgId;
+
+        public FieldInfo(string name, string type, string msgId = null)
+        {
+            this.name = name;
+            this.type = type;
+            this.msgId = msgId;
+        }
+
+        public string Name { get { return name; } }
+        public string Type { get { return type; } }
+        public string MsgId { get { return msgId; } }
+    }
+
+    public class TableInfo
+    {
+        private readonly string name;
+        private readonly List<FieldInfo> fields;
+
+        public TableInfo(string name, List<FieldInfo> fields)
+        {
+            this.name = name;
+            this.fields = fields;
+        }
+
+        public string Name { get { return name; } }
+        public List<FieldInfo> Fields { get { return fields; } }
+    }
+
+    public class StreamInfo
+    {
+        private readonly string name;
+        private readonly List<TableInfo> tables;
+
+        public StreamInfo(string name, List<TableInfo> tables)
+        {
+            this.name = name;
+            this.tables = tables;
+        }
+
+        public string Name { get { return name; } }
+        public List<TableInfo> Tables { get { return tables; } }
+
+        public static StreamInfo Load(string iniFilePath)
+        {
+            var tables = new List<TableInfo>();
+            var ini = File.ReadAllLines(iniFilePath);
+
+            List<FieldInfo> fields = null;
+            foreach(var line in ini)
+            {         
+                var tablePrefix = "[table:";
+                if(line.StartsWith(tablePrefix))
+                {
+                    var tableName = line.Substring(line.IndexOf(':',line.IndexOf(':')+1)+1);
+                    tableName = tableName.Substring(0, tableName.Length-1);
+                    fields = new List<FieldInfo>();
+                    tables.Add(new TableInfo(tableName, fields));
+                }
+
+                if(line.StartsWith("field="))
+                {
+                    var fieldNameAndType = line.Substring(line.IndexOf("field=")+"field=".Length).Split(',');
+                    var fieldName = fieldNameAndType[0];
+                    var fieldType = ConvertType(fieldNameAndType[1]);
+                    fields.Add(new FieldInfo(fieldName, fieldType));
+                }
+        
+                if(line.StartsWith("msgid="))
+                {
+                    fields.Add(new FieldInfo("msgid", "int", line.Split('=')[1]));
+                }
+        
+                if(line.StartsWith("reply="))
+                {
+                    fields.Add(new FieldInfo("reply", "int", line.Split('=')[1]));
+                }
+        
+                if(line.StartsWith("request="))
+                {
+                    fields.Add(new FieldInfo("request", "int", line.Split('=')[1]));
+                }
+        
+              /*  if(line.StartsWith("replies="))
+                {   
+                        var replies = "new[]{" + (line.Split('=')[1]).Split(',') + "}";
+                    fields.Add(new FieldInfo("replies", "int[]", replies));
+                } */
+            }
+
+            return new StreamInfo(Path.GetFileNameWithoutExtension(iniFilePath), tables);
+        }
+    }
+
+    public class StreamSet
+    {
+        private readonly List<StreamInfo> streams;
+
+        public StreamSet(IEnumerable<StreamInfo> streams)
+        {
+            this.streams = streams.ToList();
+        }
+
+        public List<StreamInfo> Streams { get { return streams; } }
+
+        public static StreamSet Load(string directory)
+        {
+            return new StreamSet(Directory.GetFiles(directory, "*.ini").Select(path => StreamInfo.Load(path)));
+        }
+    }
+
+    public static IEnumerable<string> ExtraMessageTypes()
+    {
+        yield return "StreamStateChange";
+        yield return "CGateOrder";
+        yield return "CGateDelOrderReply";
+        yield return "CGateDeal";
+        yield return "CGateDataEnd";
+        yield return "CGateDataBegin";
+        yield return "CGateAddOrderReply";
+        yield return "CGConnectionStateChange";
+        yield return "CGateClearTableMessage";
+    }
+
+    public static string ConvertType(string cgateFieldType)
+    {
+        switch(cgateFieldType)
+        {
+            case "i1":
+                return "sbyte";
+            case "i2":
+                return "short";
+            case "i4":
+                return "int";
+            case "i8":
+                return "long";
+            case "u1":
+                return "byte";
+            case "u2":
+                return "ushort";
+            case "u4":
+                return "uint";
+            case "u8":
+                return "ulong";
+            case "t":
+                return "DateTime";           
+            case "f":
+                return "double";    
+        }
+        
+        if (cgateFieldType.StartsWith("c"))
+            return "string";
+
+        if (cgateFieldType.StartsWith("d"))
+            return "double";
+
+        if (cgateFieldType.StartsWith("b"))
+            return "byte[]";
+
+        return cgateFieldType;
+    }
+
+    public static string GetConvertionMethodName(string fieldType)
+    {
+        switch(fieldType)
+        {
+            case "sbyte":
+                return "asSByte";
+            case "short":
+                return "asShort";
+            case "int":
+                return "asInt";
+            case "long":
+                return "asLong";
+            case "byte":
+                return "asByte";
+            case "ushort":
+                return "asUShort";
+            case "uint":
+                return "asUInt";
+            case "ulong":
+                return "asULong";
+            case "DateTime":
+                return "asDateTime";  
+            case "string":
+                return "asString"; 
+            case "double":
+                return "asDouble"; 
+            case "byte[]":
+                return "asBytes";          
+        }
+        
+        return fieldType;
+    }
+
+    public static string Normalize(string text)
+    {
+        var result = new StringBuilder();
+        
+        foreach(var part in SplitIntoParts(text))
+        {
+            for(var i = 0; i < part.Length; i++)
+            {
+                var ch = char.ToLowerInvariant(part[i]);
+                if(i == 0)
+                {
+                    ch = char.ToUpperInvariant(ch);
+                }
+                result.Append(ch);
+            }
+            
+            part.Clear();
+        }
+        
+        return result.ToString();
+    }
+
+	public static string NormalizeAlt(string text)
+    {
+        var result = new StringBuilder();
+        
+		var j = 0;
+        foreach(var part in SplitIntoParts(text))
+        {
+			if(j != 0)
+			{
+				result.Append('_');
+			}
+			
+			result.Append(part.ToString().ToLowerInvariant());
+            part.Clear();
+			j++;
+        }
+        
+        return result.ToString();
+    }
+    
+    private static IEnumerable<StringBuilder> SplitIntoParts(string text)
+    {
+        var part = new StringBuilder();
+        
+        var prevCharWasDigit = false;
+        var prevCharWasUpper = false;
+        
+        foreach(var c in text)
+        {
+            if(char.IsDigit(c))
+            {
+                part.Append(c);
+                prevCharWasDigit = true;
+                continue;
+            }
+            
+            prevCharWasDigit = false;
+            
+            if(char.IsLetter(c))
+            {
+                if(prevCharWasDigit)
+                {
+                    prevCharWasDigit = false;
+                    yield return part;
+                    
+                    part.Append(c);
+                    continue;
+                }
+                
+                if(char.IsUpper(c))
+                {
+                    if(!prevCharWasUpper)
+                    {
+                        yield return part;
+                    }
+                    
+                    part.Append(c);
+                    prevCharWasUpper = true;
+                    continue;
+                }
+                
+                prevCharWasUpper = false;
+                part.Append(c);
+                continue;
+            }
+            
+            yield return part;
+        }
+        
+        yield return part;
+    }
+ #>

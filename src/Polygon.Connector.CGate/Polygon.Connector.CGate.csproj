@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>Polygon.Connector.CGate</RootNamespace>
+    <AssemblyName>Polygon.Connector.CGate</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
+    <PackageReference Include="protobuf-net" Version="2.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="*.dll" PackagePath="runtimes/win/native/" />
+    <Content Include="scheme\*.ini" PackagePath="content/scheme/" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Polygon.Connector\Polygon.Connector.csproj" />
+    <ProjectReference Include="..\cgate\CGateAdapter.P2Client\CGateAdapter.P2Client.csproj" />
+  </ItemGroup>
+</Project>

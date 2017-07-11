@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../common.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net45</TargetFrameworks>
+    <RootNamespace>CGateAdapter</RootNamespace>
+    <PackageId>ITGlobal.CGateAdapter.P2</PackageId>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="cgate_net">
+      <HintPath>../libs/x86/cgate_net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="netrepl.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../CGateAdapter.Core/CGateAdapter.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../ini/scheme/*.ini" PackagePath="content/scheme/" CopyToOutputDirectory="Always" />
+    <Content Include="../../libs/x86/*.dll" PackagePath="runtimes/win/native/" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Messages/MessageExtensions.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MessageExtensions.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Messages\MessageExtensions.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MessageExtensions.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Messages/MessageExtensions.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MessageExtensions.cs</LastGenOutput>
+    </None>
+    <None Update="Messages\MessageExtensions.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MessageExtensions.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+</Project>
