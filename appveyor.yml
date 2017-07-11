@@ -1,0 +1,19 @@
+version: 1.0.{build}
+pull_requests:
+  do_not_increment_build_number: true
+build:
+  verbosity: minimal
+cache: 
+- 'C:\projects\polygon\scripts\tools'
+build_script:
+- ps: '& ./build.ps1'
+test: off
+artifacts:
+- path: artifacts\**\*.nupkg
+deploy:
+- provider: NuGet
+  api_key:
+    secure: r5vF3QENzP28+dU6gvmD7Sqbdt5Ti43yhuSye3O7TJxKT+6vuponJ7tVwkGkotH7
+  on:
+    branch: master
+  skip_symbols: false
