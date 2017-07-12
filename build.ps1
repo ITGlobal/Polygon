@@ -77,7 +77,7 @@ if($LASTEXITCODE -ne 0) {
 #
 # -----------------------------------------------------------------------------
 Print-Header "Restoring dependencies"
-& dotnet restore /nologo -v q
+& dotnet restore /nologo -v q /p:Version=$VERSION
 if($LASTEXITCODE -ne 0) {
     Write-Host "`"dotnet restore`" failed with $LASTEXITCODE"
     exit $LASTEXITCODE
