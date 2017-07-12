@@ -6,8 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using ITGlobal.DeadlockDetection;
 using Polygon.Diagnostics;
-using Polygon.Connector;
-using Polygon.Messages;
 using ProtoBuf;
 using WebSocket4Net;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
@@ -19,18 +17,15 @@ namespace Polygon.Connector.CQGContinuum
     /// <summary>
     ///     Обёртка над CQG Continuum API
     /// </summary>
-    internal sealed class CQGCAdapter : IDisposable, ISubscriptionTester
+    internal sealed class CQGCAdapter : IDisposable, ISubscriptionTester<InstrumentData>, IInstrumentConverterContext<InstrumentData>
     {
         #region Private fields
 
         /// <summary>
         ///     Версия протокола
         /// </summary>
-        private const string ClientVersion = "1.28";
-
-        public const string DefaultUrl = "wss://api.cqg.com";
-        public const string DemoUrl = "wss://demoapi.cqg.com:443";
-
+        private const string ClientVersion = "1.32";
+        
         /// <summary>
         ///     Логгер
         /// </summary>
@@ -1142,12 +1137,18 @@ namespace Polygon.Connector.CQGContinuum
 
         #endregion
 
-        #region ISubscriptionTester implementation (Методы для тестирования подписки на инструмент по вендорскому коду)
+        #region IInstrumentConverterContext
+
+        ISubscriptionTester<InstrumentData> IInstrumentConverterContext<InstrumentData>.SubscriptionTester => this;
+
+        #endregion
+
+        #region ISubscriptionTester
 
         private readonly ILockObject resolutionRequestsLock = DeadlockMonitor.Cookie<CQGCAdapter>("resolutionRequestsLock");
         private readonly Dictionary<uint, ResolutionRequest> resolutionRequestsById = new Dictionary<uint, ResolutionRequest>();
 
-        private sealed class ResolutionRequest : TaskCompletionSource<Tuple<bool, string>>
+        private sealed class ResolutionRequest : TaskCompletionSource<SubscriptionTestResult>
         {
             public string Symbol { get; }
 
@@ -1160,19 +1161,22 @@ namespace Polygon.Connector.CQGContinuum
             }
         }
 
-        async Task<Tuple<bool, string>> ISubscriptionTester.TestVendorCodeAsync(string symbol)
-        {
-            var requestId = GetNextRequestId();
-            var request = new ResolutionRequest(symbol, requestId);
+        /// <summary>
+        ///     Проверить подписку 
+        /// </summary>
+        async Task<SubscriptionTestResult> ISubscriptionTester<InstrumentData>.TestSubscriptionAsync(InstrumentData data)
+        { 
+            var id = GetNextRequestId();
+            var request = new ResolutionRequest(data.Symbol, id);
             using (resolutionRequestsLock.Lock())
             {
-                resolutionRequestsById.Add(requestId, request);
+                resolutionRequestsById.Add(id, request);
             }
 
             var message = new InformationRequest
             {
-                symbol_resolution_request = new SymbolResolutionRequest { symbol = symbol },
-                id = requestId
+                symbol_resolution_request = new SymbolResolutionRequest { symbol = data.Symbol },
+                id = id
             };
 
             SendMessage(message);
@@ -1182,10 +1186,9 @@ namespace Polygon.Connector.CQGContinuum
 
         private void OnMarketDataResolved(AdapterEventArgs<InformationReport> args)
         {
-            ResolutionRequest request;
             using (resolutionRequestsLock.Lock())
             {
-                if (!resolutionRequestsById.TryGetValue(args.Message.id, out request))
+                if (!resolutionRequestsById.TryGetValue(args.Message.id, out var request))
                 {
                     return;
                 }
@@ -1196,12 +1199,15 @@ namespace Polygon.Connector.CQGContinuum
 
                 if (resolvedSymbol.EndsWith(request.Symbol))
                 {
-                    request.TrySetResult(Tuple.Create(true,
-                        ContractMetadataToString(args.Message.symbol_resolution_report.contract_metadata)));
+                    request.TrySetResult(SubscriptionTestResult.Passed(
+                        ContractMetadataToString(args.Message.symbol_resolution_report.contract_metadata))
+                    );
                 }
                 else
                 {
-                    request.TrySetResult(Tuple.Create(false, ContractMetadataToString(args.Message.symbol_resolution_report.contract_metadata)));
+                    request.TrySetResult(SubscriptionTestResult.Failed(
+                        ContractMetadataToString(args.Message.symbol_resolution_report.contract_metadata))
+                    );
                 }
             }
 
@@ -1221,8 +1227,8 @@ namespace Polygon.Connector.CQGContinuum
 
                 resolutionRequestsById.Remove(args.Message.id);
             }
-
-            request.TrySetResult(Tuple.Create(false, args.Message.text_message));
+            
+            request.TrySetResult(SubscriptionTestResult.Failed(args.Message.text_message));
             args.MarkHandled();
         }
 

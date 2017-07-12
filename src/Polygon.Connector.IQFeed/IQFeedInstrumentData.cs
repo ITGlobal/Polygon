@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Polygon.Diagnostics;
 
 namespace Polygon.Connector.IQFeed
 {
@@ -12,10 +13,5 @@ namespace Polygon.Connector.IQFeed
         ///     Тип ценной бумаги
         /// </summary>
         public SecurityType SecurityType { get; set; }
-
-        /// <summary>
-        ///     Тип инструмента
-        /// </summary>
-        public InstrumentType InstrumentType { get; set; }
     }
 }

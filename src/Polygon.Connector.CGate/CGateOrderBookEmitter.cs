@@ -288,7 +288,7 @@ namespace Polygon.Connector.CGate
                     if (!orderBooks.TryGetValue(record.IsinId, out ob))
                     {
                         var instrument = instrumentResolver.GetInstrument(record.InstrumentCode);
-                        ob = new OrderBook {Instrument = instrument.TransportInstrument};
+                        ob = new OrderBook {Instrument = instrument.Instrument};
                         orderBooks.Add(record.IsinId, ob);
                     }
 

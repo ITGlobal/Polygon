@@ -8,19 +8,15 @@ namespace Polygon.Connector.IQFeed
     [PublicAPI]
     public sealed class IQFeedParameters : IConnectorFactory
     {
-        #region .ctor
-
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public IQFeedParameters(IInstrumentConverter<IQFeedInstrumentData> externalConverter)
+        public IQFeedParameters(InstrumentConverter<IQFeedInstrumentData> instrumentConverter)
         {
             IQConnectAddress = "localhost";
             TreatCommodityAs = SecurityType.SPOT;
-            InstrumentConverter = IQFeedInstrumentConverter.Create(externalConverter);
+            InstrumentConverter = instrumentConverter;
         }
-
-        #endregion
 
         /// <summary>
         ///     Адрес для соединения
@@ -31,23 +27,10 @@ namespace Polygon.Connector.IQFeed
         ///     <see cref="SecurityType"/> для коммодити
         /// </summary>
         public SecurityType TreatCommodityAs { get; set; }
-
-        #region InstrumentConverter
-
-        /// <summary>
-        ///     Конвертер инструментов IQFeed
-        /// </summary>
-        internal sealed class IQFeedInstrumentConverter
-            : InstrumentConverter<IQFeedInstrumentConverter, IQFeedInstrumentData, IQFeedGateway>
-        {
-        }
-
         /// <summary>
         ///     Конвертер инструментов
         /// </summary>
-        internal IQFeedInstrumentConverter InstrumentConverter { get; }
-
-        #endregion
+        public InstrumentConverter<IQFeedInstrumentData> InstrumentConverter { get; }
 
         /// <summary>
         ///     Создать транспорт с текущими настройками

@@ -131,9 +131,15 @@ namespace Polygon.Connector.QUIKLua
         {
             using (LogManager.Scope())
             {
-                instrument = await adapter.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-                QLAdapter.Log.Debug().Print($"Candles request: {instrument.Code}, span {span}, from {begin} to {end}");
-                var dataRequestMessage = new QLHistoryDataRequest(instrument.Code, span);
+                var symbol = await adapter.ResolveSymbolAsync(instrument);
+                if (symbol == null)
+                {
+                    consumer.Error($"Unable to resolve symbol for {instrument}");
+                    return;
+                }
+
+                QLAdapter.Log.Debug().Print($"Candles request: {symbol}, span {span}, from {begin} to {end}");
+                var dataRequestMessage = new QLHistoryDataRequest(symbol, span);
                 var request = new HistoryDataRequest(dataRequestMessage.id, instrument, begin, end, span);
 
                 using (requestsLock.Lock())
@@ -183,9 +189,15 @@ namespace Polygon.Connector.QUIKLua
         {
             using (LogManager.Scope())
             {
-                instrument = await adapter.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-                QLAdapter.Log.Debug().Print($"Candles subscription: {instrument.Code}, span {span}, from {begin}");
-                var subscriptionMessage = new QLHistoryDataSubscription(instrument.Code, begin, span);
+                var symbol = await adapter.ResolveSymbolAsync(instrument);
+                if (symbol == null)
+                {
+                    consumer.Error($"Unable to resolve symbol for {instrument}");
+                    return new NullHistoryDataSubscription();
+                }
+
+                QLAdapter.Log.Debug().Print($"Candles subscription: {symbol}, span {span}, from {begin}");
+                var subscriptionMessage = new QLHistoryDataSubscription(symbol, begin, span);
                 var subscription = new HistoryDataSubscription(subscriptionMessage.id, instrument, begin, span, adapter, consumer);
 
                 using (requestsLock.Lock())
@@ -207,8 +219,7 @@ namespace Polygon.Connector.QUIKLua
                     var response = (QLHistoryDataResponse)e.Message;
                     QLAdapter.Log.Debug().Print($"CandlesResponse received, contains {response.candles?.Count} candles", LogFields.RequestId(response.id));
 
-                    HistoryDataRequest request = null;
-
+                    HistoryDataRequest request;
                     using (requestsLock.Lock())
                     {
                         if (!requests.TryGetValue(response.id, out request))
@@ -220,7 +231,9 @@ namespace Polygon.Connector.QUIKLua
                     request.ProcessResponse(response);
 
                     using (requestsLock.Lock())
+                    {
                         requests.Remove(response.id);
+                    }
 
                     break;
 

@@ -11,6 +11,23 @@ namespace Polygon.Messages
     [Serializable, PublicAPI]
     public sealed class Instrument : IEquatable<Instrument>, IComparable<Instrument>, IComparable, IPrintable
     {
+        #region .ctor
+
+        /// <summary>
+        ///     .ctor
+        /// </summary>
+        public Instrument() { }
+
+        /// <summary>
+        ///     .ctor
+        /// </summary>
+        public Instrument(string code)
+        {
+            Code = code;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>

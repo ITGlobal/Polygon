@@ -14,8 +14,7 @@ namespace Polygon.Connector.IQFeed
         private readonly IQFeedParameters parameters;
         private readonly IQFeedGateway feed;
 
-        internal IQFeedConnector(
-            IQFeedParameters parameters)
+        internal IQFeedConnector(IQFeedParameters parameters)
         {
             this.parameters = parameters;
             feed = new IQFeedGateway(parameters);

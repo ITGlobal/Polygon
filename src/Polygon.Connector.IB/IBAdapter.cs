@@ -10,7 +10,6 @@ using Polygon.Messages;
 using IBApi;
 using ITGlobal.DeadlockDetection;
 using IBOrder = IBApi.Order;
-using IBInstrumentConverter = Polygon.Connector.InteractiveBrokers.IBParameters.IBInstrumentConverter;
 using OrderState = Polygon.Messages.OrderState;
 
 namespace Polygon.Connector.InteractiveBrokers
@@ -18,7 +17,10 @@ namespace Polygon.Connector.InteractiveBrokers
     /// <summary>
     ///     Адаптер IB
     /// </summary>
-    internal sealed partial class IBAdapter : EWrapperBase, IInstrumentHistoryProvider, ISubscriptionTester
+    internal sealed partial class IBAdapter : EWrapperBase, 
+        IInstrumentHistoryProvider, 
+        ISubscriptionTester<IBInstrumentData>, 
+        IInstrumentConverterContext<IBInstrumentData>
     {
         public const int TwsDefaultPort = 7496;
         public const int GatewayDefaultPort = 4001;
@@ -26,6 +28,7 @@ namespace Polygon.Connector.InteractiveBrokers
         internal static readonly ILog Log = LogManager.GetLogger<IBAdapter>();
 
         private readonly IBConnector connector;
+        private readonly InstrumentConverter<IBInstrumentData> instrumentConverter;
 
         private readonly AutoResetEvent errorEvent = new AutoResetEvent(false);
         private readonly ManualResetEventSlim connectedEvent = new ManualResetEventSlim(false);
@@ -48,13 +51,12 @@ namespace Polygon.Connector.InteractiveBrokers
 
         private int nextValidIdentifyer;
 
-        public IBAdapter(IBConnector connector)
+        public IBAdapter(IBConnector connector, InstrumentConverter<IBInstrumentData> instrumentConverter)
         {
             this.connector = connector;
+            this.instrumentConverter = instrumentConverter;
             Socket = new LoggingEClientSocketFacade(new EClientSocket(this));
         }
-
-        private IBInstrumentConverter InstrumentConverter => connector.ContractContainer.InstrumentConverter;
 
         internal LoggingEClientSocketFacade Socket { get; }
 
@@ -297,8 +299,6 @@ namespace Polygon.Connector.InteractiveBrokers
         {
             using (LogManager.Scope())
             {
-                instrument = await InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-
                 // Получаем контракт по инструменту
                 var contract = await connector.ContractContainer.GetContractAsync(instrument);
                 if (contract == null)
@@ -382,10 +382,8 @@ namespace Polygon.Connector.InteractiveBrokers
         {
             using (LogManager.Scope())
             {
-                instrument = await InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-
                 // Получаем контракт по инструменту
-                var contract = await connector.ContractContainer.GetContractAsync(instrument, null);
+                var contract = await connector.ContractContainer.GetContractAsync(instrument);
 
                 if (contract == null)
                 {
@@ -417,7 +415,6 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </param>
         public void Unsubscribe(Instrument instrument)
         {
-            instrument = InstrumentConverter.ResolveTransportInstrumentAsync(instrument).Result;
             try
             {
                 // Получаем тикер по инструменту
@@ -450,11 +447,10 @@ namespace Polygon.Connector.InteractiveBrokers
         {
             using (LogManager.Scope())
             {
-                instrument = await InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
                 try
                 {
                     // Получаем контракт по инструменту
-                    var contract = await connector.ContractContainer.GetContractAsync(instrument, null).ConfigureAwait(false);
+                    var contract = await connector.ContractContainer.GetContractAsync(instrument);
 
                     if (contract == null)
                     {
@@ -511,7 +507,6 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </param>
         public void UnsubscribeOrderBook(Instrument instrument)
         {
-            instrument = InstrumentConverter.ResolveTransportInstrumentAsync(instrument).Result;
             try
             {
                 // Получаем тикер по инструменту
@@ -640,36 +635,58 @@ namespace Polygon.Connector.InteractiveBrokers
             return Interlocked.Increment(ref nextValidIdentifyer);
         }
 
+        #region IInstrumentConverterContext
+
+        ISubscriptionTester<IBInstrumentData> IInstrumentConverterContext<IBInstrumentData>.SubscriptionTester => this;
+
+        #endregion
+
         #region ISubscriptionTester implementation
 
-        async Task<Tuple<bool, string>> ISubscriptionTester.TestVendorCodeAsync(string symbol)
+        /// <summary>
+        ///     Проверить подписку 
+        /// </summary>
+        async Task<SubscriptionTestResult> ISubscriptionTester<IBInstrumentData>.TestSubscriptionAsync(IBInstrumentData data)
         {
-            Instrument instrument = await InstrumentConverter.ResolveSymbolAsync(symbol).ConfigureAwait(false);
-            IBInstrumentData data = await InstrumentConverter.ResolveInstrumentAsync(instrument).ConfigureAwait(false);
-            Task<Tuple<bool, string>> result;
+            if (data.Symbol == null)
+            {
+                return SubscriptionTestResult.Failed("No symbol has been specified");
+            }
+            
+            // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
 
+            Contract contract;
             switch (data.InstrumentType)
             {
-                    case InstrumentType.Asset:
-                        result = connector.ContractContainer.TestAssetContractAsync(symbol, data);
-                        break;
-                    case InstrumentType.Future:
-                        result = connector.ContractContainer.TestFutureContractAsync(symbol, data);
-                        break;
-                    case InstrumentType.AssetOptionSeries:
-                        result = connector.ContractContainer.TestAssetOptionContractAsync(symbol, data);
-                        break;
-                    case InstrumentType.FutureOptionSeries:
-                        result = connector.ContractContainer.TestFutureOptionContractAsync(symbol, data);
-                        break;
-                    default:
-                        result = Task.FromResult(Tuple.Create(default(bool), default(string)));
-                        break;
+                case IBInstrumentType.Equity:
+                case IBInstrumentType.Index:
+                case IBInstrumentType.Commodity:
+                case IBInstrumentType.FX:
+                    contract = ContractContainer.GetAssetContractStub(data);
+                    break;
+                case IBInstrumentType.Future:
+                    contract = ContractContainer.GetFutureContractStub(data);
+                    break;
+                case IBInstrumentType.AssetOption:
+                    contract = ContractContainer.GetAssetOptionContractStub(data);
+                    break;
+                case IBInstrumentType.FutureOption:
+                    contract = ContractContainer.GetFutureOptionContractStub(data);
+                    break;
+                default:
+                    return SubscriptionTestResult.Failed($"Bad instrument type: {data.InstrumentType}");
             }
 
-            return await result;
-        } 
+            var testResult = TestContract(contract);
+            var result = await testResult.WaitAsync();
+            if (result)
+            {
+                return SubscriptionTestResult.Passed();
+            }
 
+            return SubscriptionTestResult.Failed();
+        }
+        
         #endregion
     }
 }

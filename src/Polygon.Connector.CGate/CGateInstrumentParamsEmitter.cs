@@ -223,12 +223,12 @@ namespace Polygon.Connector.CGate
                         var code = instrumentResolver.GetShortIsinByIsinId(isinId);
                         if (!string.IsNullOrEmpty(code))
                         {
-                            InstrumentData data = instrumentResolver.GetInstrument(code);
+                            var data = instrumentResolver.GetInstrument(code);
                             if (!data.Equals(default(InstrumentData)))
                             {
                                 ip = new InstrumentParams
                                 {
-                                    Instrument = data.TransportInstrument,
+                                    Instrument = data.Instrument,
                                     VolaTranslatedByFeed = true,
                                     SessionEndTime = sessionEndTime
                                 };

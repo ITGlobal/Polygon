@@ -1,5 +1,4 @@
-﻿using Polygon.Connector.QUIKLua.Adapter;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace Polygon.Connector.QUIKLua
 {
@@ -12,25 +11,20 @@ namespace Polygon.Connector.QUIKLua
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public QLParameters(IDateTimeProvider dateTimeProvider, [CanBeNull]IInstrumentConverter<InstrumentData> externalConverter)
+        public QLParameters(InstrumentConverter<InstrumentData> instrumentConverter)
         {
-            DateTimeProvider = dateTimeProvider;
-            InstrumentConverter = QLInstrumentConverter.Create(externalConverter);
+            InstrumentConverter = instrumentConverter;
         }
 
         /// <summary>
         ///     Провайдер даты и времени
         /// </summary>
-        public IDateTimeProvider DateTimeProvider { get; }
+        public IDateTimeProvider DateTimeProvider { get; set; } = new DefaultDateTimeProvider();
 
         /// <summary>
         ///     Конвертер инструментов QUICKLua
         /// </summary>
-        internal QLInstrumentConverter InstrumentConverter { get; }
-
-        internal sealed class QLInstrumentConverter
-            : InstrumentConverter<QLInstrumentConverter, InstrumentData, QLAdapter>
-        { }
+        public InstrumentConverter<InstrumentData> InstrumentConverter { get; }
 
         /// <summary>
         ///     IP адрес, на котором открыт LUA сокет

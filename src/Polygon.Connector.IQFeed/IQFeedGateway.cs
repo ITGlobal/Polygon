@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ITGlobal.DeadlockDetection;
@@ -11,7 +10,6 @@ using Polygon.Diagnostics;
 using Polygon.Connector.IQFeed.History;
 using Polygon.Connector.IQFeed.Level1;
 using Polygon.Connector.IQFeed.Lookup;
-using Polygon.Connector;
 using Polygon.Messages;
 
 namespace Polygon.Connector.IQFeed
@@ -19,7 +17,13 @@ namespace Polygon.Connector.IQFeed
     /// <summary>
     ///     Фид для IQFeed
     /// </summary>
-    internal sealed class IQFeedGateway : Feed, IInstrumentParamsSubscriber, IOrderBookSubscriber, IConnectionStatusProvider, IInstrumentHistoryProvider, ISubscriptionTester
+    internal sealed class IQFeedGateway : Feed,
+        IInstrumentParamsSubscriber,
+        IOrderBookSubscriber,
+        IConnectionStatusProvider,
+        IInstrumentHistoryProvider,
+        ISubscriptionTester<IQFeedInstrumentData>,
+        IInstrumentConverterContext<IQFeedInstrumentData>
     {
         #region fields
 
@@ -51,7 +55,7 @@ namespace Polygon.Connector.IQFeed
         /// <summary>
         ///     Конвертер инструментов IQFeed
         /// </summary>
-        private readonly IQFeedParameters.IQFeedInstrumentConverter instrumentConverter;
+        private readonly InstrumentConverter<IQFeedInstrumentData> instrumentConverter;
 
         #endregion
 
@@ -60,8 +64,7 @@ namespace Polygon.Connector.IQFeed
         /// <summary>
         ///     Конструктор
         /// </summary>
-        internal IQFeedGateway(
-            IQFeedParameters parameters)
+        internal IQFeedGateway(IQFeedParameters parameters)
         {
             var ip = IQFeedParser.ParseIpAddressOrDns(parameters.IQConnectAddress, AddressFamily.InterNetwork);
             socketL1 = new Level1SocketWrapper(ip);
@@ -88,7 +91,6 @@ namespace Polygon.Connector.IQFeed
             lookupSocket.OnErrorMsg += LookupOnErrorMsg;
 
             instrumentConverter = parameters.InstrumentConverter;
-            instrumentConverter.Adapter = this;
         }
 
         #endregion
@@ -129,8 +131,6 @@ namespace Polygon.Connector.IQFeed
 
         private sealed class InstrumentSubscription : TaskCompletionSource<SubscriptionResult>
         {
-            private readonly Instrument instrument;
-            private readonly InstrumentParams instrumentParams;
             private readonly Action<InstrumentSubscription> onTimeout;
 
             private readonly ILockObject syncRoot = DeadlockMonitor.Cookie<InstrumentSubscription>();
@@ -148,17 +148,19 @@ namespace Polygon.Connector.IQFeed
 
             private int isConfirmed;
 
-            public InstrumentSubscription(string code, Action<InstrumentSubscription> onTimeout)
+            public InstrumentSubscription(Instrument instrument, IQFeedInstrumentData data, Action<InstrumentSubscription> onTimeout)
             {
-                instrument = new Instrument {Code = code};
-                instrumentParams = new InstrumentParams {Instrument = instrument};
-                this.Code = code;
+                Instrument = instrument;
+                InstrumentParams = new InstrumentParams { Instrument = instrument };
+                Code = data.Symbol;
+                SecurityType = data.SecurityType;
                 this.onTimeout = onTimeout;
             }
 
-            public Instrument Instrument => instrument;
-            public InstrumentParams InstrumentParams => instrumentParams;
+            public Instrument Instrument { get; }
+            public InstrumentParams InstrumentParams { get; }
             public string Code { get; }
+            public SecurityType SecurityType { get; }
 
             public void BeginTimeout()
             {
@@ -177,9 +179,9 @@ namespace Polygon.Connector.IQFeed
 
                 using (syncRoot.Lock())
                 {
-                    instrumentParams.DecimalPlaces = msg.DecimalPlaces;
-                    instrumentParams.PriceStep = msg.PriceStep;
-                    instrumentParams.PriceStepValue = msg.PriceStepValue;
+                    InstrumentParams.DecimalPlaces = msg.DecimalPlaces;
+                    InstrumentParams.PriceStep = msg.PriceStep;
+                    InstrumentParams.PriceStepValue = msg.PriceStepValue;
 
                     return true;
                 }
@@ -196,13 +198,13 @@ namespace Polygon.Connector.IQFeed
 
                 using (syncRoot.Lock())
                 {
-                    instrumentParams.BestBidPrice = msg.BestBidPrice;
-                    instrumentParams.BestBidQuantity = msg.BestBidQuantity;
-                    instrumentParams.BestOfferPrice = msg.BestOfferPrice;
-                    instrumentParams.BestOfferQuantity = msg.BestOfferQuantity;
-                    instrumentParams.LastPrice = msg.LastPrice;
-                    instrumentParams.Settlement = msg.Settlement;
-                    instrumentParams.PreviousSettlement = msg.PreviousSettlement;
+                    InstrumentParams.BestBidPrice = msg.BestBidPrice;
+                    InstrumentParams.BestBidQuantity = msg.BestBidQuantity;
+                    InstrumentParams.BestOfferPrice = msg.BestOfferPrice;
+                    InstrumentParams.BestOfferQuantity = msg.BestOfferQuantity;
+                    InstrumentParams.LastPrice = msg.LastPrice;
+                    InstrumentParams.Settlement = msg.Settlement;
+                    InstrumentParams.PreviousSettlement = msg.PreviousSettlement;
 
                     var date = DateTime.UtcNow;
                     if ((date - lastUpdateTime).TotalMilliseconds >= UpdateIntervalMs)
@@ -230,7 +232,7 @@ namespace Polygon.Connector.IQFeed
             {
                 if (Interlocked.CompareExchange(ref isConfirmed, SUBSCRIBED, UNKNOWN) == UNKNOWN)
                 {
-                    TrySetResult(SubscriptionResult.OK(instrument));
+                    TrySetResult(SubscriptionResult.OK(Instrument));
                 }
             }
         }
@@ -247,11 +249,13 @@ namespace Polygon.Connector.IQFeed
         /// </param>
         public async Task<SubscriptionResult> Subscribe(Instrument instrument)
         {
-            instrument = await instrumentConverter.ResolveTransportInstrumentAsync(instrument);
-
             using (LogManager.Scope())
             {
-                var code = instrument.Code;
+                var data = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+                if (data == null)
+                {
+                    return SubscriptionResult.Error(instrument, $"Unable to resolve symbol for {instrument}");
+                }
 
                 // Забираем подписку из коллекции или создаем новую
                 InstrumentSubscription subscription;
@@ -264,10 +268,10 @@ namespace Polygon.Connector.IQFeed
                     }
                     else
                     {
-                        subscription = new InstrumentSubscription(code, OnInstrumentSubscriptionTimedOut);
+                        subscription = new InstrumentSubscription(instrument, data, OnInstrumentSubscriptionTimedOut);
                         instrumentSubscriptionsByInstrument.Add(instrument, subscription);
 
-                        instrumentSubscriptionsByCode[code] = subscription;
+                        instrumentSubscriptionsByCode[subscription.Code] = subscription;
                         isNewSubscription = true;
                     }
                 }
@@ -278,7 +282,7 @@ namespace Polygon.Connector.IQFeed
                     // В противном случае требуется подписаться
 
                     // Подписываемся
-                    socketL1.Subscribe(code);
+                    socketL1.Subscribe(subscription.Code);
                     subscription.BeginTimeout();
                 }
 
@@ -292,23 +296,22 @@ namespace Polygon.Connector.IQFeed
         /// <param name="instrument">
         ///     Инструмент для отписки.
         /// </param>
-        public async void Unsubscribe(Instrument instrument)
+        public void Unsubscribe(Instrument instrument)
         {
-            instrument = await instrumentConverter.ResolveTransportInstrumentAsync(instrument);
-            
-            socketL1.Unubscribe(instrument.Code);
-
             InstrumentSubscription subscription;
             using (instrumentSubscriptionsLock.Lock())
             {
-                if (instrumentSubscriptionsByInstrument.TryGetValue(instrument, out subscription))
+                if (!instrumentSubscriptionsByInstrument.TryGetValue(instrument, out subscription))
                 {
-                    instrumentSubscriptionsByCode.Remove(subscription.Code);
-                    instrumentSubscriptionsByInstrument.Remove(instrument);
+                    return;
                 }
+
+                instrumentSubscriptionsByCode.Remove(subscription.Code);
+                instrumentSubscriptionsByInstrument.Remove(instrument);
             }
 
-            subscription?.Terminate();
+            socketL1.Unubscribe(subscription.Code);
+            subscription.Terminate();
         }
 
         private void L1OnSubscriptionErrorMsg(IQMessageArgs args)
@@ -350,13 +353,17 @@ namespace Polygon.Connector.IQFeed
                     return;
                 }
             }
-            Instrument instrument = instrumentConverter.ResolveSymbolAsync(msg.Symbol).Result;
-            IQFeedInstrumentData data = instrumentConverter.ResolveInstrumentAsync(instrument).Result;
-            if (data.InstrumentType == InstrumentType.Asset || data.InstrumentType == InstrumentType.AssetOptionSeries)
-            {
-                subscription.InstrumentParams.PriceStepValue = subscription.InstrumentParams.PriceStep;
-            }
             
+            switch (subscription.SecurityType)
+            {
+                case SecurityType.FUTURE:
+                case SecurityType.FOPTION:
+                    break;
+                default:
+                    subscription.InstrumentParams.PriceStepValue = subscription.InstrumentParams.PriceStep;
+                    break;
+            }
+
             var shouldTransmit = subscription.Update(ref msg);
             if (shouldTransmit)
             {
@@ -366,8 +373,7 @@ namespace Polygon.Connector.IQFeed
 
         private void L1OnUpdateMsg(IQMessageArgs args)
         {
-            L1UpdateMsg msg;
-            if (!L1UpdateMsg.TryParse(args, fieldIndex, out msg))
+            if (!L1UpdateMsg.TryParse(args, fieldIndex, out var msg))
             {
                 return;
             }
@@ -456,8 +462,7 @@ namespace Polygon.Connector.IQFeed
         #endregion
 
         #region Implementation of IInstrumentHistoryProvider
-
-
+        
         private readonly ILockObject historyRequestsLock = DeadlockMonitor.Cookie<IQFeedGateway>("historyRequestsLock");
         private readonly Dictionary<string, HistoryRequest> historyRequests = new Dictionary<string, HistoryRequest>();
 
@@ -516,10 +521,15 @@ namespace Polygon.Connector.IQFeed
         {
             using (LogManager.Scope())
             {
-                var code = instrument.Code;
+                var instrumentData = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+                if (instrumentData == null)
+                {
+                    consumer.Error($"Unable to resolve symbol for {instrument}");
+                    return;
+                }
 
                 // Выгружаем список точек
-                var points = await FetchHistoryDataAsync(code, begin, end, span, cancellationToken).ConfigureAwait(false);
+                var points = await FetchHistoryDataAsync(instrumentData.Symbol, begin, end, span, cancellationToken);
 
                 // Собираем результат
                 var data = new HistoryData(instrument, begin, end, span);
@@ -563,12 +573,15 @@ namespace Polygon.Connector.IQFeed
         {
             using (LogManager.Scope())
             {
-                instrument = await instrumentConverter.ResolveTransportInstrumentAsync(instrument);
-                
-                var code = instrument.Code;
+                var instrumentData = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+                if (instrumentData == null)
+                {
+                    consumer.Error($"Unable to resolve symbol for {instrument}");
+                    return new NullHistoryDataSubscription();
+                }
 
                 // Создаем подписку
-                var subscription = new HistorySubscription(this, consumer, instrument, code, span);
+                var subscription = new HistorySubscription(this, consumer, instrument, instrumentData.Symbol, span);
                 subscription.StartFetch(begin);
                 return subscription;
             }
@@ -712,7 +725,7 @@ namespace Polygon.Connector.IQFeed
                 return Tuple.Create(result, operation.Message);
             }
         }
-        
+
         private bool SubscriptionTestOnResultMsg(IQMessageArgs args)
         {
             SubscriptionTest operation;
@@ -760,7 +773,7 @@ namespace Polygon.Connector.IQFeed
         {
             private readonly int? maxResults;
             private readonly List<string> codes = new List<string>();
-            
+
             public SymbolLookupRequest(int? maxResults)
             {
                 this.maxResults = maxResults;
@@ -768,7 +781,7 @@ namespace Polygon.Connector.IQFeed
 
             public void Handle(IQMessageArgs args, out bool isCompleted)
             {
-                var parts = args.Message.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                var parts = args.Message.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length < 2)
                 {
                     TrySetResult(codes.ToArray());
@@ -815,7 +828,7 @@ namespace Polygon.Connector.IQFeed
                 return result;
             }
         }
-        
+
         private bool SymbolLookupOnResultMsg(IQMessageArgs args)
         {
             SymbolLookupRequest operation;
@@ -853,7 +866,7 @@ namespace Polygon.Connector.IQFeed
 
                 symbolLookupRequests.Remove(args.RequestId);
             }
-            
+
             operation.Fail(args);
             return true;
         }
@@ -936,17 +949,50 @@ namespace Polygon.Connector.IQFeed
 
         #endregion
 
-        #region Implementation of ISubscriptionTester
+        #region IInstrumentConverterContext
 
-        async Task<Tuple<bool, string>> ISubscriptionTester.TestVendorCodeAsync(string symbol)
-        {
-            Instrument instrument = await instrumentConverter.ResolveSymbolAsync(symbol);
-            IQFeedInstrumentData data = await instrumentConverter.ResolveInstrumentAsync(instrument);
-
-            return await TrySubscribeAsync(symbol, data.SecurityType);
-        }
+        ISubscriptionTester<IQFeedInstrumentData> IInstrumentConverterContext<IQFeedInstrumentData>.SubscriptionTester => this;
 
         #endregion
+
+        #region Implementation of ISubscriptionTester
+
+        /// <summary>
+        ///     Проверить подписку
+        /// </summary>
+        async Task<SubscriptionTestResult> ISubscriptionTester<IQFeedInstrumentData>.TestSubscriptionAsync(IQFeedInstrumentData data)
+        { 
+            using (LogManager.Scope())
+            {
+                await securityTypeIndexCompleted.Task;
+
+                if (!securityTypeIndex.TryGetValue(data.SecurityType, out var typeId))
+                {
+                    var message = LogMessage.Format($"Failed to find an identifier for {data.SecurityType}").ToString();
+                    Logger.Warn().Print(message);
+                    return SubscriptionTestResult.Failed(message);
+                }
+
+                var operation = new SubscriptionTest(data.Symbol, data.SecurityType);
+                var requestId = LookupSocketWrapper.RequestIdPrefix + Guid.NewGuid().ToString("N");
+                using (subscriptionTestsLock.Lock())
+                {
+                    subscriptionTests[requestId] = operation;
+                }
+
+                lookupSocket.RequestSymbolLookup(data.Symbol, typeId, requestId);
+
+                var result = await operation.Task;
+                if (result)
+                {
+                    return SubscriptionTestResult.Passed();
+                }
+
+                return SubscriptionTestResult.Failed();
+            }
+        }
+
+        #endregion      
     }
 }
 

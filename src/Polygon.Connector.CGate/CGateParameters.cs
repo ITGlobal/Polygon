@@ -13,10 +13,10 @@ namespace Polygon.Connector.CGate
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public CGateParameters([CanBeNull]IInstrumentConverter<InstrumentData> externalConverter) 
+        public CGateParameters(InstrumentConverter<InstrumentData> instrumentConverter) 
         {
             OrderBooksEnabled = true;
-            InstrumentConverter = CGateInstrumentConverter.Create(externalConverter);
+            InstrumentConverter = instrumentConverter;
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Polygon.Connector.CGate
         public string P2Key { get; set; }
 
         /// <summary>
-        /// Полный путь к каталогу хранения настроек
+        ///     Полный путь к каталогу хранения настроек
         /// </summary>
         public string ApplicationDataFolder { get; set; }
 
@@ -68,16 +68,11 @@ namespace Polygon.Connector.CGate
         ///     Пароль для транзакционного конекшна
         /// </summary>
         public string TransactionConnectionPassword { get; set; }
-
-        internal sealed class CGateInstrumentConverter : InstrumentConverter<CGateInstrumentConverter, InstrumentData,
-            CGateInstrumentResolver>
-        {
-        }
-
+        
         /// <summary>
         ///     Конвертер инструментов CGate
         /// </summary>
-        internal CGateInstrumentConverter InstrumentConverter { get; }
+        public InstrumentConverter<InstrumentData> InstrumentConverter { get; }
         
         internal CGAdapterConfiguration ToCGAdapterConfiguration()
         {
@@ -98,7 +93,7 @@ namespace Polygon.Connector.CGate
         /// </returns> 
         public IConnector CreateConnector()
         {
-            return new CGateTransport(this, ApplicationDataFolder);
+            return new CGateConnector(this, ApplicationDataFolder);
         } 
     }
 }

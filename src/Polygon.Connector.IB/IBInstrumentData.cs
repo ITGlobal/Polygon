@@ -1,8 +1,11 @@
-﻿namespace Polygon.Connector.InteractiveBrokers
+﻿using JetBrains.Annotations;
+
+namespace Polygon.Connector.InteractiveBrokers
 {
     /// <summary>
     ///     Метаданные по инструменту от внешнего конвертера
     /// </summary>
+    [PublicAPI]
     public sealed class IBInstrumentData : InstrumentData
     {
         /// <summary>
@@ -10,20 +13,14 @@
         /// </summary>
         public IBInstrumentData()
         {
-            InstrumentType = InstrumentType.Unknown;
-            AssetType = AssetType.Undefined;
+            InstrumentType = IBInstrumentType.Unknown;
             ExchangeCode = default(string);
         }
 
         /// <summary>
         ///     Тип инструмента
         /// </summary>
-        public InstrumentType InstrumentType { get; set; }
-
-        /// <summary>
-        ///     Тип актива
-        /// </summary>
-        public AssetType AssetType { get; set; }
+        public IBInstrumentType InstrumentType { get; set; }
 
         /// <summary>
         ///     Код биржи

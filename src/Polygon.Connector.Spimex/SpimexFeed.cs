@@ -9,8 +9,9 @@ using SpimexAdapter.FTE;
 
 namespace Polygon.Connector.Spimex
 {
-    internal class SpimexFeed : Feed, IInstrumentParamsSubscriber, IOrderBookSubscriber
+    internal class SpimexFeed : Feed, IInstrumentParamsSubscriber, IOrderBookSubscriber, ISubscriptionTester<SpimexInstrumentData>
     {
+        private readonly SpimexConnector connector;
         private readonly InfoCommClient infoClient;
 
         private readonly IDictionary<string, InfoSecurity> securitiesMap = new Dictionary<string, InfoSecurity>();
@@ -21,10 +22,10 @@ namespace Polygon.Connector.Spimex
         private readonly ISet<string> allInstruments = new HashSet<string>();
         private readonly ISet<string> subscribedInstruments = new HashSet<string>();
         private readonly ISet<string> subscribedBooks = new HashSet<string>();
-
-
-        public SpimexFeed(InfoCommClient infoClient)
+        
+        public SpimexFeed(SpimexConnector connector, InfoCommClient infoClient)
         {
+            this.connector = connector;
             this.infoClient = infoClient;
 
             infoClient.OnInfoSecurity += InfoClient_OnInfoSecurity;
@@ -35,18 +36,21 @@ namespace Polygon.Connector.Spimex
             infoClient.OnError += InfoClient_OnError;
         }
 
-        public override void Start()
-        { }
+        public override void Start() { }
 
-        public override void Stop()
-        { }
+        public override void Stop() { }
 
         #region IInstrumentParamsSubscriber
-
+        
         public async Task<SubscriptionResult> Subscribe(Instrument instrument)
         {
-            var code = instrument.Code;
-            using (allInstrumentLock.ReadLock())
+            var code = await connector.ResolveInstrumentAsync(instrument);
+            if (code == null)
+            {
+                return SubscriptionResult.Error(instrument, "Unable to resolve instrument symbol");
+            }
+            
+            using (allInstrumentLock.WriteLock())
             {
                 if (allInstruments.Contains(code))
                 {
@@ -55,11 +59,16 @@ namespace Polygon.Connector.Spimex
                         subscribedInstruments.Add(code);
 
                         InstrumentParams ip;
-                        if (instrumentsParams.TryGetValue(instrument.Code, out ip))
+                        if (instrumentsParams.TryGetValue(code, out ip))
                         {
                             OnMessageReceived(ip);
                         }
-
+                        else
+                        {
+                            ip =new InstrumentParams { Instrument = instrument };
+                            instrumentsParams[code] = ip;
+                        }
+                        
                         return SubscriptionResult.OK(instrument);
                     }
 
@@ -72,9 +81,15 @@ namespace Polygon.Connector.Spimex
 
         public void Unsubscribe(Instrument instrument)
         {
-            if (subscribedInstruments.Contains(instrument.Code))
+            var code = connector.ResolveInstrumentAsync(instrument).Result;
+            if (code == null)
             {
-                subscribedInstruments.Remove(instrument.Code);
+                return;
+            }
+            
+            if (subscribedInstruments.Contains(code))
+            {
+                subscribedInstruments.Remove(code);
             }
         }
 
@@ -84,20 +99,39 @@ namespace Polygon.Connector.Spimex
 
         public void SubscribeOrderBook(Instrument instrument)
         {
-            using (allInstrumentLock.ReadLock())
+            var code = connector.ResolveInstrumentAsync(instrument).Result;
+            if (code == null)
             {
-                if (allInstruments.Contains(instrument.Code) &&
-                    buildersMap.TryGetValue(instrument.Code, out var builder))
+                return;
+            }
+            using (allInstrumentLock.WriteLock())
+            {
+                if (allInstruments.Contains(code))
                 {
-                    subscribedBooks.Add(instrument.Code);
-                    OnMessageReceived(builder.BuildBook());
+                    subscribedBooks.Add(code);
+                    
+                    if (buildersMap.TryGetValue(code, out var builder))
+                    {
+                        OnMessageReceived(builder.BuildBook());
+                    }
+                    else
+                    {
+                        builder = new OrderBookBuilder(instrument);
+                        buildersMap[code] = builder;
+                    }
                 }
             }
         }
 
         public void UnsubscribeOrderBook(Instrument instrument)
         {
-            subscribedBooks.Remove(instrument.Code);
+            var code = connector.ResolveInstrumentAsync(instrument).Result;
+            if (code == null)
+            {
+                return;
+            }
+
+            subscribedBooks.Remove(code);
         }
 
         #endregion
@@ -119,8 +153,15 @@ namespace Polygon.Connector.Spimex
                 InstrumentParams ip;
                 if (!instrumentsParams.TryGetValue(code, out ip))
                 {
-                    instrumentsParams[code] = ip = CreateParams(secboard);
                     allInstruments.Add(code);
+
+                    ip = CreateParams(secboard);
+                    if (ip == null)
+                    {
+                        return;
+                    }
+
+                    instrumentsParams[code] = ip;
                 }
 
                 ip.TopPriceLimit = PriceHelper.ToPrice(secboard.price_max);
@@ -144,7 +185,11 @@ namespace Polygon.Connector.Spimex
 
         private InstrumentParams CreateParams(InfoSecboard secboard)
         {
-            var instrument = new Instrument { Code = secboard.code };
+            var instrument = connector.ResolveSymbolAsync(secboard.code).Result;
+            if (instrument == null)
+            {
+                return null;
+            }
 
             var security = securitiesMap[secboard.security];
 
@@ -188,7 +233,14 @@ namespace Polygon.Connector.Spimex
             
             if (!buildersMap.TryGetValue(security, out var builder))
             {
-                buildersMap[security] = builder = new OrderBookBuilder(security);
+                var instrument = connector.ResolveSymbolAsync(security).Result;
+                if (instrument == null)
+                {
+                    return;
+                }
+
+                builder = new OrderBookBuilder(instrument);
+                buildersMap[security] = builder;
             }
 
             if (!builder.ProcessOrder(order))
@@ -296,5 +348,25 @@ namespace Polygon.Connector.Spimex
 
             infoClient.OnError -= InfoClient_OnError;
         }
+
+        #region ISubscriptionTester
+
+        /// <summary>
+        ///     Проверить подписку 
+        /// </summary>
+        Task<SubscriptionTestResult> ISubscriptionTester<SpimexInstrumentData>.TestSubscriptionAsync(SpimexInstrumentData data)
+        {
+            using (allInstrumentLock.WriteLock())
+            {
+                if (!allInstruments.Contains(data.Symbol))
+                {
+                    return Task.FromResult(SubscriptionTestResult.Failed());
+                }
+
+                return Task.FromResult(SubscriptionTestResult.Passed());
+            }
+        }
+
+        #endregion
     }
 }

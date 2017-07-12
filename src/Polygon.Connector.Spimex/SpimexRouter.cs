@@ -10,6 +10,7 @@ namespace Polygon.Connector.Spimex
     {
         #region Fields
 
+        private readonly SpimexConnector connector;
         private readonly InfoCommClient infoClient;
         private readonly TransCommClient transClient;
 
@@ -18,9 +19,10 @@ namespace Polygon.Connector.Spimex
         private readonly Dictionary<int, InfoAccount> mapAccountIdToAccount = new Dictionary<int, InfoAccount>();
 
         #endregion
-        
-        public SpimexRouter(InfoCommClient infoClient, TransCommClient transClient)
+
+        public SpimexRouter(SpimexConnector connector, InfoCommClient infoClient, TransCommClient transClient)
         {
+            this.connector = connector;
             this.infoClient = infoClient;
             this.transClient = transClient;
 
@@ -48,7 +50,7 @@ namespace Polygon.Connector.Spimex
         }
 
         #endregion
-        
+
         #region Заявки
 
         private void InfoClient_OnInfoOrder(InfoOrder order)
@@ -57,7 +59,7 @@ namespace Polygon.Connector.Spimex
             {
                 return;
             }
-            
+
             var activeQuantity = order.qtyLeft;
 
             OrderState state;
@@ -85,7 +87,7 @@ namespace Polygon.Connector.Spimex
             }
 
             //long filledQty = order.ActiveQty - (long)infoOrder.qtyLeft;
-            
+
             Guid.TryParseExact(order.trn, "N", out var trId);
 
             var oscm = new OrderStateChangeMessage
@@ -115,6 +117,14 @@ namespace Polygon.Connector.Spimex
                 return;
             }
 
+            var code = holding.security + "|BRD-NORMAL";
+            var instrument = connector.ResolveSymbolAsync(code).Result;
+            if (instrument == null)
+            {
+                Logger.Error().Print($"Unable to resolve instrument for {code}");
+                return;
+            }
+
             if (!mapAccountIdToAccount.ContainsKey(holding.acc_id))
             {
                 mapAccountIdToAccount.Add(holding.acc_id, accounts[holding.account]);
@@ -123,7 +133,7 @@ namespace Polygon.Connector.Spimex
             var position = new PositionMessage
             {
                 Account = holding.account,
-                Instrument = new Instrument { Code = holding.security + "|BRD-NORMAL" },
+                Instrument = instrument,
                 Quantity = (int)holding.trade_buy_qty - (int)holding.trade_sell_qty,
                 Price = PriceHelper.ToPrice(holding.settle_price)
             };
@@ -143,10 +153,18 @@ namespace Polygon.Connector.Spimex
                 return;
             }
 
+            var code = trade.security + "|" + trade.board;
+            var instrument = connector.ResolveSymbolAsync(code).Result;
+            if (instrument == null)
+            {
+                Logger.Error().Print($"Unable to resolve instrument for {code}");
+                return;
+            }
+
             var fill = new FillMessage
             {
                 Account = mapAccountIdToAccount[trade.acc_id].code,
-                Instrument = new Instrument { Code = trade.security + "|" + trade.board },
+                Instrument = instrument,
                 ExchangeId = trade.code,
                 Operation = trade.buy_sell == BuySell.BUY ? OrderOperation.Buy : OrderOperation.Sell,
                 Price = PriceHelper.ToPrice(trade.price),
@@ -201,50 +219,51 @@ namespace Polygon.Connector.Spimex
 
         public async void Visit(NewOrderTransaction transaction)
         {
-            var parts = transaction.Instrument.Code.Split('|');
-            
-            if (!accounts.TryGetValue(transaction.Account, out var account))
-            {
-                OnMessageReceived(new TransactionReply
-                {
-                    TransactionId = transaction.TransactionId,
-                    Message = $"Не найден счет {transaction.Account}",
-                    Success = false
-                });
-                return;
-            }
-
-            var order = new SpimexAdapter.FTE.Order
-            {
-                account = account.code,
-                firm = account.firm,
-                client = account.client,
-
-                security = parts[0],
-                board = parts[1],
-
-                @type = transaction.GetOrderType(),
-                @params = transaction.GetOrderParams(),
-                buy_sell = transaction.GetOperation(),
-
-                price = PriceHelper.FromPrice(transaction.Price),
-                qty = transaction.Quantity,
-                trn = transaction.TransactionId.ToString("N"),
-                isMarketMaker = transaction.IsMarketMakerOrder,
-                comment = transaction.Comment,
-            };
-
-
             try
             {
+                //internal async Task<string> ResolveInstrumentAsync(Instrument instrument)
+                //{
+                //    var data = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+                //    return data?.Symbol;
+                //}
+
+                var data = await connector.ResolveInstrumentDataAsync(transaction.Instrument);
+                if (data == null)
+                {
+                    OnMessageReceived(TransactionReply.Rejected(transaction, $"Unable to get symbol of {transaction.Instrument}"));
+                    return;
+                }
+
+                if (!accounts.TryGetValue(transaction.Account, out var account))
+                {
+                    OnMessageReceived(TransactionReply.Rejected(transaction, $"Не найден счет {transaction.Account}"));
+                    return;
+                }
+
+                var order = new SpimexAdapter.FTE.Order
+                {
+                    account = account.code,
+                    firm = account.firm,
+                    client = account.client,
+
+                    security = data.Symbol,
+                    board = data.Board,
+
+                    @type = transaction.GetOrderType(),
+                    @params = transaction.GetOrderParams(),
+                    buy_sell = transaction.GetOperation(),
+
+                    price = PriceHelper.FromPrice(transaction.Price),
+                    qty = transaction.Quantity,
+                    trn = transaction.TransactionId.ToString("N"),
+                    isMarketMaker = transaction.IsMarketMakerOrder,
+                    comment = transaction.Comment,
+                };
+
+
                 var reply = await transClient.SendOrder(order);
 
-                OnMessageReceived(new TransactionReply
-                {
-                    TransactionId = transaction.TransactionId,
-                    Message = reply.code,
-                    Success = true
-                });
+                OnMessageReceived(TransactionReply.Accepted(transaction, reply.code));
 
                 OrderState? state = null;
                 switch (reply.status)
@@ -271,19 +290,14 @@ namespace Polygon.Connector.Spimex
                     ActiveQuantity = reply.qtyLeft,
                     FilledQuantity = reply.qty_executed,
                     Price = PriceHelper.ToPrice(order.price),
-                    ChangeTime = DateTime.Now, 
+                    ChangeTime = DateTime.Now,
                     State = state
                 };
                 OnMessageReceived(oscm);
             }
             catch (FTEException e)
             {
-                OnMessageReceived(new TransactionReply
-                {
-                    TransactionId = transaction.TransactionId,
-                    Message = e.Message,
-                    Success = false
-                });
+                OnMessageReceived(TransactionReply.Rejected(transaction, e.Message));
             }
         }
 
@@ -293,12 +307,7 @@ namespace Polygon.Connector.Spimex
             {
                 var reply = await transClient.CancelOrder(new CancelOrder { order_id = transaction.OrderExchangeId });
 
-                OnMessageReceived(new TransactionReply
-                {
-                    TransactionId = transaction.TransactionId,
-                    Message = reply.code,
-                    Success = true
-                });
+                OnMessageReceived(TransactionReply.Accepted(transaction, reply.code));
 
                 var oscm = new OrderStateChangeMessage
                 {
@@ -314,12 +323,7 @@ namespace Polygon.Connector.Spimex
             }
             catch (FTEException e)
             {
-                OnMessageReceived(new TransactionReply
-                {
-                    TransactionId = transaction.TransactionId,
-                    Message = e.Message,
-                    Success = false
-                });
+                OnMessageReceived(TransactionReply.Rejected(transaction, e.Message));
             }
         }
 

@@ -5,5 +5,6 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=IB/@EntryIndexedValue">IB</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=IQ/@EntryIndexedValue">IQ</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=QL/@EntryIndexedValue">QL</s:String>
-	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateInstanceFields/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="aaBb" /&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateInstanceFields/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="_" Suffix="" Style="aaBb" /&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateStaticReadonly/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="_" Suffix="" Style="AaBb" /&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=StaticReadonly/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="_" Style="AaBb" /&gt;</s:String></wpf:ResourceDictionary>

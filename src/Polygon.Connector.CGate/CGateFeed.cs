@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CGateAdapter;
 using CGateAdapter.Messages;
 using CGateAdapter.Messages.FutInfo;
-using CGateAdapter.Messages.FutTrades;
 using CGateAdapter.Messages.OptInfo;
 using CGateAdapter.Messages.OrdersAggr;
 using ITGlobal.DeadlockDetection;
@@ -385,7 +384,6 @@ namespace Polygon.Connector.CGate
         /// </param>
         public Task<SubscriptionResult> Subscribe(Instrument instrument)
         {
-            instrument = instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument).Result;
             using (subscribedInstrumentsLock.UpgradableReadLock())
             {
                 if (!subscribedInstruments.Contains(instrument))
@@ -417,7 +415,6 @@ namespace Polygon.Connector.CGate
         /// </param>
         public void Unsubscribe(Instrument instrument)
         {
-            instrument = instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument).Result;
             using (subscribedInstrumentsLock.UpgradableReadLock())
             {
                 if (subscribedInstruments.Contains(instrument))
@@ -438,7 +435,6 @@ namespace Polygon.Connector.CGate
         {
             using (LogManager.Scope())
             {
-                instrument = await instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
                 try
                 {
                     using (subscribedInstrumentsLock.UpgradableReadLock())
@@ -475,7 +471,6 @@ namespace Polygon.Connector.CGate
 
         public void UnsubscribeOrderBook(Instrument instrument)
         {
-            instrument = instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument).Result;
             using (subscribedInstrumentsLock.UpgradableReadLock())
             {
                 if (subscribedOrderBooks.Contains(instrument))

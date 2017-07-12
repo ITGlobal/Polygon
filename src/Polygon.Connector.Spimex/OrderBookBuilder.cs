@@ -34,9 +34,9 @@ namespace Polygon.Connector.Spimex
         private readonly IDictionary<decimal, List<ShortOrderInfo>> asks = new SortedList<decimal, List<ShortOrderInfo>>();
         private readonly IDictionary<decimal, List<ShortOrderInfo>> bids = new SortedList<decimal, List<ShortOrderInfo>>(ComparerInstance);
 
-        public OrderBookBuilder(string security)
+        public OrderBookBuilder(Instrument instrument)
         {
-            instrument = new Instrument { Code = security };
+            this.instrument = instrument;
         }
 
         public bool ProcessOrder(InfoOrder order)

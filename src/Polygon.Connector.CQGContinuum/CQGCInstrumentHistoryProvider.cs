@@ -103,9 +103,7 @@ namespace Polygon.Connector.CQGContinuum
         {
             using (LogManager.Scope())
             {
-                instrument = await instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-                var message =
-                    await PrepareTimeBarRequestAsync(instrument, begin, end, span, TimeBarRequest.RequestType.GET);
+                var message = await PrepareTimeBarRequestAsync(instrument, begin, end, span, TimeBarRequest.RequestType.GET);
                 if (message == null)
                 {
                     throw new ArgumentException($"Unable to resolve instrument {instrument}");
@@ -161,7 +159,6 @@ namespace Polygon.Connector.CQGContinuum
         {
             using (LogManager.Scope())
             {
-                instrument = await instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
                 var message = await PrepareTimeBarRequestAsync(instrument, begin, DateTime.Now, span, TimeBarRequest.RequestType.SUBSCRIBE);
                 if (message == null)
                 {

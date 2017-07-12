@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Xml.Linq;
 using JetBrains.Annotations;
-using Polygon.Diagnostics;
 
 namespace Polygon.Connector.InteractiveBrokers
 {
@@ -11,25 +9,23 @@ namespace Polygon.Connector.InteractiveBrokers
     [PublicAPI]
     public sealed class IBParameters : IConnectorFactory
     {
-        internal sealed class IBInstrumentConverter : InstrumentConverter<IBInstrumentConverter, IBInstrumentData, IBAdapter> { }
-
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public IBParameters(IInstrumentConverter<IBInstrumentData> externalConverter)
+        public IBParameters(InstrumentConverter<IBInstrumentData> instrumentConverter)
         {
             Host = "127.0.0.1";
             Port = 7496;
             ClientId = 0;
             SessionUid = Guid.NewGuid().ToString("N").Substring(0, 5);
             RouterMode = OrderRouterMode.ExternalSessionsRenewable;
-            InstrumentConverter = IBInstrumentConverter.Create(externalConverter);
+            InstrumentConverter = instrumentConverter;
         }
 
         /// <summary>
         ///     Конвертер инструментов IB
         /// </summary>
-        internal IBInstrumentConverter InstrumentConverter;
+        public InstrumentConverter<IBInstrumentData> InstrumentConverter { get; }
 
         /// <summary>
         ///     Хост

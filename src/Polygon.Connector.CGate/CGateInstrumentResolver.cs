@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CGateAdapter.Messages.FutInfo;
 using CGateAdapter.Messages.OptInfo;
 using ITGlobal.DeadlockDetection;
 using Polygon.Messages;
-using CGateInstrumentConverter = Polygon.Connector.CGate.CGateParameters.CGateInstrumentConverter;
 
 namespace Polygon.Connector.CGate
 {
     /// <summary>
     /// Логика для мэппинга isin-ов инструментов на их коды. Для шлюза cgate.
     /// </summary>
-    internal class CGateInstrumentResolver
+    internal class CGateInstrumentResolver : IInstrumentConverterContext<InstrumentData>, ISubscriptionTester<InstrumentData>
     {
         private readonly IRwLockObject containerLock = DeadlockMonitor.ReaderWriterLock(typeof(CGateInstrumentResolver), "containerLock");
         
@@ -27,13 +27,13 @@ namespace Polygon.Connector.CGate
         private readonly List<int> futuresIsinIds = new List<int>();
         private readonly List<int> optionsIsinIds = new List<int>();
 
-        public CGateInstrumentResolver(CGateParameters.CGateInstrumentConverter instrumentConverter)
+        private readonly InstrumentConverter<InstrumentData> instrumentConverter;
+
+        public CGateInstrumentResolver(InstrumentConverter<InstrumentData> instrumentConverter)
         {
-            InstrumentConverter = instrumentConverter;
+            this.instrumentConverter = instrumentConverter;
         }
-
-        public CGateInstrumentConverter InstrumentConverter { get; }
-
+        
         /// <summary>
         /// Получить данные по инструменту 
         /// </summary>
@@ -41,7 +41,7 @@ namespace Polygon.Connector.CGate
         /// <returns></returns>
         public InstrumentData GetCGateInstrumentData(Instrument instrument)
         {
-            return InstrumentConverter.ResolveInstrumentAsync(instrument).Result;
+            return instrumentConverter.ResolveInstrumentAsync(this, instrument).Result;
         }
 
         public void Handle(CgmFutSessContents message)
@@ -156,13 +156,10 @@ namespace Polygon.Connector.CGate
 
         public InstrumentData GetInstrument(string code)
         {
-            Instrument instrument = InstrumentConverter.ResolveSymbolAsync(code, "CGate").Result;
-
-            return InstrumentConverter.ResolveInstrumentAsync(instrument).Result;
+            var instrument = instrumentConverter.ResolveSymbolAsync(this, code).Result;
+            return instrumentConverter.ResolveInstrumentAsync(this, instrument).Result;
         }
-
         
-
         private void AddPair(InstrumentType type, int isinId, string shortIsin, string isin)
         {
             using (containerLock.WriteLock())
@@ -183,6 +180,34 @@ namespace Polygon.Connector.CGate
 
             RaiseOnNewIsinResolved();
         }
+
+        #region IInstrumentConverterContext
+
+        ISubscriptionTester<InstrumentData> IInstrumentConverterContext<InstrumentData>.SubscriptionTester => this;
+
+        #endregion
+
+        #region ISubscriptionTester
+
+        /// <summary>
+        ///     Проверить подписку 
+        /// </summary>
+        Task<SubscriptionTestResult> ISubscriptionTester<InstrumentData>.TestSubscriptionAsync(InstrumentData data)
+        {
+            var result = SubscriptionTestResult.Failed();
+
+            using (containerLock.WriteLock())
+            {
+                if (mapShortIsinToIsin.ContainsKey(data.Symbol))
+                {
+                    result = SubscriptionTestResult.Passed();
+                }
+            }
+            
+            return Task.FromResult(result);
+        }
+
+        #endregion
     }
 }
 

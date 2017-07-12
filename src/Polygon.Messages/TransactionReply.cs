@@ -51,20 +51,21 @@ namespace Polygon.Messages
         /// <summary>
         ///     Создать ответ на транзакцию, обозначающий успешное ее исполнение
         /// </summary>
-        public static TransactionReply Accepted(Guid transactionId)
+        public static TransactionReply Accepted(Guid transactionId, string message = null)
         {
             return new TransactionReply
             {
                 TransactionId = transactionId,
-                Success = true
+                Success = true,
+                Message = message
             };
         }
 
         /// <summary>
         ///     Создать ответ на транзакцию, обозначающий успешное ее исполнение
         /// </summary>
-        public static TransactionReply Accepted(Transaction transaction)
-            => Accepted(transaction.TransactionId);
+        public static TransactionReply Accepted(Transaction transaction, string message = null)
+            => Accepted(transaction.TransactionId, message);
 
         /// <summary>
         ///     Создать ответ на транзакцию, обозначающий неуспешное ее исполнение

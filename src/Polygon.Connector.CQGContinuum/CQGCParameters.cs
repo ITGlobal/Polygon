@@ -5,15 +5,23 @@
     /// </summary>
     public sealed class CQGCParameters : IConnectorFactory
     {
-        internal sealed class CQGInstrumentConverter : InstrumentConverter<CQGInstrumentConverter, InstrumentData, CQGCAdapter> { }
+        /// <summary>
+        ///     URL по умолчанию
+        /// </summary>
+        public const string DefaultUrl = "wss://api.cqg.com";
+
+        /// <summary>
+        ///     URL для демо доступа
+        /// </summary>
+        public const string DemoUrl = "wss://demoapi.cqg.com:443";
 
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public CQGCParameters(IInstrumentConverter<InstrumentData> externalConverter) 
+        public CQGCParameters(InstrumentConverter<InstrumentData> instrumentConverter) 
         {
-            ConnectionUrl = CQGCAdapter.DefaultUrl;
-            InstrumentConverter = CQGInstrumentConverter.Create(externalConverter);
+            ConnectionUrl = DefaultUrl;
+            InstrumentConverter = instrumentConverter;
         }
 
         /// <summary>
@@ -34,7 +42,7 @@
         /// <summary>
         ///     CQGContinuum Instrument Converter
         /// </summary>
-        internal CQGInstrumentConverter InstrumentConverter { get; }
+        public InstrumentConverter<InstrumentData> InstrumentConverter { get; }
         
         /// <summary>
         ///     Создать транспорт с текущими настройками

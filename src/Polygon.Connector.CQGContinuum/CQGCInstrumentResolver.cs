@@ -48,7 +48,7 @@ namespace Polygon.Connector.CQGContinuum
         }
 
         private static readonly ILog _Log = LogManager.GetLogger<CQGCInstrumentResolver>();
-
+        
         private readonly CQGCAdapter adapter;
 
         private readonly ILockObject cacheLock = DeadlockMonitor.Cookie<CQGCInstrumentResolver>("cacheLock");
@@ -67,7 +67,7 @@ namespace Polygon.Connector.CQGContinuum
 
         public CQGCInstrumentResolver(
             CQGCAdapter adapter,
-            CQGCParameters.CQGInstrumentConverter instrumentConverter)
+            InstrumentConverter<InstrumentData> instrumentConverter)
         {
             this.adapter = adapter;
 
@@ -80,7 +80,7 @@ namespace Polygon.Connector.CQGContinuum
             requestBatchTimer = new Timer(_ => SendBatchRequest(), null, 0, RequestBatchTimerInterval);
         }
 
-        public CQGCParameters.CQGInstrumentConverter InstrumentConverter { get; }
+        public InstrumentConverter<InstrumentData> InstrumentConverter { get; }
 
         /// <summary>
         ///     Получить Contract ID для инструмента
@@ -171,11 +171,11 @@ namespace Polygon.Connector.CQGContinuum
             using (LogManager.Scope())
             {
                 _Log.Debug().Print(
-                "Contract metadata received",
-                LogFields.ContractId(metadata.contract_id),
-                LogFields.Symbol(metadata.contract_symbol),
-                LogFields.CorrectPriceScale(metadata.correct_price_scale),
-                LogFields.DisplayPriceScale(metadata.display_price_scale)
+                    "Contract metadata received",
+                    LogFields.ContractId(metadata.contract_id),
+                    LogFields.Symbol(metadata.contract_symbol),
+                    LogFields.CorrectPriceScale(metadata.correct_price_scale),
+                    LogFields.DisplayPriceScale(metadata.display_price_scale)
                 );
                 using (cacheLock.Lock())
                 {
@@ -186,7 +186,7 @@ namespace Polygon.Connector.CQGContinuum
                     }
                 }
 
-                Instrument instrument = await InstrumentConverter.ResolveSymbolAsync(metadata.contract_symbol, dependentObjectDescription ?? "(CQG)").ConfigureAwait(false);
+                Instrument instrument = await InstrumentConverter.ResolveSymbolAsync(adapter, metadata.contract_symbol, dependentObjectDescription);
                 if(instrument == null)
                 {
                     _Log.Warn().Print("Instrument not resolved", LogFields.Symbol(metadata.contract_symbol));
@@ -235,7 +235,7 @@ namespace Polygon.Connector.CQGContinuum
                 }
             }
 
-            Instrument instrument = InstrumentConverter.ResolveSymbolAsync(metadata.contract_symbol).Result;
+            var instrument = InstrumentConverter.ResolveSymbolAsync(adapter, metadata.contract_symbol).Result;
             if(instrument == null)
             {
                 _Log.Warn().Print("Instrument not resolved", LogFields.Symbol(metadata.contract_symbol));
@@ -259,15 +259,7 @@ namespace Polygon.Connector.CQGContinuum
             OnInstrumentResolved(metadata.contract_id);
         }
 
-        public class InstrumentResolverEventArgs : EventArgs
-        {
-            public uint ContractId { get; set; }
-
-            public InstrumentResolverEventArgs(uint contractId)
-            {
-                ContractId = contractId;
-            }
-        }
+        
 
         /// <summary>
         ///     Событие резолва инструмента
@@ -373,10 +365,10 @@ namespace Polygon.Connector.CQGContinuum
             using (LogManager.Scope())
             {
                 var instrument = request.Instrument;
-                var symbol = await InstrumentConverter.ResolveInstrumentAsync(instrument, false);
+                var data = await InstrumentConverter.ResolveInstrumentAsync(adapter, instrument);
 
                 // если символ не зарезолвился, выходим
-                if (string.IsNullOrEmpty(symbol))
+                if (data == null)
                 {
                     request.Resolve(uint.MaxValue);
                     return;
@@ -384,7 +376,7 @@ namespace Polygon.Connector.CQGContinuum
 
                 var message = new InformationRequest
                 {
-                    symbol_resolution_request = new SymbolResolutionRequest { symbol = symbol },
+                    symbol_resolution_request = new SymbolResolutionRequest { symbol = data.Symbol },
                     id = request.Id
                 };
 
@@ -399,7 +391,7 @@ namespace Polygon.Connector.CQGContinuum
                     "Sending a symbol resolution request {0} for instrument {1} mapped to symbol {2}",
                     request.Id,
                     instrument,
-                    symbol
+                    data.Symbol
                     );
             }
         }

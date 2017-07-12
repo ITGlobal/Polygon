@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
+using Polygon.Messages;
 using SpimexAdapter;
 using SpimexAdapter.FTE;
 
@@ -8,29 +10,34 @@ namespace Polygon.Connector.Spimex
     /// <summary>
     ///     Коннектор для Spimex
     /// </summary>
-    public sealed class SpimexConnector : IConnector, IConnectionStatusProvider, IInstrumentTickerLookup
+    internal sealed class SpimexConnector : IConnector, IConnectionStatusProvider, IInstrumentTickerLookup, IInstrumentConverterContext<SpimexInstrumentData>
     {
         #region Fields
 
         private readonly InfoCommClient infoClient;
         private readonly TransCommClient transClient;
 
+        private readonly InstrumentConverter<SpimexInstrumentData> instrumentConverter;
+
         private readonly SpimexFeed feed;
         private readonly SpimexRouter router;
-
-
+        
         #endregion
 
         /// <summary>
         ///     .ctor
         /// </summary>
-        public SpimexConnector(CommClientSettings infoClientSettings, CommClientSettings transClientSettings)
+        public SpimexConnector(
+            CommClientSettings infoClientSettings, 
+            CommClientSettings transClientSettings,
+            InstrumentConverter<SpimexInstrumentData> instrumentConverter)
         {
             infoClient = new InfoCommClient(infoClientSettings);
             transClient = new TransCommClient(transClientSettings);
+            this.instrumentConverter = instrumentConverter;
 
-            feed = new SpimexFeed(infoClient);
-            router = new SpimexRouter(infoClient, transClient);
+            feed = new SpimexFeed(this, infoClient);
+            router = new SpimexRouter(this, infoClient, transClient);
 
             infoClient.OnError += OnError;
             transClient.OnError += OnError;
@@ -80,8 +87,7 @@ namespace Polygon.Connector.Spimex
                 // TODO log
             }
         }
-
-
+        
         private void SubscribeTables()
         {
             infoClient.SubscribeOnce(
@@ -126,6 +132,24 @@ namespace Polygon.Connector.Spimex
             Router?.Dispose();
         }
 
+        internal async Task<string> ResolveInstrumentAsync(Instrument instrument)
+        {
+            var data = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+            return data?.Symbol;
+        }
+
+        internal async Task<SpimexInstrumentData> ResolveInstrumentDataAsync(Instrument instrument)
+        {
+            var data = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+            return data;
+        }
+
+        internal async Task<Instrument> ResolveSymbolAsync(string symbol)
+        {
+            var instrument = await instrumentConverter.ResolveSymbolAsync(this, symbol);
+            return instrument;
+        }
+
         #region IConnectionStatusProvider
 
         /// <inheritdoc />
@@ -152,6 +176,12 @@ namespace Polygon.Connector.Spimex
         ///     Поиск тикеров по (частичному) коду
         /// </summary>
         public string[] LookupInstruments(string code, int maxResults = 10) => feed.LookupInstruments(code, maxResults);
+
+        #endregion
+
+        #region IInstrumentConverterContext<SpimexInstrumentData>
+
+        ISubscriptionTester<SpimexInstrumentData> IInstrumentConverterContext<SpimexInstrumentData>.SubscriptionTester => feed;
 
         #endregion
     }

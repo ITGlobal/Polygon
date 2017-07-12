@@ -7,7 +7,6 @@ using Polygon.Diagnostics;
 using IBApi;
 using ITGlobal.DeadlockDetection;
 using JetBrains.Annotations;
-using Polygon.Connector;
 using Polygon.Messages;
 
 namespace Polygon.Connector.InteractiveBrokers
@@ -37,8 +36,9 @@ namespace Polygon.Connector.InteractiveBrokers
         #region fields
 
         private static readonly ILog _Log = LogManager.GetLogger<ContractContainer>();
-
+        
         private readonly IBAdapter adapter;
+        private readonly InstrumentConverter<IBInstrumentData> instrumentConverter;
 
         private readonly IRwLockObject containerLock = DeadlockMonitor.ReaderWriterLock<ContractContainer>("containerLock", LockRecursionPolicy.SupportsRecursion);
         private readonly Dictionary<int, Instrument> pendingContractTickerIds = new Dictionary<int, Instrument>();
@@ -52,18 +52,13 @@ namespace Polygon.Connector.InteractiveBrokers
         /// <summary>
         ///     Конструктор
         /// </summary>
-        /// <param name="adapter">
-        ///     Адаптер IB
-        /// </param>
-        public ContractContainer(IBAdapter adapter, IBParameters.IBInstrumentConverter instrumentConverter)
+        public ContractContainer(IBAdapter adapter, InstrumentConverter<IBInstrumentData> instrumentConverter)
         {
             this.adapter = adapter;
-            InstrumentConverter = instrumentConverter;
+            this.instrumentConverter = instrumentConverter;
         }
 
         #endregion
-
-        public IBParameters.IBInstrumentConverter InstrumentConverter { get; }
 
         #region public methods
 
@@ -80,7 +75,7 @@ namespace Polygon.Connector.InteractiveBrokers
         ///     Токен отмены
         /// </param>
         public async Task<Contract> GetContractAsync(Instrument instrument, Contract contractStub = null, CancellationToken cancellationToken = new CancellationToken())
-        
+
         {
             using (LogManager.Scope())
             {
@@ -94,7 +89,7 @@ namespace Polygon.Connector.InteractiveBrokers
                     }
                 }
                 // Запрашиваем контракт
-                return await RequestContract(instrument, contractStub, cancellationToken).ConfigureAwait(false);
+                return await RequestContract(instrument, contractStub).ConfigureAwait(false);
             }
         }
 
@@ -152,7 +147,7 @@ namespace Polygon.Connector.InteractiveBrokers
                     if (string.IsNullOrEmpty(contract.Exchange))
                     {
                         // Используем временный инструмент с заведомо уникальным кодом
-                        contract = await RequestContract(new Instrument { Code = $"TEMPORARY_INSTRUMENT_{Guid.NewGuid():N}" }, contract);
+                        contract = await RequestContract(new Instrument($"TEMPORARY_INSTRUMENT_{Guid.NewGuid():N}"), contract);
                     }
 
                     // Попытка 1 - сначала пытаемся найти по коду с доп.полями и с указанием родной биржи
@@ -160,7 +155,7 @@ namespace Polygon.Connector.InteractiveBrokers
                     if (!string.IsNullOrEmpty(contract.Exchange))
                     {
                         code = $"exchange:{contract.Exchange};{contract.LocalSymbol}";
-                        instrument = await InstrumentConverter.ResolveSymbolAsync(code, objectDescription).ConfigureAwait(false);
+                        instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
                         tryNumber++;
                         if (instrument != null)
                         {
@@ -181,7 +176,7 @@ namespace Polygon.Connector.InteractiveBrokers
                     // поиск будет идти только по локальному кэшу конвертера
                     var exchangeCode = contract.SecType == "FUT" || contract.SecType == "FOP" ? GLOBEX : SMART;
                     code = $"exchange:{exchangeCode};{contract.LocalSymbol}";
-                    instrument = await InstrumentConverter.ResolveSymbolAsync(code, objectDescription).ConfigureAwait(false);
+                    instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
                     tryNumber++;
                     if (instrument != null)
                     {
@@ -200,7 +195,7 @@ namespace Polygon.Connector.InteractiveBrokers
 
                     // Попытка 3 - ищем просто по коду
                     code = contract.LocalSymbol;
-                    instrument = await InstrumentConverter.ResolveSymbolAsync(code, objectDescription).ConfigureAwait(false);
+                    instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
                     tryNumber++;
                     if (instrument != null)
                     {
@@ -289,7 +284,7 @@ namespace Polygon.Connector.InteractiveBrokers
 
         #region implementation details
 
-        private async Task<Contract> RequestContract(Instrument instrument, Contract contractStub = null, CancellationToken cancellationToken = new CancellationToken())
+        private async Task<Contract> RequestContract(Instrument instrument, Contract contractStub = null)
         {
             using (LogManager.Scope())
             {
@@ -308,7 +303,7 @@ namespace Polygon.Connector.InteractiveBrokers
 
                 // Такого контракта еще нет в списке ожидающих
                 // Запрашиваем контракт из адаптера, используя фейковый контракт
-                var contract = contractStub ?? await ResolveContractStubAsync(instrument).ConfigureAwait(false);
+                var contract = contractStub ?? await ResolveContractStubAsync(instrument);
 
                 if (contract != null)
                 {
@@ -323,7 +318,7 @@ namespace Polygon.Connector.InteractiveBrokers
                         pendingContracts.Add(instrument, pendingContract);
                     }
 
-                    return await pendingContract.Task.ConfigureAwait(false);
+                    return await pendingContract.Task;
                 }
 
                 return null;
@@ -334,78 +329,18 @@ namespace Polygon.Connector.InteractiveBrokers
         {
             using (LogManager.Scope())
             {
-                var symbol = await InstrumentConverter.ResolveInstrumentAsync(instrument, false).ConfigureAwait(false);
-                if (symbol == null)
+                var instrumentData = await instrumentConverter.ResolveInstrumentAsync(adapter, instrument);
+                if (instrumentData == null)
                 {
                     _Log.Error().Print("Unable to resolve vendor symbol for an instrument", LogFields.Instrument(instrument));
                     return null;
                 }
 
-                var instrumentData = await InstrumentConverter.ResolveInstrumentAsync(instrument);
                 var contract = GetContractStub(instrumentData);
-
                 return contract;
             }
         }
-
-        internal Task<Tuple<bool, string>> TestAssetContractAsync(string symbol, IBInstrumentData instrumentData)
-        {
-            // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
-
-            if (symbol == null)
-            {
-                return Task.FromResult(Tuple.Create(false, ""));
-            }
-
-            var contract = GetAssetContractStub(instrumentData);
-            var testResult = adapter.TestContract(contract);
-            var result = testResult.WaitAsync();
-            return Task.FromResult(Tuple.Create(result.Result, ""));
-        }
-
-        internal Task<Tuple<bool, string>> TestFutureContractAsync(string symbol, IBInstrumentData instrumentData)
-        {
-            // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
-
-            if (symbol == null)
-            {
-                return Task.FromResult(Tuple.Create(false, ""));
-            }
-
-            var contract = GetFutureContractStub(instrumentData);
-            var testResult = adapter.TestContract(contract);
-            var result = testResult.WaitAsync();
-            return Task.FromResult(Tuple.Create(result.Result, ""));
-        }
-
-        internal Task<Tuple<bool, string>> TestAssetOptionContractAsync(string symbol, IBInstrumentData instrumentData)
-        {
-            // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
-
-            if (symbol == null)
-            {
-                return Task.FromResult(Tuple.Create(false, ""));
-            }
-
-            var contract = GetAssetOptionContractStub(instrumentData);
-            var testResult = adapter.TestContract(contract);
-            var result = testResult.WaitAsync();
-            return Task.FromResult(Tuple.Create(result.Result, ""));
-        }
-
-        internal Task<Tuple<bool, string>> TestFutureOptionContractAsync(string symbol, IBInstrumentData instrumentData)
-        {
-            if (symbol == null)
-            {
-                return Task.FromResult(Tuple.Create(false, ""));
-            }
-
-            var contract = GetFutureOptionContractStub(instrumentData);
-            var testResult = adapter.TestContract(contract);
-            var result = testResult.WaitAsync();
-            return Task.FromResult(Tuple.Create(result.Result, ""));
-        }
-
+        
         // ReSharper disable InconsistentNaming
         private const string SMART = "SMART";
         private const string GLOBEX = "GLOBEX";
@@ -432,7 +367,7 @@ namespace Polygon.Connector.InteractiveBrokers
                     return;
                 }
             }
-            
+
             if (instrumentData == null)
             {
                 exchangeCode = defaultExchange;
@@ -454,22 +389,18 @@ namespace Polygon.Connector.InteractiveBrokers
                 return;
             }
 
-            // Для опционов и фьючерсов не CBOT
-            InstrumentType instrumentType = instrumentData.InstrumentType;
-            if (instrumentType == InstrumentType.Option 
-                || instrumentType == InstrumentType.AssetOptionSeries
-                || instrumentType == InstrumentType.FutureOptionSeries
-                || instrumentType == InstrumentType.Future)
+            switch (instrumentData.InstrumentType)
             {
-                exchangeCode = defaultExchange;
-                return;
-            }
-
-            // Для акций
-            AssetType assetType = instrumentData.AssetType;
-            if (assetType == AssetType.Equity)
-            { 
-                exchangeCode = defaultExchange;
+                case IBInstrumentType.Equity:
+                    // Для акций
+                    exchangeCode = defaultExchange;
+                    break;
+                case IBInstrumentType.AssetOption:
+                case IBInstrumentType.FutureOption:
+                case IBInstrumentType.Future:
+                    // Для опционов и фьючерсов не CBOT
+                    exchangeCode = defaultExchange;
+                    break;
             }
         }
 
@@ -477,16 +408,19 @@ namespace Polygon.Connector.InteractiveBrokers
         {
             switch (instrumentData.InstrumentType)
             {
-                case InstrumentType.Asset:
+                case IBInstrumentType.Equity:
+                case IBInstrumentType.Commodity:
+                case IBInstrumentType.Index:
+                case IBInstrumentType.FX:
                     return GetAssetContractStub(instrumentData);
 
-                case InstrumentType.Future:
+                case IBInstrumentType.Future:
                     return GetFutureContractStub(instrumentData);
 
-                case InstrumentType.FutureOptionSeries:
+                case IBInstrumentType.FutureOption:
                     return GetFutureOptionContractStub(instrumentData);
-                    
-                case InstrumentType.AssetOptionSeries:
+
+                case IBInstrumentType.AssetOption:
                     return GetAssetOptionContractStub(instrumentData);
 
                 default:
@@ -494,26 +428,25 @@ namespace Polygon.Connector.InteractiveBrokers
             }
         }
 
-        private static Contract GetAssetContractStub(IBInstrumentData instrumentData)
+        public static Contract GetAssetContractStub(IBInstrumentData instrumentData)
         {
             // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
-            string exchangeCode;
-            string symbol = instrumentData.Symbol;
-            GetCustomSymbolAndExchangeCode(instrumentData, SMART, ref symbol, out exchangeCode);
+            var symbol = instrumentData.Symbol;
+            GetCustomSymbolAndExchangeCode(instrumentData, SMART, ref symbol, out string exchangeCode);
+
             var contract = new Contract
             {
                 Exchange = exchangeCode,
                 LocalSymbol = symbol,
                 PrimaryExch = TryGetPrimaryExch(instrumentData)
             };
-
-            var assetType = instrumentData.AssetType;
-            switch (assetType)
+            
+            switch (instrumentData.InstrumentType)
             {
-                case AssetType.Index:
+                case IBInstrumentType.Index:
                     contract.SecType = "IND";
                     break;
-                case AssetType.FX:
+                case IBInstrumentType.FX:
                     contract.SecType = "CASH";
                     break;
                 default:
@@ -524,12 +457,12 @@ namespace Polygon.Connector.InteractiveBrokers
             return contract;
         }
 
-        private static Contract GetFutureContractStub(IBInstrumentData instrumentData)
+        public static Contract GetFutureContractStub(IBInstrumentData instrumentData)
         {
             // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
-            string exchangeCode;
-            string symbol = instrumentData.Symbol;
-            GetCustomSymbolAndExchangeCode(instrumentData, GLOBEX, ref symbol, out exchangeCode);
+            var symbol = instrumentData.Symbol;
+            GetCustomSymbolAndExchangeCode(instrumentData, GLOBEX, ref symbol, out string exchangeCode);
+
             var contract = new Contract
             {
                 Exchange = exchangeCode,
@@ -539,12 +472,12 @@ namespace Polygon.Connector.InteractiveBrokers
             return contract;
         }
 
-        private static Contract GetAssetOptionContractStub(IBInstrumentData instrumentData)
+        public static Contract GetAssetOptionContractStub(IBInstrumentData instrumentData)
         {
             // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
-            string exchangeCode;
-            string symbol = instrumentData.Symbol;
-            GetCustomSymbolAndExchangeCode(instrumentData, SMART, ref symbol, out exchangeCode);
+            var symbol = instrumentData.Symbol;
+            GetCustomSymbolAndExchangeCode(instrumentData, SMART, ref symbol, out string exchangeCode);
+
             var contract = new Contract
             {
                 Exchange = exchangeCode,
@@ -554,12 +487,12 @@ namespace Polygon.Connector.InteractiveBrokers
             return contract;
         }
 
-        private static Contract GetFutureOptionContractStub(IBInstrumentData instrumentData)
+        public static Contract GetFutureOptionContractStub(IBInstrumentData instrumentData)
         {
             // Мы ожидаем, что внешний конвертер сформирует код в формате LOCALSYMBOL
-            string exchangeCode;
-            string symbol = instrumentData.Symbol;
-            GetCustomSymbolAndExchangeCode(instrumentData, GLOBEX, ref symbol, out exchangeCode);
+            var symbol = instrumentData.Symbol;
+            GetCustomSymbolAndExchangeCode(instrumentData, GLOBEX, ref symbol, out string exchangeCode);
+
             var contract = new Contract
             {
                 Exchange = exchangeCode,

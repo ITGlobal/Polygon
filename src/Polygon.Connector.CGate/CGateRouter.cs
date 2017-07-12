@@ -94,7 +94,7 @@ namespace Polygon.Connector.CGate
         /// <summary>
         ///     Конвертер инструментов CGate
         /// </summary>
-        private readonly CGateParameters.CGateInstrumentConverter instrumentConverter;
+        private readonly InstrumentConverter<InstrumentData> instrumentConverter;
 
         /// <summary>
         /// Отдельный класс, обрабатывающий обновления параметров инструментов
@@ -113,7 +113,6 @@ namespace Polygon.Connector.CGate
         public CGateRouter(
             ICGAdapter adapter,
             CGateInstrumentResolver instrumentIsinResolver,
-            CGateParameters.CGateInstrumentConverter instrumentConverter,
             CGateInstrumentParamsEmitter instrumentParamsEmitter)
             : base(true, null, null, OrderRouterMode.ExternalSessionsRenewable)
         {
@@ -121,7 +120,6 @@ namespace Polygon.Connector.CGate
             cgAdapter = adapter;
             this.instrumentIsinResolver = instrumentIsinResolver;
             this.instrumentParamsEmitter = instrumentParamsEmitter;
-            this.instrumentConverter = instrumentConverter;
             instrumentIsinResolver.OnNewIsinResolved += CGateIsinResolverOnNewIsinResolved;
             cgAdapter.ExecutionMessageReceived += CGateAdapterStreamMessageHandler;
             // TODO отправку сообщений подписчикам тоже нужно вынести в отдельную задачу
@@ -173,8 +171,8 @@ namespace Polygon.Connector.CGate
         /// </summary>
         private void SendKillOrderTransaction(KillOrderTransaction killOrder)
         {
-            InstrumentData data = instrumentConverter.ResolveInstrumentAsync(killOrder.Instrument).Result;
-            if (data.Equals(default(InstrumentData)))
+            var data = instrumentIsinResolver.GetCGateInstrumentData(killOrder.Instrument);
+            if (data == null)
             {
                 OnMessageReceived(new TransactionReply
                 {
@@ -385,8 +383,8 @@ namespace Polygon.Connector.CGate
         /// </summary>
         private void SendNewOrderTransaction(NewOrderTransaction newOrder)
         {
-            InstrumentData data = instrumentConverter.ResolveInstrumentAsync(newOrder.Instrument).Result;
-            if (data.Equals(default(InstrumentData)))
+            var data = instrumentIsinResolver.GetCGateInstrumentData(newOrder.Instrument);
+            if (data == null)
             {
                 OnMessageReceived(new TransactionReply
                 {
@@ -832,11 +830,10 @@ namespace Polygon.Connector.CGate
                     (action == 1 /*  OrderState.Active */|| action == 2
                         /* OrderState.PartiallyFilled  or OrderState.Filled */))
                 {
-                    Instrument instrument = instrumentConverter.ResolveSymbolAsync(instrumentCode, "CGate").Result;
-                    InstrumentData data = instrumentConverter.ResolveInstrumentAsync(instrument).Result;
+                    var data = instrumentIsinResolver.GetInstrument(instrumentCode);
                     order = new Order
                     {
-                        Instrument = data.TransportInstrument,
+                        Instrument = data.Instrument,
                         Account = reply.ClientCode,
                         ActiveQuantity = (uint)reply.AmountRest,
                         ClientCode = reply.ClientCode,
@@ -1149,13 +1146,11 @@ namespace Polygon.Connector.CGate
                     return;
                 }
 
-                Instrument instrument = instrumentConverter.ResolveSymbolAsync(code, "CGate").Result;
-                InstrumentData data = instrumentConverter.ResolveInstrumentAsync(instrument).Result;
-
+                var data = instrumentIsinResolver.GetInstrument(code);
                 var pos = new PositionMessage
                 {
                     Account = message.ClientCode,
-                    Instrument = data.TransportInstrument,
+                    Instrument = data.Instrument,
                     ClientCode = message.ClientCode,
                     Quantity = message.Pos
                 };

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using ITGlobal.DeadlockDetection;
-using Polygon.Diagnostics;
 
 namespace Polygon.Connector.InteractiveBrokers
 {
@@ -15,16 +13,13 @@ namespace Polygon.Connector.InteractiveBrokers
 
         private bool isConnected;
 
-        public IBConnector(
-            IBParameters settings)
+        public IBConnector(IBParameters settings)
         {
             this.settings = settings;
             IBFeed = new IBFeed(this);
             IBOrderRouter = new IBOrderRouter(this, settings.SessionUid, settings.RouterMode);
-            Adapter = new IBAdapter(this);
-            var instrumentConverter = settings.InstrumentConverter;
-            instrumentConverter.Adapter = Adapter;
-            ContractContainer = new ContractContainer(Adapter, instrumentConverter);
+            Adapter = new IBAdapter(this, settings.InstrumentConverter);
+            ContractContainer = new ContractContainer(Adapter, settings.InstrumentConverter);
         }
 
         /// <summary>

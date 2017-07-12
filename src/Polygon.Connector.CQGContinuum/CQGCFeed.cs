@@ -429,7 +429,6 @@ namespace Polygon.Connector.CQGContinuum
         {
             using (LogManager.Scope())
             {
-                instrument = await instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
                 InstrumentSubscription subscription = null;
                 ContractMetadata metadata = null;
 
@@ -534,7 +533,6 @@ namespace Polygon.Connector.CQGContinuum
 
         private void Unsubscribe(Instrument instrument, SubscriptionFlags flags)
         {
-            instrument = instrumentResolver.InstrumentConverter.ResolveTransportInstrumentAsync(instrument).Result;
             InstrumentSubscription subscription;
             using (subscriptionsLock.Lock())
             {

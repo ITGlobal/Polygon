@@ -9,16 +9,15 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Polygon.Diagnostics;
-using Polygon.Connector;
-using Polygon.Messages;
 using Polygon.Connector.QUIKLua.Adapter.Messages;
+using Polygon.Messages;
 
 namespace Polygon.Connector.QUIKLua.Adapter
 {
     /// <summary>
     ///     Коннектор к квику 
     /// </summary>
-    internal sealed class QLAdapter : ISubscriptionTester
+    internal sealed class QLAdapter : ISubscriptionTester<InstrumentData>, IInstrumentConverterContext<InstrumentData>
     {
         #region Fields
 
@@ -54,59 +53,24 @@ namespace Polygon.Connector.QUIKLua.Adapter
 
         #region .ctor
 
-        public QLAdapter(string ipAddress, int port, IDateTimeProvider dateTimeProvider, bool receiveMarketdata, QLParameters.QLInstrumentConverter instrumentConverter)
+        public QLAdapter(string ipAddress, int port, IDateTimeProvider dateTimeProvider, bool receiveMarketdata, InstrumentConverter<InstrumentData> instrumentConverter)
         {
             this.dateTimeProvider = dateTimeProvider;
             ip = IPAddress.Parse(!string.IsNullOrEmpty(ipAddress) ? ipAddress : "127.0.0.1");
             this.port = port == 0 ? 1248 : port;
             this.receiveMarketdata = receiveMarketdata;
             InstrumentConverter = instrumentConverter;
-            InstrumentConverter.Adapter = this;
         }
 
         #endregion
 
         #region Properties
 
-        public QLParameters.QLInstrumentConverter InstrumentConverter { get; }
+        public InstrumentConverter<InstrumentData> InstrumentConverter { get; }
 
         #endregion
 
         #region Public methods
-
-        private void RecreateTcpClient()
-        {
-            try
-            {
-#if NET45
-                tcpCient.Close();
-#endif
-#if NETSTANDARD1_6
-                tcpCient.Dispose();
-#endif
-            }
-            catch (Exception ex)
-            {
-                Log.Error().PrintFormat(ex, "Error closing socket: {0}", ex.Message);
-            }
-
-            tcpCient = null;
-            CreateTcpClient();
-        }
-
-        private void CreateTcpClient()
-        {
-            if (tcpCient == null)
-            {
-                Log.Debug().Print("(Re)creating TcpClient", LogFields.IP(ip), LogFields.Port(port));
-                tcpCient = new TcpClient
-                {
-                    ExclusiveAddressUse = true,
-                    NoDelay = true,
-                    ReceiveBufferSize = 1000000
-                };
-            }
-        }
 
         public async void Start()
         {
@@ -168,6 +132,18 @@ namespace Polygon.Connector.QUIKLua.Adapter
             outgoingMessages.Enqueue(message);
         }
 
+        public async Task<string> ResolveSymbolAsync(Instrument instrument)
+        {
+            var data = await InstrumentConverter.ResolveInstrumentAsync(this, instrument);
+            return data?.Symbol;
+        }
+
+        public async Task<Instrument> ResolveInstrumentAsync(string symbol)
+        {
+            var instrument = await InstrumentConverter.ResolveSymbolAsync(this, symbol);
+            return instrument;
+        }
+
         #endregion
 
         #region Events
@@ -206,6 +182,40 @@ namespace Polygon.Connector.QUIKLua.Adapter
         #endregion
 
         #region Private methods
+
+        private void RecreateTcpClient()
+        {
+            try
+            {
+#if NET45
+                tcpCient.Close();
+#endif
+#if NETSTANDARD1_6
+                tcpCient.Dispose();
+#endif
+            }
+            catch (Exception ex)
+            {
+                Log.Error().PrintFormat(ex, "Error closing socket: {0}", ex.Message);
+            }
+
+            tcpCient = null;
+            CreateTcpClient();
+        }
+
+        private void CreateTcpClient()
+        {
+            if (tcpCient == null)
+            {
+                Log.Debug().Print("(Re)creating TcpClient", LogFields.IP(ip), LogFields.Port(port));
+                tcpCient = new TcpClient
+                {
+                    ExclusiveAddressUse = true,
+                    NoDelay = true,
+                    ReceiveBufferSize = 1000000
+                };
+            }
+        }
 
         /// <summary>
         /// Подключение к сокету квика
@@ -361,7 +371,6 @@ namespace Polygon.Connector.QUIKLua.Adapter
                 Thread.CurrentThread.Name = "QL_SEND";
 
                 Log.Debug().Print("Thread started");
-                QLMessage message;
 
                 while (!cancellationTokenSource.Token.WaitHandle.WaitOne(SendTimeout))
                 {
@@ -370,6 +379,7 @@ namespace Polygon.Connector.QUIKLua.Adapter
                         if (!EnsureSocketConnected())
                             return;
 
+                        QLMessage message;
                         if (outgoingMessages.TryDequeue(out message))
                         {
                             var json = JsonConvert.SerializeObject(message,
@@ -417,24 +427,28 @@ namespace Polygon.Connector.QUIKLua.Adapter
                 };
 
                 Log.Debug().Print("Thread started");
-                string chunk;
                 while (!cancellationTokenSource.Token.WaitHandle.WaitOne(ReceiveTimeout))
                 {
                     try
                     {
+                        string chunk;
                         if (incomingMessages.TryDequeue(out chunk))
                         {
                             var envelopeJson = chunk;
 
                             if (!IsJsonValid(envelopeJson))
+                            {
                                 throw new Exception($"Corrupted json received: {envelopeJson}");
+                            }
 
                             var envelope = JsonConvert.DeserializeObject<QLEnvelope>(envelopeJson, jsonSettings);
                             
-                            outgoingMessages.Enqueue(new QLEnvelopeAcknowledgment() { id = envelope.id });
+                            outgoingMessages.Enqueue(new QLEnvelopeAcknowledgment { id = envelope.id });
 
                             foreach (var message in envelope.body)
+                            {
                                 OnMessageReceived(message);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -463,24 +477,26 @@ namespace Polygon.Connector.QUIKLua.Adapter
 
         #endregion
 
+        #region IInstrumentConverterContext
+
+        ISubscriptionTester<InstrumentData> IInstrumentConverterContext<InstrumentData>.SubscriptionTester => this;
+
+        #endregion
+
         #region ISubscriptionTester implementation
 
         /// <summary>
-        /// Метод для тестирования подписки на инструмент по вендорскому коду
-        /// вызывается при отсутствии подписки
+        ///     Проверить подписку 
         /// </summary>
-        /// <param name="symbol"></param>
-        /// <returns>
-        /// в первом item: результат тестирования
-        /// </returns>
-        async Task<Tuple<bool, string>> ISubscriptionTester.TestVendorCodeAsync(string symbol)
+        Task<SubscriptionTestResult> ISubscriptionTester<InstrumentData>.TestSubscriptionAsync(InstrumentData data)
         {
-            var result = Tuple.Create(default(bool), default(string));
+            var symbol = data.Symbol;
+            var result = SubscriptionTestResult.Failed();
 
             const int timeToWait = 10000;
-            bool isResolved = false;
-            CancellationTokenSource source = new CancellationTokenSource(timeToWait);
-            CancellationToken cancellationToken = source.Token;
+            var isResolved = false;
+            var source = new CancellationTokenSource(timeToWait);
+            var cancellationToken = source.Token;
             MessageReceived += (sender, args) =>
             {
                 if (args.Message.message_type == QLMessageType.InstrumentParams)
@@ -500,10 +516,11 @@ namespace Polygon.Connector.QUIKLua.Adapter
             if (isResolved)
             {
                 SendMessage(new QLInstrumentParamsUnsubscriptionRequest(symbol));
-                result = Tuple.Create(true, string.Empty);
+
+                result = SubscriptionTestResult.Passed();
             }
 
-            return await Task.FromResult(result);
+            return Task.FromResult(result);
         }
 
         #endregion

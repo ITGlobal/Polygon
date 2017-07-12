@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ITGlobal.DeadlockDetection;
-using Polygon.Diagnostics;
-using Polygon.Connector;
 using Polygon.Messages;
 using Polygon.Connector.QUIKLua.Adapter;
 using Polygon.Connector.QUIKLua.Adapter.Messages;
@@ -58,103 +56,111 @@ namespace Polygon.Connector.QUIKLua
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void adapter_MessageReceived(object sender, QLMessageEventArgs e)
-        {
-            switch (e.Message.message_type)
-            {
-                case QLMessageType.InstrumentParams:
-                    Handle((QLInstrumentParams)e.Message);
-                    break;
-                case QLMessageType.OrderBook:
-                    Handle((QLOrderBook)e.Message);
-                    break;
-            }
-        }
-
-        private void Handle(QLOrderBook message)
+        private async void adapter_MessageReceived(object sender, QLMessageEventArgs e)
         {
             try
             {
-                var ob = new OrderBook { Instrument = new Instrument { Code = message.instrument } };
-
-                if (message.offers != null)
+                switch (e.Message.message_type)
                 {
-                    message.offers.ForEach(_ => ob.Items.Add(new OrderBookItem
-                    {
-                        Price = _.p,
-                        Quantity = _.q,
-                        Operation = OrderOperation.Sell
-                    }));
+                    case QLMessageType.InstrumentParams:
+                        await HandleAsync((QLInstrumentParams)e.Message);
+                        break;
+                    case QLMessageType.OrderBook:
+                        await HandleAsync((QLOrderBook)e.Message);
+                        break;
                 }
 
-                if (message.bids != null)
-                {
-                    message.bids.ForEach(_ => ob.Items.Add(new OrderBookItem
-                    {
-                        Price = _.p,
-                        Quantity = _.q,
-                        Operation = OrderOperation.Buy
-                    }));
-                }
-
-                OnMessageReceived(ob);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error().Print(e, $"Failed to handle {message}");
+                Logger.Error().Print(ex, $"Failed to handle {e.Message}");
             }
         }
 
-        private void Handle(QLInstrumentParams message)
+        private async Task HandleAsync(QLOrderBook message)
         {
-            try
+            var instrument = await adapter.ResolveInstrumentAsync(message.instrument);
+            if (instrument == null)
             {
-                decimal pricemin = 0, pricemax = 0;
-                decimal.TryParse(message.pricemin, out pricemin);
-                decimal.TryParse(message.pricemax, out pricemax);
-
-                // цены шага
-                var stepPrices = new[]
-                    {message.stepPriceT, message.stepPrice, message.stepPriceCl, message.stepPricePrCl};
-
-                // первая ненулевая цена шага
-                var stepPriceValue = stepPrices.FirstOrDefault(x => x != 0);
-
-                // проверить утверждение: любая цена шага равна либо stepPriceValue, либо 0
-                //Debug.Assert(stepPrices.All(x => x == stepPriceValue || x == 0));
-                // NOTE выяснилось, что утверждение иногда не выполняется. Замечен случай с BRM6 stepPricePrCl=stepPrice=stepPriceT=6.61737, stepPriceCl=6.63015
-
-                var ip = new InstrumentParams
-                {
-                    Instrument = new Instrument { Code = message.code },
-                    BestBidPrice = message.bid,
-                    LastPrice = message.last,
-                    LotSize = message.lotsize,
-                    BestOfferPrice = message.offer,
-                    Vola = message.volatility,
-                    BestBidQuantity = message.bidQuantity,
-                    BestOfferQuantity = message.offerQuantity,
-                    PriceStep = message.priceStep,
-                    PriceStepValue = stepPriceValue,
-                    Settlement = message.settlement,
-                    PreviousSettlement = message.previousSettlement,
-                    BottomPriceLimit = pricemin,
-                    TopPriceLimit = pricemax,
-                    VolaTranslatedByFeed = true,
-                    SessionEndTime = message.endTime,
-                    OpenInterest = message.openinterest
-                };
-
-                OnMessageReceived(ip);
-
-                using (fullCodesLock.Lock())
-                {
-                    fullCodes[ip.Instrument] = message.fullCode;
-                }
+                Logger.Error().Print($"Unable to resolve instrument for {message.instrument}");
+                return;
             }
-            catch (Exception e)
+
+            var ob = new OrderBook { Instrument = instrument };
+
+            if (message.offers != null)
             {
-                Logger.Error().Print(e, $"Failed to handle {message}");
+                message.offers.ForEach(_ => ob.Items.Add(new OrderBookItem
+                {
+                    Price = _.p,
+                    Quantity = _.q,
+                    Operation = OrderOperation.Sell
+                }));
+            }
+
+            if (message.bids != null)
+            {
+                message.bids.ForEach(_ => ob.Items.Add(new OrderBookItem
+                {
+                    Price = _.p,
+                    Quantity = _.q,
+                    Operation = OrderOperation.Buy
+                }));
+            }
+
+            OnMessageReceived(ob);
+        }
+
+        private async Task HandleAsync(QLInstrumentParams message)
+        {
+            var instrument = await adapter.ResolveInstrumentAsync(message.code);
+            if (instrument == null)
+            {
+                Logger.Error().Print($"Unable to resolve instrument for {message.code}");
+                return;
+            }
+
+            decimal pricemin = 0, pricemax = 0;
+            decimal.TryParse(message.pricemin, out pricemin);
+            decimal.TryParse(message.pricemax, out pricemax);
+
+            // цены шага
+            var stepPrices = new[]
+                {message.stepPriceT, message.stepPrice, message.stepPriceCl, message.stepPricePrCl};
+
+            // первая ненулевая цена шага
+            var stepPriceValue = stepPrices.FirstOrDefault(x => x != 0);
+
+            // проверить утверждение: любая цена шага равна либо stepPriceValue, либо 0
+            //Debug.Assert(stepPrices.All(x => x == stepPriceValue || x == 0));
+            // NOTE выяснилось, что утверждение иногда не выполняется. Замечен случай с BRM6 stepPricePrCl=stepPrice=stepPriceT=6.61737, stepPriceCl=6.63015
+
+            var ip = new InstrumentParams
+            {
+                Instrument = instrument,
+                BestBidPrice = message.bid,
+                LastPrice = message.last,
+                LotSize = message.lotsize,
+                BestOfferPrice = message.offer,
+                Vola = message.volatility,
+                BestBidQuantity = message.bidQuantity,
+                BestOfferQuantity = message.offerQuantity,
+                PriceStep = message.priceStep,
+                PriceStepValue = stepPriceValue,
+                Settlement = message.settlement,
+                PreviousSettlement = message.previousSettlement,
+                BottomPriceLimit = pricemin,
+                TopPriceLimit = pricemax,
+                VolaTranslatedByFeed = true,
+                SessionEndTime = message.endTime,
+                OpenInterest = message.openinterest
+            };
+
+            OnMessageReceived(ip);
+
+            using (fullCodesLock.Lock())
+            {
+                fullCodes[ip.Instrument] = message.fullCode;
             }
         }
 
@@ -170,8 +176,21 @@ namespace Polygon.Connector.QUIKLua
         /// </param>
         public async void SubscribeOrderBook(Instrument instrument)
         {
-            Instrument transportInstrument = await adapter.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-            adapter.SendMessage(new QLOrderBookSubscriptionRequest(transportInstrument.Code));
+            try
+            {
+                var symbol = await adapter.ResolveSymbolAsync(instrument);
+                if (symbol == null)
+                {
+                    Logger.Error().Print($"Unable to resolve symbol for {instrument}");
+                    return;
+                }
+
+                adapter.SendMessage(new QLOrderBookSubscriptionRequest(symbol));
+            }
+            catch (Exception e)
+            {
+                Logger.Error().Print(e, $"Failed to subscribe to {instrument}");
+            }
         }
 
         /// <summary>
@@ -182,8 +201,21 @@ namespace Polygon.Connector.QUIKLua
         /// </param>
         public async void UnsubscribeOrderBook(Instrument instrument)
         {
-            Instrument transportInstrument = await adapter.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-            adapter.SendMessage(new QLOrderBookUnsubscriptionRequest(transportInstrument.Code));
+            try
+            {
+                var symbol = await adapter.ResolveSymbolAsync(instrument);
+                if (symbol == null)
+                {
+                    Logger.Error().Print($"Unable to resolve symbol for {instrument}");
+                    return;
+                }
+
+                adapter.SendMessage(new QLOrderBookUnsubscriptionRequest(symbol));
+            }
+            catch (Exception e)
+            {
+                Logger.Error().Print(e, $"Failed to unsubscribe from {instrument}");
+            }
         }
 
         #endregion
@@ -198,20 +230,15 @@ namespace Polygon.Connector.QUIKLua
         /// </param>
         public async Task<SubscriptionResult> Subscribe(Instrument instrument)
         {
-            Instrument transportInstrument = await adapter.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-            SubscriptionResult result;
-            if (transportInstrument == null)
+            var symbol = await adapter.ResolveSymbolAsync(instrument);
+            if (symbol == null)
             {
-                // может вернуться null если подключить внешний конвертер и передать ему из прикладного приложения неопозаваемый инструмент
-                result = SubscriptionResult.Error(instrument);
-            }
-            else
-            {
-                adapter.SendMessage(new QLInstrumentParamsSubscriptionRequest(transportInstrument.Code));
-                result = SubscriptionResult.OK(instrument);
+                return SubscriptionResult.Error(instrument, "Unable to resolve symbol");
             }
 
-            return await Task.FromResult(result);
+            adapter.SendMessage(new QLInstrumentParamsSubscriptionRequest(symbol));
+
+            return SubscriptionResult.OK(instrument);
         }
 
         /// <summary>
@@ -222,8 +249,21 @@ namespace Polygon.Connector.QUIKLua
         /// </param>
         public async void Unsubscribe(Instrument instrument)
         {
-            Instrument transportInstrument = await adapter.InstrumentConverter.ResolveTransportInstrumentAsync(instrument);
-            adapter.SendMessage(new QLInstrumentParamsUnsubscriptionRequest(transportInstrument.Code));
+            try
+            {
+                var symbol = await adapter.ResolveSymbolAsync(instrument);
+                if (symbol == null)
+                {
+                    Logger.Error().Print($"Unable to resolve symbol for {instrument}");
+                    return;
+                }
+
+                adapter.SendMessage(new QLInstrumentParamsUnsubscriptionRequest(symbol));
+            }
+            catch (Exception e)
+            {
+                Logger.Error().Print(e, $"Failed to unsubscribe from {instrument}");
+            }
         }
 
         #endregion
@@ -243,8 +283,7 @@ namespace Polygon.Connector.QUIKLua
         {
             using (fullCodesLock.Lock())
             {
-                string fullCode;
-                if (!fullCodes.TryGetValue(instrument, out fullCode))
+                if (!fullCodes.TryGetValue(instrument, out var fullCode))
                 {
                     return null;
                 }

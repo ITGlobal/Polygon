@@ -634,7 +634,7 @@ namespace Polygon.Connector.CQGContinuum
             TrySendTransactionReplyRejected(args.Message.request_id, message);
         }
 
-        private void InstrumentResolved(object sender, CQGCInstrumentResolver.InstrumentResolverEventArgs e)
+        private void InstrumentResolved(object sender, InstrumentResolverEventArgs e)
         {
             pendingOrderAddedEvent.Set();
         }

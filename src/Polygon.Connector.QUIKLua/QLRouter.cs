@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Polygon.Diagnostics;
-using Polygon.Connector;
 using Polygon.Messages;
 using Polygon.Connector.QUIKLua.Adapter;
 using Polygon.Connector.QUIKLua.Adapter.Messages;
@@ -114,7 +113,7 @@ namespace Polygon.Connector.QUIKLua
 
                 foreach (var pendingFill in pendingFills)
                 {
-                    Handle(pendingFill);
+                     HandleAsync(pendingFill).Wait();
                 }
             }
 
@@ -124,36 +123,42 @@ namespace Polygon.Connector.QUIKLua
         /// <summary>
         ///     Обработка сообщения от адаптера квика
         /// </summary>
-        private void adapter_MessageReceived(object sender, QLMessageEventArgs e)
+        private async void adapter_MessageReceived(object sender, QLMessageEventArgs e)
         {
             var message = e.Message;
-            switch (message.message_type)
+            try
             {
-                case QLMessageType.TransactionReply:
-                    Handle((QLTransactionReply)message);
-                    break;
-                case QLMessageType.OrderStateChange:
-                    Handle((QLOrderStateChange)message);
-                    break;
-                case QLMessageType.MoneyPosition:
-                    Handle((QLMoneyPosition)message);
-                    break;
-                case QLMessageType.Position:
-                    Handle((QLPosition)message);
-                    break;
-                case QLMessageType.AccountsList:
-                    Handle((QLAccountsList)message);
-                    break;
-                case QLMessageType.Fill:
-                    Handle((QLFill)message);
-                    break;
-                case QLMessageType.InitEnd:
-                    Handle((QLInitEnd)message);
-                    break;
-                case QLMessageType.Heartbeat:
-                    Handle((QLHeartbeat)message);
-                    break;
-
+                switch (message.message_type)
+                {
+                    case QLMessageType.TransactionReply:
+                        Handle((QLTransactionReply)message);
+                        break;
+                    case QLMessageType.OrderStateChange:
+                        Handle((QLOrderStateChange)message);
+                        break;
+                    case QLMessageType.MoneyPosition:
+                        Handle((QLMoneyPosition)message);
+                        break;
+                    case QLMessageType.Position:
+                        await HandleAsync((QLPosition)message);
+                        break;
+                    case QLMessageType.AccountsList:
+                        Handle((QLAccountsList)message);
+                        break;
+                    case QLMessageType.Fill:
+                        await HandleAsync((QLFill)message);
+                        break;
+                    case QLMessageType.InitEnd:
+                        Handle((QLInitEnd)message);
+                        break;
+                    case QLMessageType.Heartbeat:
+                        Handle((QLHeartbeat)message);
+                        break;
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Error().Print(exception, $"Failed to handle {message}");
             }
         }
 
@@ -174,11 +179,18 @@ namespace Polygon.Connector.QUIKLua
             initialized = true;
         }
 
-        private void Handle(QLFill message)
+        private async Task HandleAsync(QLFill message)
         {
             try
             {
                 Logger.Debug().Print($"Handle(QLFill): {message}");
+
+                var instrument = await adapter.ResolveInstrumentAsync(message.sec_code);
+                if (instrument == null)
+                {
+                    Logger.Error().Print($"Unable to resolve instrument for {message.sec_code}");
+                    return;
+                }
 
                 // если заявка отправлялась в текущей сессии работы программы, то нужно убедиться, что oscm по ней уже отправлялся
                 if (container.IsCurrentSessionOrder(message.order_num))
@@ -204,7 +216,7 @@ namespace Polygon.Connector.QUIKLua
 
                 OnMessageReceived(new FillMessage
                 {
-                    Instrument = new Instrument {Code = message.sec_code},
+                    Instrument = instrument,
                     Account = message.account,
                     Quantity = (uint)message.qty,
                     ClientCode = message.account,
@@ -240,7 +252,9 @@ namespace Polygon.Connector.QUIKLua
 
             var orderExchangeId = ParseOrderIdFromTransactionReply(message);
             if (orderExchangeId > 0)
+            {
                 container.PutOrderExchangeId(orderExchangeId);
+            }
 
             var pendingOscmsToProcess = container.PutTransactionReply(message, orderExchangeId);
 
@@ -310,15 +324,14 @@ namespace Polygon.Connector.QUIKLua
                     break;
             }
 
-            OnMessageReceived(new TransactionReply()
+            OnMessageReceived(message: new TransactionReply
             {
                 Success = message.Successful,
                 Message = message.result_msg,
-                TransactionId = newOrderTransaction != null
-                    ? newOrderTransaction.TransactionId
-                    : killOrderTransaction != null
-                        ? killOrderTransaction.TransactionId
-                        : modifyOrderTransaction != null ? modifyOrderTransaction.TransactionId : Guid.Empty
+                TransactionId = newOrderTransaction?.TransactionId
+                                ?? killOrderTransaction?.TransactionId
+                                ?? modifyOrderTransaction?.TransactionId
+                                ?? Guid.Empty
             });
 
             container.RemoveProcessedPendingReply(message);
@@ -327,10 +340,6 @@ namespace Polygon.Connector.QUIKLua
         /// <summary>
         /// Обработка успешной транзакции
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="newOrderTransaction"></param>
-        /// <param name="killOrderTransaction"></param>
-        /// <param name="modifyOrderTransaction"></param>
         private void ProcessSuccessfulTransactionReply(QLTransactionReply message)
         {
             var newOrderTransaction = container.GetNewOrderTransaction(message.trans_id);
@@ -385,7 +394,7 @@ namespace Polygon.Connector.QUIKLua
                 var unfilledQuantity = ParseUnfilledQuantityFromTransactionReply(message);
                 Logger.Debug().Print($"Handle(TR)[{message.trans_id}]: Create artifitial OSCM from successful kill transaction reply", LogFields.Message(message));
 
-                OnMessageReceived(new OrderStateChangeMessage()
+                OnMessageReceived(new OrderStateChangeMessage
                 {
                     TransactionId = killOrderTransaction.TransactionId,
                     ActiveQuantity = (uint)unfilledQuantity,
@@ -397,15 +406,14 @@ namespace Polygon.Connector.QUIKLua
                 });
             }
 
-            OnMessageReceived(new TransactionReply()
+            OnMessageReceived(new TransactionReply
             {
                 Success = message.Successful,
                 Message = message.result_msg,
-                TransactionId = newOrderTransaction != null
-                    ? newOrderTransaction.TransactionId
-                    : killOrderTransaction != null
-                        ? killOrderTransaction.TransactionId
-                        : modifyOrderTransaction != null ? modifyOrderTransaction.TransactionId : Guid.Empty
+                TransactionId = newOrderTransaction?.TransactionId
+                                ?? killOrderTransaction?.TransactionId
+                                ?? modifyOrderTransaction?.TransactionId
+                                ?? Guid.Empty
             });
 
             container.RemoveProcessedPendingReply(message);
@@ -435,7 +443,7 @@ namespace Polygon.Connector.QUIKLua
                     if (message.State == OrderState.Active || message.State == OrderState.PartiallyFilled || message.State == OrderState.Filled)
                     {
                         Logger.Info().Print($"Handle(OSCM): transaction with trans_id = {message.trans_id} is pending and order state {message.State} received. Create and handle artifitial QLTransactionReply");
-                        Handle(new QLTransactionReply()
+                        Handle(new QLTransactionReply
                         {
                             status = 3,
                             result_msg = message.reject_reason,
@@ -476,27 +484,27 @@ namespace Polygon.Connector.QUIKLua
             processPendingMessagesEvent.Set();
         }
 
-        private async void Handle(QLPosition position)
+        private async Task HandleAsync(QLPosition position)
         {
-            try
+            using (LogManager.Scope())
             {
-                using(LogManager.Scope())
-                {
-                    Logger.Debug().PrintFormat("Handle: {0}", position);
+                Logger.Debug().PrintFormat("Handle: {0}", position);
 
-                    OnMessageReceived(new PositionMessage
-                    {
-                        Account = position.trdaccid,
-                        ClientCode = position.trdaccid,
-                        Quantity = position.totalnet,
-                        //MorningQuantity = position.startnet,
-                        Instrument = new Instrument {Code = position.sec_code}
-                    });
+                var instrument = await adapter.ResolveInstrumentAsync(position.sec_code);
+                if (instrument == null)
+                {
+                    Logger.Error().Print($"Unable to resolve instrument for {position.sec_code}");
+                    return;
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error().Print(e, $"Failed to handle {position}");
+
+                OnMessageReceived(new PositionMessage
+                {
+                    Account = position.trdaccid,
+                    ClientCode = position.trdaccid,
+                    Quantity = position.totalnet,
+                    //MorningQuantity = position.startnet,
+                    Instrument = instrument
+                });
             }
         }
 
@@ -506,12 +514,12 @@ namespace Polygon.Connector.QUIKLua
             var moneyPosition = new MoneyPosition
             {
                 Account = position.trdaccid,
-                ClientCode = position.trdaccid
+                ClientCode = position.trdaccid,
+                [MoneyPositionPropertyNames.OpenLimit] = position.cbplimit,
+                [MoneyPositionPropertyNames.PlannedPurePosition] = position.cbplplanned,
+                [MoneyPositionPropertyNames.Commission] = position.ts_comission,
+                [MoneyPositionPropertyNames.VariationMargin] = position.varmargin
             };
-            moneyPosition[MoneyPositionPropertyNames.OpenLimit] = position.cbplimit;
-            moneyPosition[MoneyPositionPropertyNames.PlannedPurePosition] = position.cbplplanned;
-            moneyPosition[MoneyPositionPropertyNames.Commission] = position.ts_comission;
-            moneyPosition[MoneyPositionPropertyNames.VariationMargin] = position.varmargin;
             OnMessageReceived(moneyPosition);
         }
 
@@ -523,13 +531,17 @@ namespace Polygon.Connector.QUIKLua
         private long ParseOrderIdFromTransactionReply(QLTransactionReply message)
         {
             if (string.IsNullOrEmpty(message.result_msg))
+            {
                 return -1;
+            }
 
             var match = orderIdFromTransReplRegex.Match(message.result_msg);
 
             // должено быть ровно одно совпадение
             if (match.Length == 0 || match.Groups.Count != 2)
+            {
                 return -1;
+            }
 
             long rValue = -1;
             long.TryParse(match.Groups[1].Value, out rValue);
@@ -596,7 +608,7 @@ namespace Polygon.Connector.QUIKLua
                 transactionId = (Guid)(newTransactionId ?? killTransactionId);
             }
 
-            OnMessageReceived(new OrderStateChangeMessage()
+            OnMessageReceived(new OrderStateChangeMessage
             {
                 TransactionId = transactionId,
                 ActiveQuantity = (uint)message.balance,
@@ -617,16 +629,23 @@ namespace Polygon.Connector.QUIKLua
             try
             {
                 var order = container.GetOrder(message.order_num);
-
+                
                 // если это первый статус по заявке, то отправляем ExternalOrderMessage
                 if (order == null)
                 {
+                    var instrument = adapter.ResolveInstrumentAsync(message.sec_code).Result;
+                    if (instrument == null)
+                    {
+                        Logger.Error().Print($"Unable to resolve instrument for {message.sec_code}");
+                        return;
+                    }
+
                     order = new Order
                     {
                         OrderExchangeId = message.order_num.ToString(),
-                        Instrument = new Instrument {Code = message.sec_code},
+                        Instrument = instrument,
                         Account = message.account,
-                        ActiveQuantity = (uint)(message.balance),
+                        ActiveQuantity = (uint)message.balance,
                         Quantity = (uint)message.qty,
                         State = message.State,
                         Price = message.price,
@@ -640,11 +659,9 @@ namespace Polygon.Connector.QUIKLua
 
                     container.PutOrder(message.order_num, order);
 
-                    OnMessageReceived(new ExternalOrderMessage()
-                    {
-                        Order = order
-                    });
-                    OnMessageReceived(new OrderStateChangeMessage()
+                    OnMessageReceived(new ExternalOrderMessage { Order = order });
+
+                    OnMessageReceived(new OrderStateChangeMessage
                     {
                         ActiveQuantity = (uint)message.balance,
                         OrderExchangeId = message.order_num.ToString(),
@@ -659,7 +676,7 @@ namespace Polygon.Connector.QUIKLua
                 // иначе мы уже отправляли информацию о внешней заявке и теперь должны слать статусы
                 else
                 {
-                    OnMessageReceived(new OrderStateChangeMessage()
+                    OnMessageReceived(new OrderStateChangeMessage
                     {
                         ActiveQuantity = (uint)message.qty,
                         OrderExchangeId = message.order_num.ToString(),
@@ -710,14 +727,21 @@ namespace Polygon.Connector.QUIKLua
 
         public void Visit(KillOrderTransaction transaction)
         {
+            var symbol = adapter.ResolveSymbolAsync(transaction.Instrument).Result;
+            if (symbol == null)
+            {
+                Logger.Error().Print($"Unable to resolve symbol for {transaction.Instrument}");
+                return;
+            }
+            
             var newTransactionId = IncTransId();
             var qlTrans = new QLTransaction
             {
                 ACTION = ACTION.KILL_ORDER,
                 ACCOUNT = transaction.Account,
                 CLIENT_CODE = transaction.Account,
-                SECCODE = transaction.Instrument.Code,
-                CLASSCODE = transaction.Instrument.Code.Length >= 5 ? "SPBOPT" : "SPBFUT",
+                SECCODE = symbol,
+                CLASSCODE = symbol.Length >= 5 ? "SPBOPT" : "SPBFUT",
                 EXECUTION_CONDITION = EXECUTION_CONDITION.PUT_IN_QUEUE,
                 TRANS_ID = newTransactionId.ToString(),
                 ORDER_KEY = transaction.OrderExchangeId
@@ -730,6 +754,13 @@ namespace Polygon.Connector.QUIKLua
 
         public void Visit(ModifyOrderTransaction transaction)
         {
+            var symbol = adapter.ResolveSymbolAsync(transaction.Instrument).Result;
+            if (symbol == null)
+            {
+                Logger.Error().Print($"Unable to resolve symbol for {transaction.Instrument}");
+                return;
+            }
+
             var newTransactionId = IncTransId();
 
             var qlTrans = new QLTransaction
@@ -738,8 +769,8 @@ namespace Polygon.Connector.QUIKLua
                 ACCOUNT = transaction.Account,
                 CLIENT_CODE = transaction.Account + @"//" + transaction.Comment,
                 COMMENT = transaction.Comment,
-                SECCODE = transaction.Instrument.Code,
-                CLASSCODE = transaction.Instrument.Code.Length >= 5 ? "SPBOPT" : "SPBFUT",
+                SECCODE = symbol,
+                CLASSCODE = symbol.Length >= 5 ? "SPBOPT" : "SPBFUT",
                 EXECUTION_CONDITION = EXECUTION_CONDITION.PUT_IN_QUEUE,
                 TRANS_ID = newTransactionId.ToString(),
                 TYPE = TYPE.L,
@@ -758,6 +789,13 @@ namespace Polygon.Connector.QUIKLua
 
         public void Visit(NewOrderTransaction transaction)
         {
+            var symbol = adapter.ResolveSymbolAsync(transaction.Instrument).Result;
+            if (symbol == null)
+            {
+                Logger.Error().Print($"Unable to resolve symbol for {transaction.Instrument}");
+                return;
+            }
+
             var newTransactionId = IncTransId();
             var qlTrans = new QLTransaction
             {
@@ -765,8 +803,8 @@ namespace Polygon.Connector.QUIKLua
                 ACCOUNT = transaction.Account,
                 CLIENT_CODE = transaction.Account + @"//" + transaction.Comment,
                 COMMENT = transaction.Comment,
-                SECCODE = transaction.Instrument.Code,
-                CLASSCODE = transaction.Instrument.Code.Length >= 5 ? "SPBOPT" : "SPBFUT",
+                SECCODE = symbol,
+                CLASSCODE = symbol.Length >= 5 ? "SPBOPT" : "SPBFUT",
                 EXECUTION_CONDITION = EXECUTION_CONDITION.PUT_IN_QUEUE,
                 OPERATION = transaction.Operation == OrderOperation.Buy ? OPERATION.B : OPERATION.S,
                 QUANTITY = transaction.Quantity.ToString(),

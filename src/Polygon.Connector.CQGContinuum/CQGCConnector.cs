@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using Polygon.Diagnostics;
 using Polygon.Connector.CQGContinuum.WebAPI;
-using Polygon.Connector;
-using Polygon.Messages;
 
 namespace Polygon.Connector.CQGContinuum
 {
@@ -54,9 +51,7 @@ namespace Polygon.Connector.CQGContinuum
         {
             this.settings = settings;
             adapter = new CQGCAdapter(settings);
-            var instrumentConverter = settings.InstrumentConverter; 
-            instrumentConverter.Adapter = adapter;
-            var instrumentResolver = new CQGCInstrumentResolver(adapter, instrumentConverter);
+            var instrumentResolver = new CQGCInstrumentResolver(adapter, settings.InstrumentConverter);
             feed = new CQGCFeed(adapter, instrumentResolver);
             router = new CQGCRouter(adapter, instrumentResolver);
             historyProvider = new CQGCInstrumentHistoryProvider(adapter, instrumentResolver);
@@ -88,7 +83,7 @@ namespace Polygon.Connector.CQGContinuum
         ///     Провайдер исторических данных
         /// </summary>
         public IInstrumentHistoryProvider HistoryProvider => historyProvider;
-        
+
         /// <summary>
         ///     Запуск транспорта
         /// </summary>

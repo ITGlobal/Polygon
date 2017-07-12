@@ -8,7 +8,7 @@ namespace Polygon.Connector.CGate
     /// <summary>
     /// Транспорт для шлюза cgate московской биржи
     /// </summary>
-    internal sealed class CGateTransport : IConnector, IConnectionStatusProvider
+    internal sealed class CGateConnector : IConnector, IConnectionStatusProvider
     {
         private readonly CGateParameters settings;
 
@@ -16,7 +16,7 @@ namespace Polygon.Connector.CGate
 
         #region fields
 
-        private static readonly ILog _Log = LogManager.GetLogger<CGateTransport>();
+        private static readonly ILog _Log = LogManager.GetLogger<CGateConnector>();
 
         //private readonly CGP2ClientAdapter cgAdapter;
         private readonly ICGAdapter cgAdapter;
@@ -69,11 +69,11 @@ namespace Polygon.Connector.CGate
 
         #region ctor
 
-        public CGateTransport(CGateParameters settings, string dataFolder)
+        public CGateConnector(CGateParameters settings, string dataFolder)
         {
             this.settings = settings;
             var config = settings.ToCGAdapterConfiguration();
-            
+
             if (!settings.IsTestConnection)
             {
                 config.Key = settings.P2Key;
@@ -83,12 +83,11 @@ namespace Polygon.Connector.CGate
             config.IniFolder = @"scheme\";
             cgAdapter = new CGP2ClientAdapter(config, Path.Combine(dataFolder, "cgate"), openOrderBooksStreams: settings.OrderBooksEnabled);
             cgAdapter.ConnectionStateChanged += CGAdapterConnectionStateChangedHandler;
-            var instrumentConverter = settings.InstrumentConverter;
-            instrumentIsinResolver = new CGateInstrumentResolver(instrumentConverter);
+            instrumentIsinResolver = new CGateInstrumentResolver(settings.InstrumentConverter);
             instrumentParamsEmitter = new CGateInstrumentParamsEmitter(instrumentIsinResolver);
 
             feed = new CGateFeed(cgAdapter, instrumentIsinResolver, instrumentParamsEmitter);
-            router = new CGateRouter(cgAdapter, instrumentIsinResolver, instrumentConverter, instrumentParamsEmitter);
+            router = new CGateRouter(cgAdapter, instrumentIsinResolver, instrumentParamsEmitter);
         }
 
         #endregion

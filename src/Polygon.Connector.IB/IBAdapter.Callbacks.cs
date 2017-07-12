@@ -130,13 +130,13 @@ namespace Polygon.Connector.InteractiveBrokers
 
                 #endregion
 
-                IBInstrumentData data = InstrumentConverter.ResolveInstrumentAsync(instrument).Result;
-                InstrumentType instrumentType = data.InstrumentType;
+                var data = instrumentConverter.ResolveInstrumentAsync(this, instrument).Result;
+                var instrumentType = data.InstrumentType;
                 int multiplier = 1;
                 if (contract.Multiplier != null && int.TryParse(contract.Multiplier, out multiplier))
                 {
                     // Multiplier в качестве лота берём только для опционов на акции
-                    if (instrumentType == InstrumentType.AssetOptionSeries)
+                    if (instrumentType == IBInstrumentType.AssetOption)
                     {
                         instrumentParams.LotSize = multiplier;
                     }
@@ -144,12 +144,15 @@ namespace Polygon.Connector.InteractiveBrokers
 
                 switch (instrumentType)
                 {
-                    case InstrumentType.Asset:
-                    case InstrumentType.AssetOptionSeries:
+                    case IBInstrumentType.Commodity:
+                    case IBInstrumentType.Equity:
+                    case IBInstrumentType.Index:
+                    case IBInstrumentType.FX:
+                    case IBInstrumentType.AssetOption:
                         instrumentParams.PriceStepValue = instrumentParams.PriceStep;
                         break;
-                    case InstrumentType.Future:
-                    case InstrumentType.FutureOptionSeries:
+                    case IBInstrumentType.Future:
+                    case IBInstrumentType.FutureOption:
                         instrumentParams.PriceStepValue = instrumentParams.PriceStep * multiplier;
                         break;
                 }
