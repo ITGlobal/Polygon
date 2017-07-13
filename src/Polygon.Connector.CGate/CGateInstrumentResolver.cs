@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CGateAdapter.Messages.FutInfo;
 using CGateAdapter.Messages.OptInfo;
@@ -11,7 +12,7 @@ namespace Polygon.Connector.CGate
     /// <summary>
     /// Логика для мэппинга isin-ов инструментов на их коды. Для шлюза cgate.
     /// </summary>
-    internal class CGateInstrumentResolver : IInstrumentConverterContext<InstrumentData>, ISubscriptionTester<InstrumentData>
+    internal class CGateInstrumentResolver : IInstrumentConverterContext<InstrumentData>, ISubscriptionTester<InstrumentData>, IInstrumentTickerLookup
     {
         private readonly IRwLockObject containerLock = DeadlockMonitor.ReaderWriterLock(typeof(CGateInstrumentResolver), "containerLock");
         
@@ -196,7 +197,7 @@ namespace Polygon.Connector.CGate
         {
             var result = SubscriptionTestResult.Failed();
 
-            using (containerLock.WriteLock())
+            using (containerLock.ReadLock())
             {
                 if (mapShortIsinToIsin.ContainsKey(data.Symbol))
                 {
@@ -205,6 +206,79 @@ namespace Polygon.Connector.CGate
             }
             
             return Task.FromResult(result);
+        }
+
+        #endregion
+
+        #region IInstrumentTickerLookup
+
+        /// <summary>
+        ///     Поиск тикеров по (частичному) коду
+        /// </summary>
+        public string[] LookupInstruments(string code, int maxResults = 10)
+        {
+            string[] results;
+            using (containerLock.ReadLock())
+            {
+                results = mapShortIsinToIsin
+                    .Keys
+                    .Where(_ => _.IndexOf(code, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToArray();
+            }
+            
+            var orderedResults = results
+                .OrderBy(result =>
+                {
+                    var distance = LevenshteinDistance(result, code);
+                    var relevance = 1d / (1d + distance);
+                    return relevance;
+                })
+                .Take(maxResults)
+                .ToArray();
+            return orderedResults;
+
+            // Расчет расстояния Левенштейна для пары строк
+            // См. http://stackoverflow.com/a/6944095
+            int LevenshteinDistance(string s, string t)
+            {
+                if (string.IsNullOrEmpty(s))
+                {
+                    if (string.IsNullOrEmpty(t))
+                    {
+                        return 0;
+                    }
+
+                    return t.Length;
+                }
+
+                if (string.IsNullOrEmpty(t))
+                {
+                    return s.Length;
+                }
+
+                var n = s.Length;
+                var m = t.Length;
+                var d = new int[n + 1, m + 1];
+
+                // initialize the top and right of the table to 0, 1, 2, ...
+                for (var i = 0; i <= n; d[i, 0] = i++) { }
+                for (var j = 1; j <= m; d[0, j] = j++) { }
+
+                for (var i = 1; i <= n; i++)
+
+                {
+                    for (var j = 1; j <= m; j++)
+                    {
+                        var cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+                        var min1 = d[i - 1, j] + 1;
+                        var min2 = d[i, j - 1] + 1;
+                        var min3 = d[i - 1, j - 1] + cost;
+                        d[i, j] = Math.Min(Math.Min(min1, min2), min3);
+                    }
+                }
+
+                return d[n, m];
+            }
         }
 
         #endregion

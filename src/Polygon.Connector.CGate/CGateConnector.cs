@@ -137,7 +137,7 @@ namespace Polygon.Connector.CGate
         /// <summary>
         ///     Поиск инструментов по коду
         /// </summary>
-        public IInstrumentTickerLookup InstrumentTickerLookup => null;
+        public IInstrumentTickerLookup InstrumentTickerLookup => instrumentIsinResolver;
 
         /// <summary>
         ///     Провайдер кодов инструментов для FORTS
