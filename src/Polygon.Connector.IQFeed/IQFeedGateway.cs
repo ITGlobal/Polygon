@@ -436,7 +436,7 @@ namespace Polygon.Connector.IQFeed
         /// <summary>
         ///     Название соединения
         /// </summary>
-        string IConnectionStatusProvider.ConnectionName => "IQFeed";
+        public string ConnectionName => "IQFeed";
 
         /// <summary>
         ///     Вызывается при изменении состояния соединения
@@ -445,7 +445,7 @@ namespace Polygon.Connector.IQFeed
 
         private void RaiseConnectionStatusChanged()
         {
-            ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(ConnectionStatus, "IQ Feed"));
+            ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(ConnectionStatus, ConnectionName));
         }
 
         /// <summary>

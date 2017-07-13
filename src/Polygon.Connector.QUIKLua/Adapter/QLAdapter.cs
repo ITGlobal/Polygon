@@ -163,21 +163,21 @@ namespace Polygon.Connector.QUIKLua.Adapter
             }
         }
 
-        private ConnectionStatus connectionStatus = ConnectionStatus.Undefined;
+        public ConnectionStatus ConnectionStatus { get; private set; } = ConnectionStatus.Undefined;
 
         private void OnConnectionStatusChanged()
         {
             var handler = ConnectionStatusChanged;
             if (handler != null)
             {
-                handler(this, new ConnectionStatusEventArgs(connectionStatus, "QL Adapter"));
+                handler(this, EventArgs.Empty);
             }
         }
 
         /// <summary>
         ///     Вызывается при изменении состояния соединения
         /// </summary>
-        public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
+        public event EventHandler ConnectionStatusChanged;
 
         #endregion
 
@@ -249,13 +249,13 @@ namespace Polygon.Connector.QUIKLua.Adapter
                             }
 
                             Log.Error().Print("QUIK disconnected, trying to reconnect.");
-                            connectionStatus = ConnectionStatus.Disconnected;
+                            ConnectionStatus = ConnectionStatus.Disconnected;
                             OnConnectionStatusChanged();
                             RecreateTcpClient();
                         }
                         Log.Debug().Print("Begin connect to QUIK");
 
-                        connectionStatus = ConnectionStatus.Connecting;
+                        ConnectionStatus = ConnectionStatus.Connecting;
                         OnConnectionStatusChanged();
 #if NET45
                         tcpCient.Connect(ip, port);
@@ -271,7 +271,7 @@ namespace Polygon.Connector.QUIKLua.Adapter
 
                         Log.Info().Print("QUIK connected.");
 
-                        connectionStatus = ConnectionStatus.Connected;
+                        ConnectionStatus = ConnectionStatus.Connected;
                         OnConnectionStatusChanged();
 
                         readerStream = new NetworkStream(tcpCient.Client);

@@ -120,7 +120,7 @@ namespace Polygon.Connector.InteractiveBrokers
 
         public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
 
-        public string ConnectionName { get { throw new NotImplementedException(); } }
+        public string ConnectionName => "InteractiveBrokers";
 
         public ConnectionStatus ConnectionStatus => status;
 
@@ -136,7 +136,7 @@ namespace Polygon.Connector.InteractiveBrokers
             var handler = ConnectionStatusChanged;
             if (handler != null)
             {
-                handler(this, new ConnectionStatusEventArgs(status, "IB Connector"));
+                handler(this, new ConnectionStatusEventArgs(status, ConnectionName));
             }
         }
 

@@ -90,7 +90,7 @@ namespace Polygon.Connector.QUIKLua
             feed.Start();
             router.Start();
             adapter.Start();
-            adapter.ConnectionStatusChanged += (sender, e) => ConnectionStatus = e.ConnectionStatus;
+            adapter.ConnectionStatusChanged += (sender, e) => ConnectionStatus = adapter.ConnectionStatus;
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Polygon.Connector.QUIKLua
             var handler = ConnectionStatusChanged;
             if (handler != null)
             {
-                handler(this, new ConnectionStatusEventArgs(ConnectionStatus, "QL Connector"));
+                handler(this, new ConnectionStatusEventArgs(ConnectionStatus, ConnectionName));
             }
         }
 

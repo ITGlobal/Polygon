@@ -196,7 +196,7 @@ namespace Polygon.Connector.Spimex
         {
             if (Interlocked.Exchange(ref status, (int)newStatus) != (int)newStatus)
             {
-                ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(ConnectionStatus, Name));
+                ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(ConnectionStatus, ConnectionName));
             }
         }
 

@@ -153,10 +153,10 @@ namespace Polygon.Connector.CGate
         {
             try
             {
-                connectionStatus = ConnectionStatus.Connecting;
+                ConnectionStatus = ConnectionStatus.Connecting;
                 OnConnectionStatusChanged();
                 cgAdapter.Start();
-                connectionStatus = ConnectionStatus.Connected;
+                ConnectionStatus = ConnectionStatus.Connected;
                 OnConnectionStatusChanged();
                 feed.Start();
                 router.Start();
@@ -164,7 +164,7 @@ namespace Polygon.Connector.CGate
             catch (Exception e)
             {
                 _Log.Fatal().PrintFormat(e, "Failed to start CGAdapter: {0}", e.Message);
-                connectionStatus = ConnectionStatus.Disconnected;
+                ConnectionStatus = ConnectionStatus.Disconnected;
                 OnConnectionStatusChanged();
             }
         }
@@ -176,7 +176,7 @@ namespace Polygon.Connector.CGate
                 feed.Stop();
                 router.Stop();
                 cgAdapter.Stop();
-                connectionStatus = ConnectionStatus.Disconnected;
+                ConnectionStatus = ConnectionStatus.Disconnected;
                 OnConnectionStatusChanged();
             }
             catch (Exception e)
@@ -199,10 +199,14 @@ namespace Polygon.Connector.CGate
         /// </summary>
         public string ConnectionName => "CGate";
 
-        private ConnectionStatus connectionStatus = ConnectionStatus.Undefined;
+        /// <summary>
+        ///     Текущее состояние соединения
+        /// </summary>
+        public ConnectionStatus ConnectionStatus { get; private set; } = ConnectionStatus.Undefined;
 
-        public ConnectionStatus ConnectionStatus => connectionStatus;
-
+        /// <summary>
+        ///     Вызывается при изменении состояния соединения
+        /// </summary>
         public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
 
         private void OnConnectionStatusChanged()
@@ -210,7 +214,7 @@ namespace Polygon.Connector.CGate
             var handler = ConnectionStatusChanged;
             if (handler != null)
             {
-                handler(this, new ConnectionStatusEventArgs(ConnectionStatus, Name));
+                handler(this, new ConnectionStatusEventArgs(ConnectionStatus, ConnectionName));
             }
         }
 

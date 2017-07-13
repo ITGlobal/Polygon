@@ -25,7 +25,7 @@ namespace Polygon.Connector.CQGContinuum
         ///     Версия протокола
         /// </summary>
         private const string ClientVersion = "1.32";
-        
+
         /// <summary>
         ///     Логгер
         /// </summary>
@@ -113,17 +113,21 @@ namespace Polygon.Connector.CQGContinuum
 
         #region ConnectionStatusChanged
 
+        public ConnectionStatus ConnectionStatus { get; private set; }
+
         /// <summary>
         ///     Событие изменения состояния подключения
         /// </summary>
-        public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
+        public event EventHandler ConnectionStatusChanged;
 
         private void OnConnectionStatusChanged(ConnectionStatus status)
         {
+            ConnectionStatus = status;
+
             var handler = ConnectionStatusChanged;
             if (handler != null)
             {
-                handler(this, new ConnectionStatusEventArgs(status, "CQG Adapter"));
+                handler(this, EventArgs.Empty);
             }
         }
 
@@ -554,7 +558,7 @@ namespace Polygon.Connector.CQGContinuum
                 time = time.ToUniversalTime();
             }
 
-            return (long) time.Subtract(baseTime).TotalMilliseconds;
+            return (long)time.Subtract(baseTime).TotalMilliseconds;
         }
 
         public void Dispose()
@@ -968,7 +972,7 @@ namespace Polygon.Connector.CQGContinuum
         {
             if (msg != null)
             {
-                Log.Info().Print( $"Logoff received. Closing socket", LogFields.Login(settings?.Username));
+                Log.Info().Print($"Logoff received. Closing socket", LogFields.Login(settings?.Username));
                 using (socketLock.Lock())
                 {
                     socket?.Close();
@@ -1005,7 +1009,7 @@ namespace Polygon.Connector.CQGContinuum
                         {
                             contractMetadataReceivedEvent.Raise(report.symbol_resolution_report.contract_metadata);
                         }
-                        
+
                         marketDataResolvedEvent.Raise(report.id, report);
                     }
                     //else if (report.session_information_report != null)
@@ -1165,7 +1169,7 @@ namespace Polygon.Connector.CQGContinuum
         ///     Проверить подписку 
         /// </summary>
         async Task<SubscriptionTestResult> ISubscriptionTester<InstrumentData>.TestSubscriptionAsync(InstrumentData data)
-        { 
+        {
             var id = GetNextRequestId();
             var request = new ResolutionRequest(data.Symbol, id);
             using (resolutionRequestsLock.Lock())
@@ -1227,7 +1231,7 @@ namespace Polygon.Connector.CQGContinuum
 
                 resolutionRequestsById.Remove(args.Message.id);
             }
-            
+
             request.TrySetResult(SubscriptionTestResult.Failed(args.Message.text_message));
             args.MarkHandled();
         }
@@ -1243,7 +1247,7 @@ namespace Polygon.Connector.CQGContinuum
             fmt.AddField("title", cmd.title);
             fmt.AddField("desc", cmd.description);
             return fmt.ToString();
-        } 
+        }
 
         #endregion
     }

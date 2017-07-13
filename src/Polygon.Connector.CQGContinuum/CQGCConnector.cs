@@ -168,15 +168,15 @@ namespace Polygon.Connector.CQGContinuum
         /// <summary>
         ///     Обработчик события изменения статуса соединения от адаптера
         /// </summary>
-        private void AdapterConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
+        private void AdapterConnectionStatusChanged(object sender, EventArgs e)
         {
-            ConnectionStatus = e.ConnectionStatus;
+            ConnectionStatus = adapter.ConnectionStatus;
             _Log.Debug().PrintFormat("Connection status: {0}", ConnectionStatus);
 
             var handler = ConnectionStatusChanged;
             if (handler != null)
             {
-                handler(this, e);
+                handler(this, new ConnectionStatusEventArgs(ConnectionStatus, ConnectionName));
             }
         }
 
