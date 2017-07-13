@@ -55,6 +55,7 @@ namespace Polygon.Connector.CQGContinuum
             feed = new CQGCFeed(adapter, instrumentResolver);
             router = new CQGCRouter(adapter, instrumentResolver);
             historyProvider = new CQGCInstrumentHistoryProvider(adapter, instrumentResolver);
+            ConnectionStatusProviders = new IConnectionStatusProvider[] {this};
 
             adapter.ConnectionStatusChanged += AdapterConnectionStatusChanged;
             adapter.UserMessageReceived += UserMessageReceived;
@@ -62,7 +63,7 @@ namespace Polygon.Connector.CQGContinuum
 
         #endregion
 
-        #region ITransport
+        #region IConnector
 
         /// <summary>
         ///     Название транспорта
@@ -83,6 +84,31 @@ namespace Polygon.Connector.CQGContinuum
         ///     Провайдер исторических данных
         /// </summary>
         public IInstrumentHistoryProvider HistoryProvider => historyProvider;
+
+        /// <summary>
+        ///     Подписчик на параметры инструментов
+        /// </summary>
+        public IInstrumentParamsSubscriber InstrumentParamsSubscriber => feed;
+
+        /// <summary>
+        ///     Подписчик на стаканы по инструментам
+        /// </summary>
+        public IOrderBookSubscriber OrderBookSubscriber => feed;
+
+        /// <summary>
+        ///     Поиск инструментов по коду
+        /// </summary>
+        public IInstrumentTickerLookup InstrumentTickerLookup => null;
+
+        /// <summary>
+        ///     Провайдер кодов инструментов для FORTS
+        /// </summary>
+        public IFortsDataProvider FortsDataProvider => null;
+
+        /// <summary>
+        ///     Провайдеры статусов соединений
+        /// </summary>
+        public IConnectionStatusProvider[] ConnectionStatusProviders { get; }
 
         /// <summary>
         ///     Запуск транспорта
@@ -119,6 +145,11 @@ namespace Polygon.Connector.CQGContinuum
         #endregion
 
         #region IConnectionStatusProvider
+
+        /// <summary>
+        ///     Название соединения
+        /// </summary>
+        public string ConnectionName => "CQG Continuum";
 
         /// <summary>
         ///     Состояние соединения

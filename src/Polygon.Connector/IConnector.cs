@@ -28,10 +28,40 @@ namespace Polygon.Connector
         IOrderRouter Router { get; }
 
         /// <summary>
+        ///     Подписчик на параметры инструментов
+        /// </summary>
+        [CanBeNull]
+        IInstrumentParamsSubscriber InstrumentParamsSubscriber { get; }
+
+        /// <summary>
+        ///     Подписчик на стаканы по инструментам
+        /// </summary>
+        [CanBeNull]
+        IOrderBookSubscriber OrderBookSubscriber { get; }
+
+        /// <summary>
+        ///     Поиск инструментов по коду
+        /// </summary>
+        [CanBeNull]
+        IInstrumentTickerLookup InstrumentTickerLookup { get; }
+
+        /// <summary>
+        ///     Провайдер кодов инструментов для FORTS
+        /// </summary>
+        [CanBeNull]
+        IFortsDataProvider FortsDataProvider { get; }
+
+        /// <summary>
         ///     Провайдер исторических данных
         /// </summary>
         [CanBeNull]
         IInstrumentHistoryProvider HistoryProvider { get; }
+
+        /// <summary>
+        ///     Провайдеры статусов соединений
+        /// </summary>
+        [NotNull]
+        IConnectionStatusProvider[] ConnectionStatusProviders { get; }
 
         /// <summary>
         ///     Запуск транспорта

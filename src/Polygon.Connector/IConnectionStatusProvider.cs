@@ -10,6 +10,12 @@ namespace Polygon.Connector
     public interface IConnectionStatusProvider
     {
         /// <summary>
+        ///     Название соединения
+        /// </summary>
+        [NotNull]
+        string ConnectionName { get; }
+
+        /// <summary>
         ///     Текущее состояние соединения
         /// </summary>
         ConnectionStatus ConnectionStatus { get; }

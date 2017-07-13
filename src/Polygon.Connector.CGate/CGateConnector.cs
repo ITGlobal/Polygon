@@ -88,6 +88,8 @@ namespace Polygon.Connector.CGate
 
             feed = new CGateFeed(cgAdapter, instrumentIsinResolver, instrumentParamsEmitter);
             router = new CGateRouter(cgAdapter, instrumentIsinResolver, instrumentParamsEmitter);
+
+            ConnectionStatusProviders = new IConnectionStatusProvider[] { this };
         }
 
         #endregion
@@ -96,8 +98,8 @@ namespace Polygon.Connector.CGate
 
         public void Dispose()
         {
-            Feed?.Dispose();
-            Router?.Dispose();
+            feed?.Dispose();
+            router?.Dispose();
             cgAdapter.Dispose();
         }
 
@@ -120,7 +122,32 @@ namespace Polygon.Connector.CGate
         /// <summary>
         ///     Провайдер исторических данных
         /// </summary>
-        public IInstrumentHistoryProvider HistoryProvider => null;
+        public IInstrumentHistoryProvider HistoryProvider => HistoryProvider;
+
+        /// <summary>
+        ///     Подписчик на параметры инструментов
+        /// </summary>
+        public IInstrumentParamsSubscriber InstrumentParamsSubscriber => feed;
+
+        /// <summary>
+        ///     Подписчик на стаканы по инструментам
+        /// </summary>
+        public IOrderBookSubscriber OrderBookSubscriber => feed;
+
+        /// <summary>
+        ///     Поиск инструментов по коду
+        /// </summary>
+        public IInstrumentTickerLookup InstrumentTickerLookup => null;
+
+        /// <summary>
+        ///     Провайдер кодов инструментов для FORTS
+        /// </summary>
+        public IFortsDataProvider FortsDataProvider => feed;
+
+        /// <summary>
+        ///     Провайдеры статусов соединений
+        /// </summary>
+        public IConnectionStatusProvider[] ConnectionStatusProviders { get; }
 
         public void Start()
         {
@@ -166,6 +193,11 @@ namespace Polygon.Connector.CGate
         #endregion
 
         #region IConnectionStatusProvider
+
+        /// <summary>
+        ///     Название соединения
+        /// </summary>
+        public string ConnectionName => "CGate";
 
         private ConnectionStatus connectionStatus = ConnectionStatus.Undefined;
 

@@ -434,6 +434,11 @@ namespace Polygon.Connector.IQFeed
         #region Implementation of IConnectionStatusProvider
 
         /// <summary>
+        ///     Название соединения
+        /// </summary>
+        string IConnectionStatusProvider.ConnectionName => "IQFeed";
+
+        /// <summary>
         ///     Вызывается при изменении состояния соединения
         /// </summary>
         public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;

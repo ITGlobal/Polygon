@@ -3,7 +3,7 @@ using Polygon.Connector.QUIKLua.Adapter;
 
 namespace Polygon.Connector.QUIKLua
 {
-    internal sealed class QLConnector : IConnector, IConnectionStatusProvider, IInstrumentTickerLookup
+    internal sealed class QLConnector : IConnector, IConnectionStatusProvider
     {
         public const int DefaultPort = 1248;
 
@@ -27,6 +27,8 @@ namespace Polygon.Connector.QUIKLua
             feed = new QLFeed(adapter);
             router = new QLRouter(adapter);
             historyProvider = new QLHistoryProvider(adapter);
+
+            ConnectionStatusProviders = new IConnectionStatusProvider[] {this};
         }
 
         #endregion
@@ -52,6 +54,31 @@ namespace Polygon.Connector.QUIKLua
         ///     Провайдер исторических данных
         /// </summary>
         public IInstrumentHistoryProvider HistoryProvider => historyProvider;
+
+        /// <summary>
+        ///     Подписчик на параметры инструментов
+        /// </summary>
+        public IInstrumentParamsSubscriber InstrumentParamsSubscriber => feed;
+
+        /// <summary>
+        ///     Подписчик на стаканы по инструментам
+        /// </summary>
+        public IOrderBookSubscriber OrderBookSubscriber => feed;
+
+        /// <summary>
+        ///     Поиск инструментов по коду
+        /// </summary>
+        public IInstrumentTickerLookup InstrumentTickerLookup => feed;
+
+        /// <summary>
+        ///     Провайдер кодов инструментов для FORTS
+        /// </summary>
+        public IFortsDataProvider FortsDataProvider => feed;
+
+        /// <summary>
+        ///     Провайдеры статусов соединений
+        /// </summary>
+        public IConnectionStatusProvider[] ConnectionStatusProviders { get; }
 
         /// <summary>
         ///     Запуск транспорта
@@ -89,6 +116,8 @@ namespace Polygon.Connector.QUIKLua
 
         #region IConnectionStatusProvider
 
+        public string ConnectionName => "QUIK";
+
         private ConnectionStatus connectionStatus = ConnectionStatus.Undefined;
 
         /// <summary>
@@ -120,15 +149,6 @@ namespace Polygon.Connector.QUIKLua
                 handler(this, new ConnectionStatusEventArgs(ConnectionStatus, "QL Connector"));
             }
         }
-
-        #endregion
-
-        #region IInstrumentTickerLookup
-
-        /// <summary>
-        ///     Поиск тикеров по (частичному) коду
-        /// </summary>
-        public string[] LookupInstruments(string code, int maxResults = 10) => feed.LookupInstruments(code, maxResults);
 
         #endregion
     }

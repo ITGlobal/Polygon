@@ -7,7 +7,7 @@ namespace Polygon.Connector
     ///     Интерфейс типичного сервиса шлюза.
     /// </summary>
     [PublicAPI]
-    public interface IGatewayService : IDisposable
+    public interface IGatewayService
     {
         /// <summary>
         ///     Транслировать ли ошибки в виде ErrorMessage

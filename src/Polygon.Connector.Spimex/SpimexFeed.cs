@@ -9,7 +9,7 @@ using SpimexAdapter.FTE;
 
 namespace Polygon.Connector.Spimex
 {
-    internal class SpimexFeed : Feed, IInstrumentParamsSubscriber, IOrderBookSubscriber, ISubscriptionTester<SpimexInstrumentData>
+    internal class SpimexFeed : Feed, IInstrumentParamsSubscriber, IOrderBookSubscriber, IInstrumentTickerLookup, ISubscriptionTester<SpimexInstrumentData>
     {
         private readonly SpimexConnector connector;
         private readonly InfoCommClient infoClient;

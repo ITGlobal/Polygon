@@ -20,6 +20,8 @@ namespace Polygon.Connector.InteractiveBrokers
             IBOrderRouter = new IBOrderRouter(this, settings.SessionUid, settings.RouterMode);
             Adapter = new IBAdapter(this, settings.InstrumentConverter);
             ContractContainer = new ContractContainer(Adapter, settings.InstrumentConverter);
+
+            ConnectionStatusProviders = new IConnectionStatusProvider[] {this};
         }
 
         /// <summary>
@@ -36,6 +38,31 @@ namespace Polygon.Connector.InteractiveBrokers
         ///     Раутер транспорта
         /// </summary>
         public IOrderRouter Router => IBOrderRouter;
+
+        /// <summary>
+        ///     Подписчик на параметры инструментов
+        /// </summary>
+        public IInstrumentParamsSubscriber InstrumentParamsSubscriber => null;
+
+        /// <summary>
+        ///     Подписчик на стаканы по инструментам
+        /// </summary>
+        public IOrderBookSubscriber OrderBookSubscriber => null;
+
+        /// <summary>
+        ///     Поиск инструментов по коду
+        /// </summary>
+        public IInstrumentTickerLookup InstrumentTickerLookup => null;
+
+        /// <summary>
+        ///     Провайдер кодов инструментов для FORTS
+        /// </summary>
+        public IFortsDataProvider FortsDataProvider => null;
+
+        /// <summary>
+        ///     Провайдеры статусов соединений
+        /// </summary>
+        public IConnectionStatusProvider[] ConnectionStatusProviders { get; }
 
         /// <summary>
         ///     Провайдер исторических данных
@@ -92,6 +119,8 @@ namespace Polygon.Connector.InteractiveBrokers
         #region Implementation of IConnectionStatusProvider
 
         public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
+
+        public string ConnectionName { get { throw new NotImplementedException(); } }
 
         public ConnectionStatus ConnectionStatus => status;
 

@@ -10,7 +10,7 @@ namespace Polygon.Connector.Spimex
     /// <summary>
     ///     Коннектор для Spimex
     /// </summary>
-    internal sealed class SpimexConnector : IConnector, IConnectionStatusProvider, IInstrumentTickerLookup, IInstrumentConverterContext<SpimexInstrumentData>
+    internal sealed class SpimexConnector : IConnector, IConnectionStatusProvider, IInstrumentConverterContext<SpimexInstrumentData>
     {
         #region Fields
 
@@ -39,6 +39,8 @@ namespace Polygon.Connector.Spimex
             feed = new SpimexFeed(this, infoClient);
             router = new SpimexRouter(this, infoClient, transClient);
 
+            ConnectionStatusProviders = new IConnectionStatusProvider[] {this};
+
             infoClient.OnError += OnError;
             transClient.OnError += OnError;
         }
@@ -59,6 +61,31 @@ namespace Polygon.Connector.Spimex
 
         /// <inheritdoc />
         public IInstrumentHistoryProvider HistoryProvider => null;
+
+        /// <summary>
+        ///     Подписчик на параметры инструментов
+        /// </summary>
+        public IInstrumentParamsSubscriber InstrumentParamsSubscriber => feed;
+
+        /// <summary>
+        ///     Подписчик на стаканы по инструментам
+        /// </summary>
+        public IOrderBookSubscriber OrderBookSubscriber => feed;
+
+        /// <summary>
+        ///     Поиск инструментов по коду
+        /// </summary>
+        public IInstrumentTickerLookup InstrumentTickerLookup => feed;
+
+        /// <summary>
+        ///     Провайдер кодов инструментов для FORTS
+        /// </summary>
+        public IFortsDataProvider FortsDataProvider => null;
+
+        /// <summary>
+        ///     Провайдеры статусов соединений
+        /// </summary>
+        public IConnectionStatusProvider[] ConnectionStatusProviders { get; }
 
         /// <inheritdoc />
         public void Start()
@@ -128,8 +155,8 @@ namespace Polygon.Connector.Spimex
             infoClient.OnError -= OnError;
             transClient.OnError -= OnError;
 
-            Feed?.Dispose();
-            Router?.Dispose();
+            feed?.Dispose();
+            router?.Dispose();
         }
 
         internal async Task<string> ResolveInstrumentAsync(Instrument instrument)
@@ -152,6 +179,11 @@ namespace Polygon.Connector.Spimex
 
         #region IConnectionStatusProvider
 
+        /// <summary>
+        ///     Название соединения
+        /// </summary>
+        public string ConnectionName => "SPIMEX";
+
         /// <inheritdoc />
         public ConnectionStatus ConnectionStatus => (ConnectionStatus)status;
         // Содержит значения типа ConnectionStatus
@@ -169,16 +201,7 @@ namespace Polygon.Connector.Spimex
         }
 
         #endregion
-
-        #region IInstrumentTickerLookup
-
-        /// <summary>
-        ///     Поиск тикеров по (частичному) коду
-        /// </summary>
-        public string[] LookupInstruments(string code, int maxResults = 10) => feed.LookupInstruments(code, maxResults);
-
-        #endregion
-
+        
         #region IInstrumentConverterContext<SpimexInstrumentData>
 
         ISubscriptionTester<SpimexInstrumentData> IInstrumentConverterContext<SpimexInstrumentData>.SubscriptionTester => feed;
