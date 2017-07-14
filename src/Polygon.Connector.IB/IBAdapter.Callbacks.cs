@@ -131,32 +131,35 @@ namespace Polygon.Connector.InteractiveBrokers
                 #endregion
 
                 var data = instrumentConverter.ResolveInstrumentAsync(this, instrument).Result;
-                var instrumentType = data.InstrumentType;
-                int multiplier = 1;
-                if (contract.Multiplier != null && int.TryParse(contract.Multiplier, out multiplier))
+                if (data != null)
                 {
-                    // Multiplier в качестве лота берём только для опционов на акции
-                    if (instrumentType == IBInstrumentType.AssetOption)
+                    var instrumentType = data.InstrumentType;
+                    int multiplier = 1;
+                    if (contract.Multiplier != null && int.TryParse(contract.Multiplier, out multiplier))
                     {
-                        instrumentParams.LotSize = multiplier;
+                        // Multiplier в качестве лота берём только для опционов на акции
+                        if (instrumentType == IBInstrumentType.AssetOption)
+                        {
+                            instrumentParams.LotSize = multiplier;
+                        }
+                    }
+
+                    switch (instrumentType)
+                    {
+                        case IBInstrumentType.Commodity:
+                        case IBInstrumentType.Equity:
+                        case IBInstrumentType.Index:
+                        case IBInstrumentType.FX:
+                        case IBInstrumentType.AssetOption:
+                            instrumentParams.PriceStepValue = instrumentParams.PriceStep;
+                            break;
+                        case IBInstrumentType.Future:
+                        case IBInstrumentType.FutureOption:
+                            instrumentParams.PriceStepValue = instrumentParams.PriceStep * multiplier;
+                            break;
                     }
                 }
 
-                switch (instrumentType)
-                {
-                    case IBInstrumentType.Commodity:
-                    case IBInstrumentType.Equity:
-                    case IBInstrumentType.Index:
-                    case IBInstrumentType.FX:
-                    case IBInstrumentType.AssetOption:
-                        instrumentParams.PriceStepValue = instrumentParams.PriceStep;
-                        break;
-                    case IBInstrumentType.Future:
-                    case IBInstrumentType.FutureOption:
-                        instrumentParams.PriceStepValue = instrumentParams.PriceStep * multiplier;
-                        break;
-                }
-           
                 connector.IBFeed.Transmit(instrumentParams);
             }
         }
