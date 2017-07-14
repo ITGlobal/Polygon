@@ -42,12 +42,12 @@ namespace Polygon.Connector.InteractiveBrokers
         /// <summary>
         ///     Подписчик на параметры инструментов
         /// </summary>
-        public IInstrumentParamsSubscriber InstrumentParamsSubscriber => null;
+        public IInstrumentParamsSubscriber InstrumentParamsSubscriber => IBFeed;
 
         /// <summary>
         ///     Подписчик на стаканы по инструментам
         /// </summary>
-        public IOrderBookSubscriber OrderBookSubscriber => null;
+        public IOrderBookSubscriber OrderBookSubscriber => IBFeed;
 
         /// <summary>
         ///     Поиск инструментов по коду
