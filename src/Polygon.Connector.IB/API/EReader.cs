@@ -78,13 +78,26 @@ namespace IBApi
                     catch
                     {
                         // Глушим исключения в коллбеках
-                    } 
+                    }
 #endif
                 }
             }
 #if NET45
-            catch (ThreadAbortException) { }
+            catch (ThreadAbortException)
+            {
+            }
 #endif
+            catch (EndOfStreamException)
+            {
+                if (parent.IsConnected())
+                {
+                    parent.Close();
+                }
+                else
+                {
+                    parent.Wrapper.connectionClosed();
+                }
+            }
             catch (Exception e) 
             {
                 // For when TWS is closed when the trading program open
