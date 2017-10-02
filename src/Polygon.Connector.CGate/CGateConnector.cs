@@ -10,7 +10,7 @@ namespace Polygon.Connector.CGate
     /// </summary>
     internal sealed class CGateConnector : IConnector, IConnectionStatusProvider
     {
-        private readonly CGateParameters settings;
+        private readonly CGateConnectorSettings settings;
 
         public const int DefaultPort = 4001;
 
@@ -69,7 +69,7 @@ namespace Polygon.Connector.CGate
 
         #region ctor
 
-        public CGateConnector(CGateParameters settings, string dataFolder)
+        public CGateConnector(CGateConnectorSettings settings, string dataFolder)
         {
             this.settings = settings;
             var config = settings.ToCGAdapterConfiguration();

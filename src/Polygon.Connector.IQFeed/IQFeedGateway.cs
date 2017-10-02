@@ -64,9 +64,9 @@ namespace Polygon.Connector.IQFeed
         /// <summary>
         ///     Конструктор
         /// </summary>
-        internal IQFeedGateway(IQFeedParameters parameters)
+        internal IQFeedGateway(IQFeedConnectorSettings settings)
         {
-            var ip = IQFeedParser.ParseIpAddressOrDns(parameters.IQConnectAddress, AddressFamily.InterNetwork);
+            var ip = IQFeedParser.ParseIpAddressOrDns(settings.IQConnectAddress, AddressFamily.InterNetwork);
             socketL1 = new Level1SocketWrapper(ip);
 
             socketL1.OnFundamentalMsg += L1OnFundamentalMsg;
@@ -90,7 +90,7 @@ namespace Polygon.Connector.IQFeed
             lookupSocket.OnResultMsg += LookupOnResultMsg;
             lookupSocket.OnErrorMsg += LookupOnErrorMsg;
 
-            instrumentConverter = parameters.InstrumentConverter;
+            instrumentConverter = settings.InstrumentConverter;
         }
 
         #endregion

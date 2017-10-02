@@ -11,13 +11,13 @@ namespace Polygon.Connector.IQFeed
     {
         internal static readonly ILog _Log = LogManager.GetLogger<IQFeedConnector>();
 
-        private readonly IQFeedParameters parameters;
+        private readonly IQFeedConnectorSettings settings;
         private readonly IQFeedGateway feed;
 
-        internal IQFeedConnector(IQFeedParameters parameters)
+        internal IQFeedConnector(IQFeedConnectorSettings settings)
         {
-            this.parameters = parameters;
-            feed = new IQFeedGateway(parameters);
+            this.settings = settings;
+            feed = new IQFeedGateway(settings);
             ConnectionStatusProviders = new IConnectionStatusProvider[] { feed };
         }
 

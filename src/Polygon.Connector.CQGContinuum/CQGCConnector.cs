@@ -10,7 +10,7 @@ namespace Polygon.Connector.CQGContinuum
     /// </summary>
     internal sealed class CQGCConnector : IConnector, IConnectionStatusProvider
     {
-        private readonly CQGCParameters settings;
+        private readonly CQGCConnectorSettings settings;
 
         #region Private fields
 
@@ -47,7 +47,7 @@ namespace Polygon.Connector.CQGContinuum
         ///     Конструктор
         /// </summary>
         public CQGCConnector(
-            CQGCParameters settings)
+            CQGCConnectorSettings settings)
         {
             this.settings = settings;
             adapter = new CQGCAdapter(settings);

@@ -9,11 +9,11 @@ namespace Polygon.Connector.InteractiveBrokers
     internal sealed class IBConnector : IConnector, IConnectionStatusProvider
     {
         private readonly ILockObject syncRoot = DeadlockMonitor.Cookie<IBConnector>();
-        private readonly IBParameters settings;
+        private readonly IBConnectorSettings settings;
 
         private bool isConnected;
 
-        public IBConnector(IBParameters settings)
+        public IBConnector(IBConnectorSettings settings)
         {
             this.settings = settings;
             IBFeed = new IBFeed(this);

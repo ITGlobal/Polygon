@@ -74,7 +74,7 @@ namespace Polygon.Connector.CQGContinuum
         /// <summary>
         ///     Настройки
         /// </summary>
-        private readonly CQGCParameters settings;
+        private readonly CQGCConnectorSettings settings;
 
         private DateTime baseTime;
 
@@ -99,7 +99,7 @@ namespace Polygon.Connector.CQGContinuum
         /// <param name="transportFactory">
         ///     Фабрика транспорта
         /// </param>
-        public CQGCAdapter(CQGCParameters settings)
+        public CQGCAdapter(CQGCConnectorSettings settings)
         {
             this.settings = settings;
 
