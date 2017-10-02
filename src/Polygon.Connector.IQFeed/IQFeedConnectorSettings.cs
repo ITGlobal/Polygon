@@ -6,12 +6,12 @@ namespace Polygon.Connector.IQFeed
     ///     Настройки адаптера IQFeed
     /// </summary>
     [PublicAPI]
-    public sealed class IQFeedParameters : IConnectorFactory
+    public sealed class IQFeedConnectorSettings : IConnectorFactory
     {
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public IQFeedParameters(InstrumentConverter<IQFeedInstrumentData> instrumentConverter)
+        public IQFeedConnectorSettings(InstrumentConverter<IQFeedInstrumentData> instrumentConverter)
         {
             IQConnectAddress = "localhost";
             TreatCommodityAs = SecurityType.SPOT;

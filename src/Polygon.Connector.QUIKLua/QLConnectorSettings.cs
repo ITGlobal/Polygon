@@ -6,12 +6,12 @@ namespace Polygon.Connector.QUIKLua
     ///     Настройки адаптера QUIK LUA
     /// </summary>
     [PublicAPI]
-    public sealed class QLParameters : IConnectorFactory
+    public sealed class QLConnectorSettings : IConnectorFactory
     {
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public QLParameters(InstrumentConverter<InstrumentData> instrumentConverter)
+        public QLConnectorSettings(InstrumentConverter<InstrumentData> instrumentConverter)
         {
             InstrumentConverter = instrumentConverter;
         }

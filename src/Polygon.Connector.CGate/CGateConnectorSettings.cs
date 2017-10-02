@@ -8,12 +8,12 @@ namespace Polygon.Connector.CGate
     ///     Настройки транспорта CGate
     /// </summary>
     [PublicAPI]
-    public sealed class CGateParameters : IConnectorFactory
+    public sealed class CGateConnectorSettings : IConnectorFactory
     {
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public CGateParameters(InstrumentConverter<InstrumentData> instrumentConverter) 
+        public CGateConnectorSettings(InstrumentConverter<InstrumentData> instrumentConverter) 
         {
             OrderBooksEnabled = true;
             InstrumentConverter = instrumentConverter;

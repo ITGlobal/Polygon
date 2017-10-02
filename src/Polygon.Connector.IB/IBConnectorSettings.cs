@@ -7,12 +7,12 @@ namespace Polygon.Connector.InteractiveBrokers
     ///     Настройки транспорта IB
     /// </summary>
     [PublicAPI]
-    public sealed class IBParameters : IConnectorFactory
+    public sealed class IBConnectorSettings : IConnectorFactory
     {
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public IBParameters(InstrumentConverter<IBInstrumentData> instrumentConverter)
+        public IBConnectorSettings(InstrumentConverter<IBInstrumentData> instrumentConverter)
         {
             Host = "127.0.0.1";
             Port = 7496;

@@ -7,7 +7,7 @@ namespace Polygon.Connector.QUIKLua
     {
         public const int DefaultPort = 1248;
 
-        private readonly QLParameters settings;
+        private readonly QLConnectorSettings settings;
 
         #region Fields
 
@@ -20,7 +20,7 @@ namespace Polygon.Connector.QUIKLua
 
         #region .ctor
 
-        public QLConnector(QLParameters settings, IDateTimeProvider dateTimeProvider)
+        public QLConnector(QLConnectorSettings settings, IDateTimeProvider dateTimeProvider)
         {
             this.settings = settings;
             adapter = new QLAdapter(settings.IpAddress, settings.Port, dateTimeProvider, settings.ReceiveMarketdata, settings.InstrumentConverter);

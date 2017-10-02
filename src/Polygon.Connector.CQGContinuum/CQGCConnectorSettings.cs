@@ -1,9 +1,9 @@
 ﻿namespace Polygon.Connector.CQGContinuum
 {
     /// <summary>
-    ///     Настройки транспорта CQG Continuum
+    ///     CQG Continuum connector settings
     /// </summary>
-    public sealed class CQGCParameters : IConnectorFactory
+    public sealed class CQGCConnectorSettings : IConnectorFactory
     {
         /// <summary>
         ///     URL по умолчанию
@@ -18,7 +18,7 @@
         /// <summary>
         ///     Конструктор
         /// </summary>
-        public CQGCParameters(InstrumentConverter<InstrumentData> instrumentConverter) 
+        public CQGCConnectorSettings(InstrumentConverter<InstrumentData> instrumentConverter) 
         {
             ConnectionUrl = DefaultUrl;
             InstrumentConverter = instrumentConverter;

@@ -1,8 +1,8 @@
 ﻿namespace Polygon.Connector.Spimex
 {
-    public sealed class SpimexParameters : IConnectorFactory
+    public sealed class SpimexConnectorSettings : IConnectorFactory
     {
-        public SpimexParameters(
+        public SpimexConnectorSettings(
             CommClientSettings infoClientSettings,
             CommClientSettings transClientSettings,
             InstrumentConverter<SpimexInstrumentData> instrumentConverter)
