@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Polygon.Connector.MicexBridge.Feed;
 
 namespace Polygon.Connector.MicexBridge
 {
@@ -10,8 +11,12 @@ namespace Polygon.Connector.MicexBridge
     {
         public MicexBridgeConnector(MicexBridgeConnectorSettings settings)
         {
-
+            _settings = settings;
         }
+
+        private MicexBridgeConnectorSettings _settings;
+
+        public MtesrlWrapper ApiWrapper;
 
         #region IConnector
 
@@ -32,10 +37,13 @@ namespace Polygon.Connector.MicexBridge
         public IInstrumentHistoryProvider HistoryProvider { get; }
 
         public IConnectionStatusProvider[] ConnectionStatusProviders { get; }
-
+        
         public void Start()
         {
-            throw new NotImplementedException();
+            ApiWrapper = MtesrlWrapper.GetInstance(_settings.ToString());
+            var feed = new MicexBridgeFeed(MicexSecionType.Stock, this);
+            Feed = feed;
+            feed.Start();
         }
 
         public void Stop()

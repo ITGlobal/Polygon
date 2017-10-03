@@ -16,11 +16,14 @@ namespace Polygon.Connector.MicexBridge
         /// Contructor
         /// </summary>
         /// <param name="name">Name of a parameter in connection string</param>
-        public ConnectionStringPropertyAttribute(string name)
+        public ConnectionStringPropertyAttribute(string name, bool required = false)
         {
             Name = name;
+            Required = required;
         }
 
         public string Name { get; }
+
+        public bool Required { get; }
     }
 }

@@ -30,8 +30,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Annotations">
-      <HintPath>..\..\..\Users\Pavel\.nuget\packages\jetbrains.annotations\10.4.0\lib\net\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=11.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\JetBrains.Annotations.11.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Polygon.Diagnostics, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ITGlobal.Polygon.Diagnostics.1.0.4\lib\net46\Polygon.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,8 +47,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionStringPropertyAttribute.cs" />
+    <Compile Include="Delegates.cs" />
+    <Compile Include="Feed\CurrencyFeedAdapter.cs" />
+    <Compile Include="Feed\DerivativesFeedAdapter.cs" />
+    <Compile Include="Feed\MicexBridgeFeed.cs" />
+    <Compile Include="Feed\MicexSectionFeedAdapter.cs" />
+    <Compile Include="Feed\StockFeedAdapter.cs" />
+    <Compile Include="InstrumentInfo.cs" />
+    <Compile Include="MemoryReader.cs" />
     <Compile Include="MicexBridgeConnector.cs" />
     <Compile Include="MicexBridgeConnectorSettings.cs" />
+    <Compile Include="MicexSectionType.cs" />
+    <Compile Include="MTEException.cs" />
+    <Compile Include="MtesrlWrapper.cs" />
+    <Compile Include="MTETypes\EnumType.cs" />
+    <Compile Include="MTETypes\ErrorCode.cs" />
+    <Compile Include="MTETypes\Field.cs" />
+    <Compile Include="MTETypes\MTERow.cs" />
+    <Compile Include="MTETypes\MTETable.cs" />
+    <Compile Include="MTETypes\ServInfo.cs" />
+    <Compile Include="MTETypes\TableType.cs" />
+    <Compile Include="MTETypes\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +75,25 @@
       <Project>{9485476D-80AC-41BC-B6F9-968BA1DF12C5}</Project>
       <Name>Polygon.Connector</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Polygon.Messages\Polygon.Messages.csproj">
+      <Project>{D82604B5-D9F5-49F2-AE07-D35F6AFD4AB5}</Project>
+      <Name>Polygon.Messages</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="mtesrl.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tsmr.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

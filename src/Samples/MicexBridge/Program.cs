@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Polygon.Connector;
 using Polygon.Connector.MicexBridge;
+using Polygon.Diagnostics;
 using Polygon.Messages;
 
 namespace MicexBridge
@@ -16,17 +17,32 @@ namespace MicexBridge
     {
         static void Main(string[] args)
         {
-            var settings = new MicexBridgeConnectorSettings(new InstrumentSymbolResolver(), "server", "MCU00001",
-                "777");
+            LogManager.AddListener(new Logger());
 
-            var connector = settings.CreateConnector();
-            connector.Feed.MessageReceived += HandleFeedMessageReceived;
-            connector.ConnectionStatusProviders[0].ConnectionStatusChanged += HaneleConnectionStatusChanged;
-            connector.Start();
+            try
+            {
+                var settings = new MicexBridgeConnectorSettings(new InstrumentSymbolResolver(),
+                    "UAT_GATEWAY",//"",
+                    "16411/16412",
+                    "91.208.232.211",
+                    "IFCBroker_17",
+                    "MU9012400006",
+                    "6334",
+                    prefBroadcast: "91.208.232.211");
 
-            Console.WriteLine("MicexBridge connector started\nPress any key to stop");
-            Console.ReadKey();
-            connector.Stop();
+                var connector = settings.CreateConnector();
+                //connector.Feed.MessageReceived += HandleFeedMessageReceived;
+                //connector.ConnectionStatusProviders[0].ConnectionStatusChanged += HaneleConnectionStatusChanged;
+                connector.Start();
+                Console.WriteLine("MicexBridge connector started\nPress any key to stop");
+                Console.ReadKey();
+                connector.Stop();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"Error: {exception.Message}\n{exception.StackTrace}");
+                Console.ReadKey();
+            }
         }
 
         /// <summary>
