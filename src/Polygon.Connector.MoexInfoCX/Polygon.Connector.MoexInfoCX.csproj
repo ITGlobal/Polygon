@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+		<AssemblyName>Polygon.Connector.MoexInfoCX</AssemblyName>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Primitives" Version="1.1.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+      <PackageReference Include="WebSocket4Net" Version="0.15.1" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Polygon.Connector\Polygon.Connector.csproj" />
+    </ItemGroup>
+</Project>
