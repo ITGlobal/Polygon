@@ -29,12 +29,12 @@ namespace Polygon.Connector.MoexInfoCX.Common
 
         public void ServerFrame(string message)
         {
-            _log?.Info().Print("ServerFrame " + message);
+            _log?.Trace().Print("ServerFrame " + message);
         }
 
         public void ClientFrame(string message)
         {
-            _log?.Info().Print("ClientFrame " + message);
+            _log?.Trace().Print("ClientFrame " + message);
         }
     }
 }
