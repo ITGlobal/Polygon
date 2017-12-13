@@ -14,16 +14,22 @@ using Polygon.Messages;
 
 namespace Polygon.Connector.MoexInfoCX
 {
-    public class MoexInfoCXStompFeed : Feed, IConnectionStatusProvider, IInstrumentParamsSubscriber, IOrderBookSubscriber//, IInstrumentTickerLookup
+    public class MoexInfoCXFeed : 
+        Feed, 
+        IConnectionStatusProvider, 
+        IInstrumentParamsSubscriber, 
+        IOrderBookSubscriber,
+        ISubscriptionTester<InfoCXInstrumentData>,
+        IInstrumentConverterContext<InfoCXInstrumentData>
     {
-        private readonly StompSettings settings;
+        private readonly MoexInfoCXParameters settings;
         private readonly StompConnection connection;
         private readonly WebsocketTransportSettings transportSettings = new WebsocketTransportSettings();
 
 
         private readonly Dictionary<Instrument, InstrumentParams> paramDictionary = new Dictionary<Instrument, InstrumentParams>();
 
-        public MoexInfoCXStompFeed(StompSettings settings)
+        public MoexInfoCXFeed(MoexInfoCXParameters settings)
         {
             this.settings = settings;
 
@@ -73,6 +79,9 @@ namespace Polygon.Connector.MoexInfoCX
         private const string Securities = Market + ".securities";
         private const string Orderbooks = Market + ".orderbooks";
 
+        /// <summary>
+        ///     Обработка входящего сообщения
+        /// </summary>
         private void Connection_MessageReceived(object sender, StompMessageReceivedEventArgs e)
         {
             TaskCompletionSource<SubscriptionResult> tcs;
@@ -159,6 +168,9 @@ namespace Polygon.Connector.MoexInfoCX
             }
         }
 
+        /// <summary>
+        ///     Парсинг стакана
+        /// </summary>
         private void ParseBook(IStompFrame frame, string subscription)
         {
             if (!obIdToInstrument.TryGetValue(subscription, out var instrument))
@@ -207,6 +219,9 @@ namespace Polygon.Connector.MoexInfoCX
             OnMessageReceived(ob);
         }
 
+        /// <summary>
+        ///     Парсинг параметров
+        /// </summary>
         private void ParseParams(IStompFrame frame, string subscription)
         {
             if (!ipIdToInstrument.TryGetValue(subscription, out var instrument))
@@ -287,13 +302,18 @@ namespace Polygon.Connector.MoexInfoCX
             return ip;
         }
 
+        #region Nested types
+
+        /// <summary>
+        ///     Запрос данных
+        /// </summary>
         class Request : ClientMessage
         {
             public Request(
                 string id,
                 string destination,
                 string selector = null
-                ) 
+            ) 
                 : base("REQUEST")
             {
                 if (string.IsNullOrEmpty(destination))
@@ -308,6 +328,9 @@ namespace Polygon.Connector.MoexInfoCX
             }
         }
 
+        /// <summary>
+        ///  Парсер словаря
+        /// </summary>
         class JArrayDictionary : IReadOnlyDictionary<string, JToken>
         {
             private readonly JArray columns;
@@ -370,6 +393,8 @@ namespace Polygon.Connector.MoexInfoCX
 
             #endregion
         }
+
+        #endregion
 
         #region Feed
 
@@ -494,6 +519,22 @@ namespace Polygon.Connector.MoexInfoCX
             obInstrumentToId.Remove(instrument);
             obIdToInstrument.Remove(id);
         }
+
+        #endregion
+
+        #region ISubscriptionTester
+
+        public Task<SubscriptionTestResult> TestSubscriptionAsync(InfoCXInstrumentData data)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+        
+        #endregion
+
+        #region IInstrumentConverterContext
+
+        public ISubscriptionTester<InfoCXInstrumentData> SubscriptionTester => this;
 
         #endregion
     }
