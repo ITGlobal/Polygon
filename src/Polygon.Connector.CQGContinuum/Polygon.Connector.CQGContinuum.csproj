@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="protobuf-net" Version="2.2.1" />
-    <PackageReference Include="WebSocket4Net" Version="0.15.0-beta9" />
+    <PackageReference Include="WebSocket4Net" Version="0.15.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
     <PackageReference Include="System.Reflection" Version="4.3.0" />
