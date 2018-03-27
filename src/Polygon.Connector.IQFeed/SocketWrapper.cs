@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using ITGlobal.DeadlockDetection;
 using Microsoft.Win32;
 using Polygon.Diagnostics;
@@ -122,11 +124,25 @@ namespace Polygon.Connector.IQFeed
 #if NETSTANDARD1_6
         private delegate void Receiver(byte[] buffer, int offset, int size, SocketFlags socketFlags);
 
+        private class SocketReceiveAsyncResult : IAsyncResult
+        {
+            public SocketReceiveAsyncResult(int receivedBytes)
+            {
+                ReceivedBytes = receivedBytes;
+            }
+            public object AsyncState { get; }
+            public WaitHandle AsyncWaitHandle { get; }
+            public bool CompletedSynchronously { get; }
+            public bool IsCompleted { get; }
+            public int ReceivedBytes { get; }
+        }
+
         private void ReceiveData(byte[] bytes, int offset, int size, SocketFlags socketFlags)
         {
             using (socketSyncLock.Lock())
             {
-                int receivedBytes = socket.Receive(socketBuffer, 0, BufferSize, SocketFlags.None);
+                var receivedBytes = socket.Receive(socketBuffer, 0, BufferSize, SocketFlags.None);
+                callback(new SocketReceiveAsyncResult(receivedBytes));
             }
         }
 #endif
@@ -140,8 +156,7 @@ namespace Polygon.Connector.IQFeed
                 socket.BeginReceive(socketBuffer, 0, BufferSize, SocketFlags.None, callback, null);
 #endif
 #if NETSTANDARD1_6
-                Receiver receiver = ReceiveData;
-                receiver.BeginInvoke(socketBuffer, 0, BufferSize, SocketFlags.None, callback, null);
+                Task.Run(() => ReceiveData(socketBuffer, 0, BufferSize, SocketFlags.None));
 #endif
             }
         }
@@ -150,7 +165,7 @@ namespace Polygon.Connector.IQFeed
             try
             {
                 int receivedBytes;
-
+                
                 using (socketSyncLock.Lock())
                 {
                     if (!socket.Connected)
@@ -165,7 +180,8 @@ namespace Polygon.Connector.IQFeed
                 var data = Encoding.ASCII.GetString(socketBuffer, 0, receivedBytes);
 #endif
 #if NETSTANDARD1_6
-                var data = Encoding.ASCII.GetString(socketBuffer, 0, BufferSize);
+                var receiveCallResult = asyncResult as SocketReceiveAsyncResult;
+                var data = Encoding.ASCII.GetString(socketBuffer, 0, receiveCallResult.ReceivedBytes);
 #endif
                 data = incompleteRecord + data;
                 incompleteRecord = "";
