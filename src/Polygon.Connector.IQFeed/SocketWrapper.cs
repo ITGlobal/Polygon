@@ -139,11 +139,8 @@ namespace Polygon.Connector.IQFeed
 
         private void ReceiveData(byte[] bytes, int offset, int size, SocketFlags socketFlags)
         {
-            using (socketSyncLock.Lock())
-            {
-                var receivedBytes = socket.Receive(socketBuffer, 0, BufferSize, SocketFlags.None);
-                callback(new SocketReceiveAsyncResult(receivedBytes));
-            }
+            var receivedBytes = socket.Receive(socketBuffer, 0, BufferSize, SocketFlags.None);
+            callback(new SocketReceiveAsyncResult(receivedBytes));
         }
 #endif
         #region Callback
