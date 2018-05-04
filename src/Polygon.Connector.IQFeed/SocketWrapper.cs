@@ -295,7 +295,7 @@ namespace Polygon.Connector.IQFeed
                 var key = Registry.CurrentUser.OpenSubKey("Software\\DTN\\IQFeed\\Startup");
                 return key;
             }
-            catch (PlatformNotSupportedException notSupportedException)
+            catch (Exception e)
             {
             }
 
