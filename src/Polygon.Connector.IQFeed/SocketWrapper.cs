@@ -224,12 +224,11 @@ namespace Polygon.Connector.IQFeed
 
         private static int GetIQFeedPort(SocketConnectionType sType)
         {
-            // TODO проверить, работает ли это под Linux
             var port = 0;
-            var key = Registry.CurrentUser.OpenSubKey("Software\\DTN\\IQFeed\\Startup");
+            var value = "";
+            var key = TryGetIQFeedPortRegistryKey();
             if (key != null)
             {
-                var value = "";
                 switch (sType)
                 {
                     case SocketConnectionType.Level1:
@@ -249,10 +248,26 @@ namespace Polygon.Connector.IQFeed
                         value = key.GetValue("AdminPort", "9200").ToString();
                         break;
                 }
-
                 int.TryParse(value, out port);
             }
-            
+            else
+            {
+                switch (sType)
+                {
+                    case SocketConnectionType.Level1:
+                        port = 5009;
+                        break;
+                    case SocketConnectionType.Lookup:
+                        port = 9100;
+                        break;
+                    case SocketConnectionType.Level2:
+                        port = 9200;
+                        break;
+                    case SocketConnectionType.Admin:
+                        port = 9200;
+                        break;
+                }
+            }
             return port;
         }
 
@@ -274,6 +289,21 @@ namespace Polygon.Connector.IQFeed
         }
 
         protected virtual void OnConnected() { }
+
+        private static RegistryKey TryGetIQFeedPortRegistryKey()
+        {
+            try
+            {
+                // Works under Windows only
+                var key = Registry.CurrentUser.OpenSubKey("Software\\DTN\\IQFeed\\Startup");
+                return key;
+            }
+            catch (PlatformNotSupportedException notSupportedException)
+            {
+            }
+
+            return null;
+        }
     }
 }
 
