@@ -67,7 +67,7 @@ namespace Polygon.Connector.IQFeed
         internal IQFeedGateway(IQFeedParameters parameters)
         {
             var ip = IQFeedParser.ParseIpAddressOrDns(parameters.IQConnectAddress, AddressFamily.InterNetwork);
-            socketL1 = new Level1SocketWrapper(ip);
+            socketL1 = new Level1SocketWrapper(ip, parameters);
 
             socketL1.OnFundamentalMsg += L1OnFundamentalMsg;
             socketL1.OnSummaryMsg += L1OnUpdateMsg;
@@ -80,12 +80,12 @@ namespace Polygon.Connector.IQFeed
             //socketL1.OnOtherMsg += LevelOne_OnOtherMsg;
             socketL1.OnSubscriptionErrorMsg += L1OnSubscriptionErrorMsg;
 
-            historySocket = new HistorySocketWrapper(ip);
+            historySocket = new HistorySocketWrapper(ip, parameters);
             historySocket.OnHistoryMsg += HistoryOnHistoryMsg;
             historySocket.OnHistoryEndMsg += HistoryOnHistoryEndMsg;
             historySocket.OnErrorMsg += HistoryOnErrorMsg;
 
-            lookupSocket = new LookupSocketWrapper(ip);
+            lookupSocket = new LookupSocketWrapper(ip, parameters);
             lookupSocket.OnSecurityTypeMsg += LookupOnSecurityTypeMsg;
             lookupSocket.OnResultMsg += LookupOnResultMsg;
             lookupSocket.OnErrorMsg += LookupOnErrorMsg;

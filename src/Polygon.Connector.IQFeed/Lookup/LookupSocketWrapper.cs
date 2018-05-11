@@ -6,8 +6,8 @@ namespace Polygon.Connector.IQFeed.Lookup
     {
         public const string RequestIdPrefix = "REQ-";
 
-        public LookupSocketWrapper(IPAddress address)
-            : base(address, SocketConnectionType.Lookup)
+        public LookupSocketWrapper(IPAddress address, IQFeedParameters parameters)
+            : base(address, SocketConnectionType.Lookup, parameters)
         { }
 
         public event ProcessMessageDelegate OnSecurityTypeMsg;

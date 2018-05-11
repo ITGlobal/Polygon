@@ -23,6 +23,14 @@ namespace Polygon.Connector.IQFeed
         /// </summary>
         public string IQConnectAddress { get; set; }
 
+        public string Level1Port { get; set; }
+
+        public string LookupPort { get; set; }
+
+        public string Level2Port { get; set; }
+
+        public string AdminPort { get; set; }
+        
         /// <summary>
         ///     <see cref="SecurityType"/> для коммодити
         /// </summary>
@@ -41,4 +49,3 @@ namespace Polygon.Connector.IQFeed
         public IConnector CreateConnector() => new IQFeedConnector(this);
     }
 }
-

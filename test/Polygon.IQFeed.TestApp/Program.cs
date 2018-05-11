@@ -12,7 +12,8 @@ namespace Polygon.IQFeed.TestApp
         static void Main(string[] args)
         {
             var converter = new LocalInstrumentConverter();
-            var iqParams = new IQFeedParameters(converter) { IQConnectAddress = "127.0.0.1" };
+            var iqParams = new IQFeedParameters(converter) { IQConnectAddress = "192.168.51.46" };
+            //var iqParams = new IQFeedParameters(converter) { IQConnectAddress = "172.31.27.77" };
             var iqConnector = iqParams.CreateConnector();
             //LogManager.AddListener(this);
 
