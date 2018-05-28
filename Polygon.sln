@@ -45,8 +45,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CB6E7263
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polygon.IQFeed.TestApp", "test\Polygon.IQFeed.TestApp\Polygon.IQFeed.TestApp.csproj", "{7CE23177-D844-4936-AD49-21AD21AC71FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polygon.CQG.TestApp", "test\Polygon.CQG.TestApp\Polygon.CQG.TestApp.csproj", "{A0C53A99-C5E5-4705-A0BC-4B60FECD3D1B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,10 +111,6 @@ Global
 		{7CE23177-D844-4936-AD49-21AD21AC71FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CE23177-D844-4936-AD49-21AD21AC71FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CE23177-D844-4936-AD49-21AD21AC71FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0C53A99-C5E5-4705-A0BC-4B60FECD3D1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0C53A99-C5E5-4705-A0BC-4B60FECD3D1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0C53A99-C5E5-4705-A0BC-4B60FECD3D1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0C53A99-C5E5-4705-A0BC-4B60FECD3D1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,7 +122,6 @@ Global
 		{508EFB33-535B-45C8-AC86-22AC517C1324} = {B7ECD9CB-ABA6-4614-A913-36B70AF7D35D}
 		{5AD7EE72-F960-471B-9C41-19E52AFE5E60} = {70579A2C-8896-42E0-A3BE-71F0E76E6D4C}
 		{7CE23177-D844-4936-AD49-21AD21AC71FA} = {CB6E7263-5F7E-450D-9020-2A7B4D54B462}
-		{A0C53A99-C5E5-4705-A0BC-4B60FECD3D1B} = {CB6E7263-5F7E-450D-9020-2A7B4D54B462}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10960FC2-C691-4F34-93AB-2EFCD381A25D}
