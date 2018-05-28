@@ -7,8 +7,8 @@ namespace Polygon.Connector.IQFeed.History
     {
         public const string HistoryRequestIdPefix = "hi";
 
-        public HistorySocketWrapper(IPAddress address)
-            : base(address, SocketConnectionType.Lookup)
+        public HistorySocketWrapper(IPAddress address, IQFeedParameters parameters)
+            : base(address, SocketConnectionType.Lookup, parameters)
         { }
 
         public event ProcessMessageDelegate OnHistoryMsg;

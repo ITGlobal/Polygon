@@ -30,11 +30,12 @@ namespace Polygon.Connector.IQFeed
 
         #region .ctor
 
-        protected SocketWrapper(IPAddress address, SocketConnectionType socketConnectionType)
+        protected SocketWrapper(IPAddress address, SocketConnectionType socketConnectionType,
+            IQFeedParameters parameters)
         {
             log = LogManager.GetLogger(GetType());
             this.socketConnectionType = socketConnectionType;
-            endPoint = new IPEndPoint(address, GetIQFeedPort(socketConnectionType));
+            endPoint = new IPEndPoint(address, GetIQFeedPort(socketConnectionType, parameters));
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             callback = OnReceive;
         }
@@ -219,7 +220,7 @@ namespace Polygon.Connector.IQFeed
 
         #region Helpers
 
-        private static int GetIQFeedPort(SocketConnectionType sType)
+        private static int GetIQFeedPort(SocketConnectionType sType, IQFeedParameters parameters)
         {
             var port = 0;
             var value = "";
@@ -230,19 +231,19 @@ namespace Polygon.Connector.IQFeed
                 {
                     case SocketConnectionType.Level1:
                         // the default port for Level 1 data is 5009.
-                        value = key.GetValue("Level1Port", "5009").ToString();
+                        value = string.IsNullOrEmpty(parameters.Level1Port) ? key.GetValue("Level1Port", "5009").ToString(): parameters.Level1Port;
                         break;
                     case SocketConnectionType.Lookup:
                         // the default port for Lookup data is 9100.
-                        value = key.GetValue("LookupPort", "9100").ToString();
+                        value = string.IsNullOrEmpty(parameters.LookupPort) ? key.GetValue("LookupPort", "9100").ToString():parameters.LookupPort;
                         break;
                     case SocketConnectionType.Level2:
                         // the default port for Level 2 data is 9200.
-                        value = key.GetValue("Level2Port", "9200").ToString();
+                        value = string.IsNullOrEmpty(parameters.Level2Port) ? key.GetValue("Level2Port", "9200").ToString() : parameters.Level2Port;
                         break;
                     case SocketConnectionType.Admin:
                         // the default port for Admin data is 9300.
-                        value = key.GetValue("AdminPort", "9200").ToString();
+                        value = string.IsNullOrEmpty(parameters.AdminPort) ? key.GetValue("AdminPort", "9200").ToString() : parameters.AdminPort;
                         break;
                 }
                 int.TryParse(value, out port);
@@ -252,16 +253,16 @@ namespace Polygon.Connector.IQFeed
                 switch (sType)
                 {
                     case SocketConnectionType.Level1:
-                        port = 5009;
+                        port = string.IsNullOrEmpty(parameters.Level1Port) ? 5009 : int.Parse(parameters.Level1Port);
                         break;
                     case SocketConnectionType.Lookup:
-                        port = 9100;
+                        port = string.IsNullOrEmpty(parameters.LookupPort) ? 9100 : int.Parse(parameters.LookupPort);
                         break;
                     case SocketConnectionType.Level2:
-                        port = 9200;
+                        port = string.IsNullOrEmpty(parameters.Level2Port) ? 9200 : int.Parse(parameters.Level2Port);
                         break;
                     case SocketConnectionType.Admin:
-                        port = 9200;
+                        port = string.IsNullOrEmpty(parameters.AdminPort) ? 9200 : int.Parse(parameters.AdminPort);
                         break;
                 }
             }

@@ -4,8 +4,8 @@ namespace Polygon.Connector.IQFeed.Level1
 {
     internal sealed class Level1SocketWrapper : SocketWrapper
     {
-        public Level1SocketWrapper(IPAddress address)
-            : base(address, SocketConnectionType.Level1)
+        public Level1SocketWrapper(IPAddress address, IQFeedParameters parameters)
+            : base(address, SocketConnectionType.Level1, parameters)
         { }
 
         public event ProcessMessageDelegate OnFundamentalMsg;
