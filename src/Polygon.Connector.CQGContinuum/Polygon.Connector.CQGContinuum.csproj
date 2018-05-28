@@ -5,6 +5,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="WebAPI — копия.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="protobuf-net" Version="2.2.1" />
     <PackageReference Include="WebSocket4Net" Version="0.15.1" />
   </ItemGroup>

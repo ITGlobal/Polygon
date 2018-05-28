@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A0C53A99-C5E5-4705-A0BC-4B60FECD3D1B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Polygon.CQG.TestApp</RootNamespace>
+    <AssemblyName>Polygon.CQG.TestApp</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\cgate\CGateAdapter.Core\CGateAdapter.Core.csproj">
+      <Project>{25d62471-8947-4d38-b613-615d20cce4e4}</Project>
+      <Name>CGateAdapter.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Polygon.Connector.CQGContinuum\Polygon.Connector.CQGContinuum.csproj">
+      <Project>{950b49b5-6e78-4232-bc92-0731b033436b}</Project>
+      <Name>Polygon.Connector.CQGContinuum</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Polygon.Connector\Polygon.Connector.csproj">
+      <Project>{9485476D-80AC-41BC-B6F9-968BA1DF12C5}</Project>
+      <Name>Polygon.Connector</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Polygon.Messages\Polygon.Messages.csproj">
+      <Project>{D82604B5-D9F5-49F2-AE07-D35F6AFD4AB5}</Project>
+      <Name>Polygon.Messages</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

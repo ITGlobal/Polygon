@@ -7,13 +7,688 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Option: light framework (CF/Silverlight) enabled
+// Generated from: shared_1.proto
+namespace shared_1
+{
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Text")]
+  public partial class Text : global::ProtoBuf.IExtensible
+  {
+    public Text() {}
     
+    private string _key;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"key", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string key
+    {
+      get { return _key; }
+      set { _key = value; }
+    }
+    private string _text;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"text", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string text
+    {
+      get { return _text; }
+      set { _text = value; }
+    }
+    private string _format = "";
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"format", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string format
+    {
+      get { return _format; }
+      set { _format = value; }
+    }
+    private readonly global::System.Collections.Generic.List<string> _param = new global::System.Collections.Generic.List<string>();
+    [global::ProtoBuf.ProtoMember(4, Name=@"param", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<string> param
+    {
+      get { return _param; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"OrderStatus")]
+  public partial class OrderStatus : global::ProtoBuf.IExtensible
+  {
+    public OrderStatus() {}
+    
+    [global::ProtoBuf.ProtoContract(Name=@"Status")]
+    public enum Status
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"IN_TRANSIT", Value=1)]
+      IN_TRANSIT = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"REJECTED", Value=2)]
+      REJECTED = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"WORKING", Value=3)]
+      WORKING = 3,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"EXPIRED", Value=4)]
+      EXPIRED = 4,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"IN_CANCEL", Value=5)]
+      IN_CANCEL = 5,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"IN_MODIFY", Value=6)]
+      IN_MODIFY = 6,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"CANCELLED", Value=7)]
+      CANCELLED = 7,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FILLED", Value=8)]
+      FILLED = 8,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SUSPENDED", Value=9)]
+      SUSPENDED = 9,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DISCONNECTED", Value=10)]
+      DISCONNECTED = 10,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACTIVEAT", Value=11)]
+      ACTIVEAT = 11
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TransactionStatus")]
+  public partial class TransactionStatus : global::ProtoBuf.IExtensible
+  {
+    public TransactionStatus() {}
+    
+    [global::ProtoBuf.ProtoContract(Name=@"Status")]
+    public enum Status
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"IN_TRANSIT", Value=1)]
+      IN_TRANSIT = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"REJECTED", Value=2)]
+      REJECTED = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACK_PLACE", Value=3)]
+      ACK_PLACE = 3,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"EXPIRED", Value=4)]
+      EXPIRED = 4,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"IN_CANCEL", Value=5)]
+      IN_CANCEL = 5,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACK_CANCEL", Value=6)]
+      ACK_CANCEL = 6,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"REJECT_CANCEL", Value=7)]
+      REJECT_CANCEL = 7,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"IN_MODIFY", Value=8)]
+      IN_MODIFY = 8,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACK_MODIFY", Value=9)]
+      ACK_MODIFY = 9,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"REJECT_MODIFY", Value=10)]
+      REJECT_MODIFY = 10,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FILL", Value=11)]
+      FILL = 11,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SUSPEND", Value=12)]
+      SUSPEND = 12,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FILL_CORRECT", Value=13)]
+      FILL_CORRECT = 13,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FILL_CANCEL", Value=14)]
+      FILL_CANCEL = 14,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FILL_BUST", Value=15)]
+      FILL_BUST = 15,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACTIVEAT", Value=16)]
+      ACTIVEAT = 16,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DISCONNECT", Value=17)]
+      DISCONNECT = 17,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SYNTHETIC_ACTIVATED", Value=18)]
+      SYNTHETIC_ACTIVATED = 18,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"UPDATE", Value=19)]
+      UPDATE = 19,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SYNTHETIC_FAILED", Value=20)]
+      SYNTHETIC_FAILED = 20,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SYNTHETIC_OVERFILL", Value=21)]
+      SYNTHETIC_OVERFILL = 21,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SYNTHETIC_HANG", Value=22)]
+      SYNTHETIC_HANG = 22
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SignOnRequest")]
+  public partial class SignOnRequest : global::ProtoBuf.IExtensible
+  {
+    public SignOnRequest() {}
+    
+    private string _access_key;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"access_key", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string access_key
+    {
+      get { return _access_key; }
+      set { _access_key = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SignOnResult")]
+  public partial class SignOnResult : global::ProtoBuf.IExtensible
+  {
+    public SignOnResult() {}
+    
+    private uint _result_code;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"result_code", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint result_code
+    {
+      get { return _result_code; }
+      set { _result_code = value; }
+    }
+    private shared_1.Text _details = null;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"details", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public shared_1.Text details
+    {
+      get { return _details; }
+      set { _details = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"ResultCode")]
+    public enum ResultCode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SUCCESS", Value=0)]
+      SUCCESS = 0,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FAILURE", Value=101)]
+      FAILURE = 101
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Destination")]
+  public partial class Destination : global::ProtoBuf.IExtensible
+  {
+    public Destination() {}
+    
+    private string _description = "";
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"description", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string description
+    {
+      get { return _description; }
+      set { _description = value; }
+    }
+    private shared_1.ApplePushNotif _apple_push_notif = null;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"apple_push_notif", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public shared_1.ApplePushNotif apple_push_notif
+    {
+      get { return _apple_push_notif; }
+      set { _apple_push_notif = value; }
+    }
+    private shared_1.GooglePushNotif _google_push_notif = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"google_push_notif", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public shared_1.GooglePushNotif google_push_notif
+    {
+      get { return _google_push_notif; }
+      set { _google_push_notif = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ApplePushNotif")]
+  public partial class ApplePushNotif : global::ProtoBuf.IExtensible
+  {
+    public ApplePushNotif() {}
+    
+    private string _device_token;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"device_token", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string device_token
+    {
+      get { return _device_token; }
+      set { _device_token = value; }
+    }
+    private string _app_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"app_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string app_id
+    {
+      get { return _app_id; }
+      set { _app_id = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"GooglePushNotif")]
+  public partial class GooglePushNotif : global::ProtoBuf.IExtensible
+  {
+    public GooglePushNotif() {}
+    
+    private string _registration_token;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"registration_token", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string registration_token
+    {
+      get { return _registration_token; }
+      set { _registration_token = value; }
+    }
+    private string _sender_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"sender_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string sender_id
+    {
+      get { return _sender_id; }
+      set { _sender_id = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+}
+// Generated from: timestamp.proto
+namespace google.protobuf
+{
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Timestamp")]
+  public partial class Timestamp : global::ProtoBuf.IExtensible
+  {
+    public Timestamp() {}
+    
+    private long _seconds = default(long);
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"seconds", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long seconds
+    {
+      get { return _seconds; }
+      set { _seconds = value; }
+    }
+    private int _nanos = default(int);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"nanos", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int nanos
+    {
+      get { return _nanos; }
+      set { _nanos = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+}
+// Generated from: rules_1.proto
+// Note: requires additional types generated from: shared_1.proto
+// Note: requires additional types generated from: timestamp.proto
+namespace rules_1
+{
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RuleRequest")]
+  public partial class RuleRequest : global::ProtoBuf.IExtensible
+  {
+    public RuleRequest() {}
+    
+    private string _request_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"request_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string request_id
+    {
+      get { return _request_id; }
+      set { _request_id = value; }
+    }
+    private rules_1.SetRuleRequest _set_rule_request = null;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"set_rule_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public rules_1.SetRuleRequest set_rule_request
+    {
+      get { return _set_rule_request; }
+      set { _set_rule_request = value; }
+    }
+    private rules_1.DeleteRuleRequest _delete_rule_request = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"delete_rule_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public rules_1.DeleteRuleRequest delete_rule_request
+    {
+      get { return _delete_rule_request; }
+      set { _delete_rule_request = value; }
+    }
+    private rules_1.RulesListRequest _rules_list_request = null;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"rules_list_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public rules_1.RulesListRequest rules_list_request
+    {
+      get { return _rules_list_request; }
+      set { _rules_list_request = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RuleResult")]
+  public partial class RuleResult : global::ProtoBuf.IExtensible
+  {
+    public RuleResult() {}
+    
+    private string _request_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"request_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string request_id
+    {
+      get { return _request_id; }
+      set { _request_id = value; }
+    }
+    private uint _result_code;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"result_code", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint result_code
+    {
+      get { return _result_code; }
+      set { _result_code = value; }
+    }
+    private shared_1.Text _details = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"details", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public shared_1.Text details
+    {
+      get { return _details; }
+      set { _details = value; }
+    }
+    private rules_1.SetRuleResult _set_rule_result = null;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"set_rule_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public rules_1.SetRuleResult set_rule_result
+    {
+      get { return _set_rule_result; }
+      set { _set_rule_result = value; }
+    }
+    private rules_1.DeleteRuleResult _delete_rule_result = null;
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"delete_rule_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public rules_1.DeleteRuleResult delete_rule_result
+    {
+      get { return _delete_rule_result; }
+      set { _delete_rule_result = value; }
+    }
+    private rules_1.RulesListResult _rules_list_result = null;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"rules_list_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public rules_1.RulesListResult rules_list_result
+    {
+      get { return _rules_list_result; }
+      set { _rules_list_result = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"ResultCode")]
+    public enum ResultCode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SUCCESS", Value=0)]
+      SUCCESS = 0,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FAILURE", Value=101)]
+      FAILURE = 101
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RuleDefinition")]
+  public partial class RuleDefinition : global::ProtoBuf.IExtensible
+  {
+    public RuleDefinition() {}
+    
+    private string _rule_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"rule_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string rule_id
+    {
+      get { return _rule_id; }
+      set { _rule_id = value; }
+    }
+    private readonly global::System.Collections.Generic.List<string> _rule_tag = new global::System.Collections.Generic.List<string>();
+    [global::ProtoBuf.ProtoMember(2, Name=@"rule_tag", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<string> rule_tag
+    {
+      get { return _rule_tag; }
+    }
+  
+    private google.protobuf.Timestamp _expiration_utc_time = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"expiration_utc_time", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp expiration_utc_time
+    {
+      get { return _expiration_utc_time; }
+      set { _expiration_utc_time = value; }
+    }
+    private readonly global::System.Collections.Generic.List<rules_1.Action> _action = new global::System.Collections.Generic.List<rules_1.Action>();
+    [global::ProtoBuf.ProtoMember(4, Name=@"action", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<rules_1.Action> action
+    {
+      get { return _action; }
+    }
+  
+    private rules_1.OrderEventRule _order_event_rule = null;
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"order_event_rule", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public rules_1.OrderEventRule order_event_rule
+    {
+      get { return _order_event_rule; }
+      set { _order_event_rule = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Action")]
+  public partial class Action : global::ProtoBuf.IExtensible
+  {
+    public Action() {}
+    
+    private readonly global::System.Collections.Generic.List<shared_1.Destination> _destination = new global::System.Collections.Generic.List<shared_1.Destination>();
+    [global::ProtoBuf.ProtoMember(4, Name=@"destination", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<shared_1.Destination> destination
+    {
+      get { return _destination; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"OrderEventRule")]
+  public partial class OrderEventRule : global::ProtoBuf.IExtensible
+  {
+    public OrderEventRule() {}
+    
+    private readonly global::System.Collections.Generic.List<int> _account_id = new global::System.Collections.Generic.List<int>();
+    [global::ProtoBuf.ProtoMember(1, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public global::System.Collections.Generic.List<int> account_id
+    {
+      get { return _account_id; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<uint> _order_status = new global::System.Collections.Generic.List<uint>();
+    [global::ProtoBuf.ProtoMember(2, Name=@"order_status", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public global::System.Collections.Generic.List<uint> order_status
+    {
+      get { return _order_status; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<uint> _transaction_status = new global::System.Collections.Generic.List<uint>();
+    [global::ProtoBuf.ProtoMember(3, Name=@"transaction_status", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public global::System.Collections.Generic.List<uint> transaction_status
+    {
+      get { return _transaction_status; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SetRuleRequest")]
+  public partial class SetRuleRequest : global::ProtoBuf.IExtensible
+  {
+    public SetRuleRequest() {}
+    
+    private rules_1.RuleDefinition _rule_definition;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"rule_definition", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public rules_1.RuleDefinition rule_definition
+    {
+      get { return _rule_definition; }
+      set { _rule_definition = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SetRuleResult")]
+  public partial class SetRuleResult : global::ProtoBuf.IExtensible
+  {
+    public SetRuleResult() {}
+    
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"DeleteRuleRequest")]
+  public partial class DeleteRuleRequest : global::ProtoBuf.IExtensible
+  {
+    public DeleteRuleRequest() {}
+    
+    private string _rule_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"rule_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string rule_id
+    {
+      get { return _rule_id; }
+      set { _rule_id = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"DeleteRuleResult")]
+  public partial class DeleteRuleResult : global::ProtoBuf.IExtensible
+  {
+    public DeleteRuleResult() {}
+    
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RulesListRequest")]
+  public partial class RulesListRequest : global::ProtoBuf.IExtensible
+  {
+    public RulesListRequest() {}
+    
+    private readonly global::System.Collections.Generic.List<string> _rule_tag = new global::System.Collections.Generic.List<string>();
+    [global::ProtoBuf.ProtoMember(1, Name=@"rule_tag", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<string> rule_tag
+    {
+      get { return _rule_tag; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RulesListResult")]
+  public partial class RulesListResult : global::ProtoBuf.IExtensible
+  {
+    public RulesListResult() {}
+    
+    private readonly global::System.Collections.Generic.List<rules_1.RuleDefinition> _rule_definition = new global::System.Collections.Generic.List<rules_1.RuleDefinition>();
+    [global::ProtoBuf.ProtoMember(1, Name=@"rule_definition", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<rules_1.RuleDefinition> rule_definition
+    {
+      get { return _rule_definition; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+}
 // Generated from: WebAPI.proto
+// Note: requires additional types generated from: shared_1.proto
+// Note: requires additional types generated from: timestamp.proto
+// Note: requires additional types generated from: rules_1.proto
 namespace Polygon.Connector.CQGContinuum.WebAPI
 {
-  [global::ProtoBuf.ProtoContract(Name=@"ClientMsg")]
-  internal partial class ClientMsg : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ClientMsg")]
+  public partial class ClientMsg : global::ProtoBuf.IExtensible
   {
     public ClientMsg() {}
     
@@ -153,6 +828,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _time_bar_request; }
     }
   
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileRequest> _volume_profile_request = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileRequest>();
+    [global::ProtoBuf.ProtoMember(9, Name=@"volume_profile_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileRequest> volume_profile_request
+    {
+      get { return _volume_profile_request; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<rules_1.RuleRequest> _rule_request = new global::System.Collections.Generic.List<rules_1.RuleRequest>();
+    [global::ProtoBuf.ProtoMember(10, Name=@"rule_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<rules_1.RuleRequest> rule_request
+    {
+      get { return _rule_request; }
+    }
+  
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -160,8 +849,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ServerMsg")]
-  internal partial class ServerMsg : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ServerMsg")]
+  public partial class ServerMsg : global::ProtoBuf.IExtensible
   {
     public ServerMsg() {}
     
@@ -211,22 +900,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _user_message; }
     }
   
-    private Polygon.Connector.CQGContinuum.WebAPI.ObtainDemoCredentialsResult _obtain_demo_credentials_result = null;
-    [global::ProtoBuf.ProtoMember(105, IsRequired = false, Name=@"obtain_demo_credentials_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
-    [global::System.ComponentModel.DefaultValue(null)]
-    public Polygon.Connector.CQGContinuum.WebAPI.ObtainDemoCredentialsResult obtain_demo_credentials_result
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.ObtainDemoCredentialsResult> _obtain_demo_credentials_result = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.ObtainDemoCredentialsResult>();
+    [global::ProtoBuf.ProtoMember(105, Name=@"obtain_demo_credentials_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.ObtainDemoCredentialsResult> obtain_demo_credentials_result
     {
       get { return _obtain_demo_credentials_result; }
-      set { _obtain_demo_credentials_result = value; }
     }
-    private Polygon.Connector.CQGContinuum.WebAPI.UserSessionStateResult _user_session_state_result = null;
-    [global::ProtoBuf.ProtoMember(106, IsRequired = false, Name=@"user_session_state_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
-    [global::System.ComponentModel.DefaultValue(null)]
-    public Polygon.Connector.CQGContinuum.WebAPI.UserSessionStateResult user_session_state_result
+  
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.UserSessionStateResult> _user_session_state_result = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.UserSessionStateResult>();
+    [global::ProtoBuf.ProtoMember(106, Name=@"user_session_state_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.UserSessionStateResult> user_session_state_result
     {
       get { return _user_session_state_result; }
-      set { _user_session_state_result = value; }
     }
+  
     private Polygon.Connector.CQGContinuum.WebAPI.Ping _ping = null;
     [global::ProtoBuf.ProtoMember(107, IsRequired = false, Name=@"ping", DataFormat = global::ProtoBuf.DataFormat.Default)]
     [global::System.ComponentModel.DefaultValue(null)]
@@ -350,6 +1037,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _time_bar_report; }
     }
   
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileReport> _volume_profile_report = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileReport>();
+    [global::ProtoBuf.ProtoMember(14, Name=@"volume_profile_report", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileReport> volume_profile_report
+    {
+      get { return _volume_profile_report; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<rules_1.RuleResult> _rule_result = new global::System.Collections.Generic.List<rules_1.RuleResult>();
+    [global::ProtoBuf.ProtoMember(15, Name=@"rule_result", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<rules_1.RuleResult> rule_result
+    {
+      get { return _rule_result; }
+    }
+  
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -357,8 +1058,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"RealTimeCollapsing")]
-  internal partial class RealTimeCollapsing : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RealTimeCollapsing")]
+  public partial class RealTimeCollapsing : global::ProtoBuf.IExtensible
   {
     public RealTimeCollapsing() {}
     
@@ -386,24 +1087,34 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Logon")]
-  internal partial class Logon : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Logon")]
+  public partial class Logon : global::ProtoBuf.IExtensible
   {
     public Logon() {}
     
-    private string _user_name;
-    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"user_name", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    private string _user_name = "";
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"user_name", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
     public string user_name
     {
       get { return _user_name; }
       set { _user_name = value; }
     }
-    private string _password;
-    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"password", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    private string _password = "";
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"password", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
     public string password
     {
       get { return _password; }
       set { _password = value; }
+    }
+    private string _access_token = "";
+    [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"access_token", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string access_token
+    {
+      get { return _access_token; }
+      set { _access_token = value; }
     }
     private string _one_time_password = "";
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"one_time_password", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -474,6 +1185,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _session_settings; }
     }
   
+    private uint _bandwidth = default(uint);
+    [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"bandwidth", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint bandwidth
+    {
+      get { return _bandwidth; }
+      set { _bandwidth = value; }
+    }
+    private string _dialect_id = "";
+    [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"dialect_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string dialect_id
+    {
+      get { return _dialect_id; }
+      set { _dialect_id = value; }
+    }
     [global::ProtoBuf.ProtoContract(Name=@"SessionSetting")]
     public enum SessionSetting
     {
@@ -492,8 +1219,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"LogonResult")]
-  internal partial class LogonResult : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LogonResult")]
+  public partial class LogonResult : global::ProtoBuf.IExtensible
   {
     public LogonResult() {}
     
@@ -557,6 +1284,13 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _user_id; }
       set { _user_id = value; }
     }
+    private long _server_time;
+    [global::ProtoBuf.ProtoMember(9, IsRequired = true, Name=@"server_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long server_time
+    {
+      get { return _server_time; }
+      set { _server_time = value; }
+    }
     [global::ProtoBuf.ProtoContract(Name=@"ResultCode")]
     public enum ResultCode
     {
@@ -580,7 +1314,10 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       REDIRECTED = 106,
             
       [global::ProtoBuf.ProtoEnum(Name=@"ROUTINE_ERROR", Value=107)]
-      ROUTINE_ERROR = 107
+      ROUTINE_ERROR = 107,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACCESS_TOKEN_EXPIRED", Value=108)]
+      ACCESS_TOKEN_EXPIRED = 108
     }
   
     private global::ProtoBuf.IExtension extensionObject;
@@ -590,8 +1327,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"LogonRoutineClient")]
-  internal partial class LogonRoutineClient : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LogonRoutineClient")]
+  public partial class LogonRoutineClient : global::ProtoBuf.IExtensible
   {
     public LogonRoutineClient() {}
     
@@ -633,8 +1370,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"LogonRoutineServer")]
-  internal partial class LogonRoutineServer : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LogonRoutineServer")]
+  public partial class LogonRoutineServer : global::ProtoBuf.IExtensible
   {
     public LogonRoutineServer() {}
     
@@ -668,8 +1405,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PasswordChangeRoutineClient")]
-  internal partial class PasswordChangeRoutineClient : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PasswordChangeRoutineClient")]
+  public partial class PasswordChangeRoutineClient : global::ProtoBuf.IExtensible
   {
     public PasswordChangeRoutineClient() {}
     
@@ -703,8 +1440,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PasswordChangeRoutineServer")]
-  internal partial class PasswordChangeRoutineServer : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PasswordChangeRoutineServer")]
+  public partial class PasswordChangeRoutineServer : global::ProtoBuf.IExtensible
   {
     public PasswordChangeRoutineServer() {}
     
@@ -730,8 +1467,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"AbortRoutine")]
-  internal partial class AbortRoutine : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"AbortRoutine")]
+  public partial class AbortRoutine : global::ProtoBuf.IExtensible
   {
     public AbortRoutine() {}
     
@@ -750,8 +1487,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"LogonInit")]
-  internal partial class LogonInit : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LogonInit")]
+  public partial class LogonInit : global::ProtoBuf.IExtensible
   {
     public LogonInit() {}
     
@@ -823,6 +1560,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _session_settings; }
     }
   
+    private uint _bandwidth = default(uint);
+    [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"bandwidth", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint bandwidth
+    {
+      get { return _bandwidth; }
+      set { _bandwidth = value; }
+    }
+    private string _dialect_id = "";
+    [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"dialect_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string dialect_id
+    {
+      get { return _dialect_id; }
+      set { _dialect_id = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -830,8 +1583,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PasswordRequest")]
-  internal partial class PasswordRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PasswordRequest")]
+  public partial class PasswordRequest : global::ProtoBuf.IExtensible
   {
     public PasswordRequest() {}
     
@@ -907,8 +1660,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PasswordResponse")]
-  internal partial class PasswordResponse : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PasswordResponse")]
+  public partial class PasswordResponse : global::ProtoBuf.IExtensible
   {
     public PasswordResponse() {}
     
@@ -940,8 +1693,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Encoding")]
-  internal partial class Encoding : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Encoding")]
+  public partial class Encoding : global::ProtoBuf.IExtensible
   {
     public Encoding() {}
     
@@ -973,8 +1726,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"EncodingParameter")]
-  internal partial class EncodingParameter : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"EncodingParameter")]
+  public partial class EncodingParameter : global::ProtoBuf.IExtensible
   {
     public EncodingParameter() {}
     
@@ -999,8 +1752,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"RestoreOrJoinSession")]
-  internal partial class RestoreOrJoinSession : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RestoreOrJoinSession")]
+  public partial class RestoreOrJoinSession : global::ProtoBuf.IExtensible
   {
     public RestoreOrJoinSession() {}
     
@@ -1051,6 +1804,14 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _protocol_version_major; }
       set { _protocol_version_major = value; }
     }
+    private uint _bandwidth = default(uint);
+    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"bandwidth", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint bandwidth
+    {
+      get { return _bandwidth; }
+      set { _bandwidth = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -1058,8 +1819,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"RestoreOrJoinSessionResult")]
-  internal partial class RestoreOrJoinSessionResult : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RestoreOrJoinSessionResult")]
+  public partial class RestoreOrJoinSessionResult : global::ProtoBuf.IExtensible
   {
     public RestoreOrJoinSessionResult() {}
     
@@ -1084,6 +1845,21 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
     {
       get { return _text_message; }
       set { _text_message = value; }
+    }
+    private long _server_time;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"server_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long server_time
+    {
+      get { return _server_time; }
+      set { _server_time = value; }
+    }
+    private string _dialect_id = "";
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"dialect_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string dialect_id
+    {
+      get { return _dialect_id; }
+      set { _dialect_id = value; }
     }
     [global::ProtoBuf.ProtoContract(Name=@"ResultCode")]
     public enum ResultCode
@@ -1112,8 +1888,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ConcurrentConnectionJoin")]
-  internal partial class ConcurrentConnectionJoin : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ConcurrentConnectionJoin")]
+  public partial class ConcurrentConnectionJoin : global::ProtoBuf.IExtensible
   {
     public ConcurrentConnectionJoin() {}
     
@@ -1131,8 +1907,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Logoff")]
-  internal partial class Logoff : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Logoff")]
+  public partial class Logoff : global::ProtoBuf.IExtensible
   {
     public Logoff() {}
     
@@ -1151,8 +1927,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"LoggedOff")]
-  internal partial class LoggedOff : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LoggedOff")]
+  public partial class LoggedOff : global::ProtoBuf.IExtensible
   {
     public LoggedOff() {}
     
@@ -1203,8 +1979,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PasswordChange")]
-  internal partial class PasswordChange : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PasswordChange")]
+  public partial class PasswordChange : global::ProtoBuf.IExtensible
   {
     public PasswordChange() {}
     
@@ -1229,8 +2005,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PasswordChangeResult")]
-  internal partial class PasswordChangeResult : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PasswordChangeResult")]
+  public partial class PasswordChangeResult : global::ProtoBuf.IExtensible
   {
     public PasswordChangeResult() {}
     
@@ -1270,8 +2046,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ObtainDemoCredentials")]
-  internal partial class ObtainDemoCredentials : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ObtainDemoCredentials")]
+  public partial class ObtainDemoCredentials : global::ProtoBuf.IExtensible
   {
     public ObtainDemoCredentials() {}
     
@@ -1318,8 +2094,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ObtainDemoCredentialsResult")]
-  internal partial class ObtainDemoCredentialsResult : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ObtainDemoCredentialsResult")]
+  public partial class ObtainDemoCredentialsResult : global::ProtoBuf.IExtensible
   {
     public ObtainDemoCredentialsResult() {}
     
@@ -1354,6 +2130,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _text_message; }
       set { _text_message = value; }
     }
+    private int _user_id = default(int);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"user_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int user_id
+    {
+      get { return _user_id; }
+      set { _user_id = value; }
+    }
+    private string _expiration_utc = "";
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"expiration_utc", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string expiration_utc
+    {
+      get { return _expiration_utc; }
+      set { _expiration_utc = value; }
+    }
     [global::ProtoBuf.ProtoContract(Name=@"ResultCode")]
     public enum ResultCode
     {
@@ -1372,8 +2164,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"UserMessage")]
-  internal partial class UserMessage : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"UserMessage")]
+  public partial class UserMessage : global::ProtoBuf.IExtensible
   {
     public UserMessage() {}
     
@@ -1438,8 +2230,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"UserSessionStateRequest")]
-  internal partial class UserSessionStateRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"UserSessionStateRequest")]
+  public partial class UserSessionStateRequest : global::ProtoBuf.IExtensible
   {
     public UserSessionStateRequest() {}
     
@@ -1457,8 +2249,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"UserSessionStateResult")]
-  internal partial class UserSessionStateResult : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"UserSessionStateResult")]
+  public partial class UserSessionStateResult : global::ProtoBuf.IExtensible
   {
     public UserSessionStateResult() {}
     
@@ -1516,8 +2308,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Ping")]
-  internal partial class Ping : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Ping")]
+  public partial class Ping : global::ProtoBuf.IExtensible
   {
     public Ping() {}
     
@@ -1543,8 +2335,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Pong")]
-  internal partial class Pong : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Pong")]
+  public partial class Pong : global::ProtoBuf.IExtensible
   {
     public Pong() {}
     
@@ -1577,8 +2369,250 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TickSizeByPrice")]
-  internal partial class TickSizeByPrice : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyDefinition")]
+  public partial class StrategyDefinition : global::ProtoBuf.IExtensible
+  {
+    public StrategyDefinition() {}
+    
+    private bool _aggregation = default(bool);
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"aggregation", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool aggregation
+    {
+      get { return _aggregation; }
+      set { _aggregation = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.ExchangeStrategy _exchange_strategy = null;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"exchange_strategy", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.ExchangeStrategy exchange_strategy
+    {
+      get { return _exchange_strategy; }
+      set { _exchange_strategy = value; }
+    }
+    private double _tick_size = default(double);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"tick_size", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double tick_size
+    {
+      get { return _tick_size; }
+      set { _tick_size = value; }
+    }
+    private double _price_offset = default(double);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"price_offset", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double price_offset
+    {
+      get { return _price_offset; }
+      set { _price_offset = value; }
+    }
+    private uint _round_leg_mode = default(uint);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"round_leg_mode", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint round_leg_mode
+    {
+      get { return _round_leg_mode; }
+      set { _round_leg_mode = value; }
+    }
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyNodeDefinition> _node_definition = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyNodeDefinition>();
+    [global::ProtoBuf.ProtoMember(7, Name=@"node_definition", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyNodeDefinition> node_definition
+    {
+      get { return _node_definition; }
+    }
+  
+    private string _user_description = "";
+    [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"user_description", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string user_description
+    {
+      get { return _user_description; }
+      set { _user_description = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"RoundLegMode")]
+    public enum RoundLegMode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DOWN", Value=1)]
+      DOWN = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"UP", Value=2)]
+      UP = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MATH", Value=3)]
+      MATH = 3
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ExchangeStrategy")]
+  public partial class ExchangeStrategy : global::ProtoBuf.IExtensible
+  {
+    public ExchangeStrategy() {}
+    
+    private string _exchange_strategy_type = "";
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"exchange_strategy_type", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string exchange_strategy_type
+    {
+      get { return _exchange_strategy_type; }
+      set { _exchange_strategy_type = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LegDefinition")]
+  public partial class LegDefinition : global::ProtoBuf.IExtensible
+  {
+    public LegDefinition() {}
+    
+    private uint _contract_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"contract_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint contract_id
+    {
+      get { return _contract_id; }
+      set { _contract_id = value; }
+    }
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private double _qty_ratio;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"qty_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public double qty_ratio
+    {
+      get { return _qty_ratio; }
+      set { _qty_ratio = value; }
+    }
+    private double _price_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"price_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double price_ratio
+    {
+      get { return _price_ratio; }
+      set { _price_ratio = value; }
+    }
+    private double _price_offset = default(double);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"price_offset", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double price_offset
+    {
+      get { return _price_offset; }
+      set { _price_offset = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"NestedStrategy")]
+  public partial class NestedStrategy : global::ProtoBuf.IExtensible
+  {
+    public NestedStrategy() {}
+    
+    private Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinition _definition;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"definition", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinition definition
+    {
+      get { return _definition; }
+      set { _definition = value; }
+    }
+    private double _qty_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"qty_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double qty_ratio
+    {
+      get { return _qty_ratio; }
+      set { _qty_ratio = value; }
+    }
+    private double _price_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"price_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double price_ratio
+    {
+      get { return _price_ratio; }
+      set { _price_ratio = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyNodeDefinition")]
+  public partial class StrategyNodeDefinition : global::ProtoBuf.IExtensible
+  {
+    public StrategyNodeDefinition() {}
+    
+    private uint _node_operation = default(uint);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"node_operation", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint node_operation
+    {
+      get { return _node_operation; }
+      set { _node_operation = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.LegDefinition _leg = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"leg", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.LegDefinition leg
+    {
+      get { return _leg; }
+      set { _leg = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.NestedStrategy _nested_strategy = null;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"nested_strategy", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.NestedStrategy nested_strategy
+    {
+      get { return _nested_strategy; }
+      set { _nested_strategy = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"NodeOperation")]
+    public enum NodeOperation
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SUM", Value=1)]
+      SUM = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MUL", Value=2)]
+      MUL = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DIV", Value=3)]
+      DIV = 3
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TickSizeByPrice")]
+  public partial class TickSizeByPrice : global::ProtoBuf.IExtensible
   {
     public TickSizeByPrice() {}
     
@@ -1610,8 +2644,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TickSizeByDateTillExpiration")]
-  internal partial class TickSizeByDateTillExpiration : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TickSizeByDateTillExpiration")]
+  public partial class TickSizeByDateTillExpiration : global::ProtoBuf.IExtensible
   {
     public TickSizeByDateTillExpiration() {}
     
@@ -1643,8 +2677,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ContractMetadata")]
-  internal partial class ContractMetadata : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ContractMetadata")]
+  public partial class ContractMetadata : global::ProtoBuf.IExtensible
   {
     public ContractMetadata() {}
     
@@ -1840,6 +2874,37 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _strike_price; }
       set { _strike_price = value; }
     }
+    private string _dialect_id = "";
+    [global::ProtoBuf.ProtoMember(28, IsRequired = false, Name=@"dialect_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string dialect_id
+    {
+      get { return _dialect_id; }
+      set { _dialect_id = value; }
+    }
+    private string _country_code;
+    [global::ProtoBuf.ProtoMember(29, IsRequired = true, Name=@"country_code", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string country_code
+    {
+      get { return _country_code; }
+      set { _country_code = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinition _strategy_definition = null;
+    [global::ProtoBuf.ProtoMember(30, IsRequired = false, Name=@"strategy_definition", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinition strategy_definition
+    {
+      get { return _strategy_definition; }
+      set { _strategy_definition = value; }
+    }
+    private string _contract_size = "";
+    [global::ProtoBuf.ProtoMember(31, IsRequired = false, Name=@"contract_size", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string contract_size
+    {
+      get { return _contract_size; }
+      set { _contract_size = value; }
+    }
     [global::ProtoBuf.ProtoContract(Name=@"MarginStyle")]
     public enum MarginStyle
     {
@@ -1858,8 +2923,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"InformationRequest")]
-  internal partial class InformationRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"InformationRequest")]
+  public partial class InformationRequest : global::ProtoBuf.IExtensible
   {
     public InformationRequest() {}
     
@@ -1950,6 +3015,30 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _at_the_money_strike_request; }
       set { _at_the_money_strike_request = value; }
     }
+    private Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinitionRequest _strategy_definition_request = null;
+    [global::ProtoBuf.ProtoMember(17, IsRequired = false, Name=@"strategy_definition_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinitionRequest strategy_definition_request
+    {
+      get { return _strategy_definition_request; }
+      set { _strategy_definition_request = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SessionTimeRangeRequest _session_timerange_request = null;
+    [global::ProtoBuf.ProtoMember(18, IsRequired = false, Name=@"session_timerange_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SessionTimeRangeRequest session_timerange_request
+    {
+      get { return _session_timerange_request; }
+      set { _session_timerange_request = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.TradingDayTimeRangeRequest _trading_day_timerange_request = null;
+    [global::ProtoBuf.ProtoMember(19, IsRequired = false, Name=@"trading_day_timerange_request", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.TradingDayTimeRangeRequest trading_day_timerange_request
+    {
+      get { return _trading_day_timerange_request; }
+      set { _trading_day_timerange_request = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -1957,8 +3046,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"InformationReport")]
-  internal partial class InformationReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"InformationReport")]
+  public partial class InformationReport : global::ProtoBuf.IExtensible
   {
     public InformationReport() {}
     
@@ -2064,6 +3153,30 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _at_the_money_strike_report; }
       set { _at_the_money_strike_report = value; }
     }
+    private Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinitionReport _strategy_definition_report = null;
+    [global::ProtoBuf.ProtoMember(19, IsRequired = false, Name=@"strategy_definition_report", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinitionReport strategy_definition_report
+    {
+      get { return _strategy_definition_report; }
+      set { _strategy_definition_report = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SessionTimeRangeReport _session_timerange_report = null;
+    [global::ProtoBuf.ProtoMember(20, IsRequired = false, Name=@"session_timerange_report", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SessionTimeRangeReport session_timerange_report
+    {
+      get { return _session_timerange_report; }
+      set { _session_timerange_report = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.TradingDayTimeRangeReport _trading_day_timerange_report = null;
+    [global::ProtoBuf.ProtoMember(21, IsRequired = false, Name=@"trading_day_timerange_report", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.TradingDayTimeRangeReport trading_day_timerange_report
+    {
+      get { return _trading_day_timerange_report; }
+      set { _trading_day_timerange_report = value; }
+    }
     [global::ProtoBuf.ProtoContract(Name=@"StatusCode")]
     public enum StatusCode
     {
@@ -2100,8 +3213,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"AccountsRequest")]
-  internal partial class AccountsRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"AccountsRequest")]
+  public partial class AccountsRequest : global::ProtoBuf.IExtensible
   {
     public AccountsRequest() {}
     
@@ -2112,8 +3225,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"AccountsReport")]
-  internal partial class AccountsReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"AccountsReport")]
+  public partial class AccountsReport : global::ProtoBuf.IExtensible
   {
     public AccountsReport() {}
     
@@ -2131,8 +3244,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Brokerage")]
-  internal partial class Brokerage : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Brokerage")]
+  public partial class Brokerage : global::ProtoBuf.IExtensible
   {
     public Brokerage() {}
     
@@ -2164,8 +3277,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SalesSeries")]
-  internal partial class SalesSeries : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SalesSeries")]
+  public partial class SalesSeries : global::ProtoBuf.IExtensible
   {
     public SalesSeries() {}
     
@@ -2197,8 +3310,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Account")]
-  internal partial class Account : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Account")]
+  public partial class Account : global::ProtoBuf.IExtensible
   {
     public Account() {}
     
@@ -2246,6 +3359,14 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _is_unauthorized; }
       set { _is_unauthorized = value; }
     }
+    private long _account_cluster_id = default(long);
+    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"account_cluster_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long account_cluster_id
+    {
+      get { return _account_cluster_id; }
+      set { _account_cluster_id = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -2253,8 +3374,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SymbolResolutionRequest")]
-  internal partial class SymbolResolutionRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SymbolResolutionRequest")]
+  public partial class SymbolResolutionRequest : global::ProtoBuf.IExtensible
   {
     public SymbolResolutionRequest() {}
     
@@ -2272,8 +3393,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SymbolResolutionReport")]
-  internal partial class SymbolResolutionReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SymbolResolutionReport")]
+  public partial class SymbolResolutionReport : global::ProtoBuf.IExtensible
   {
     public SymbolResolutionReport() {}
     
@@ -2299,8 +3420,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"LastStatementBalancesRequest")]
-  internal partial class LastStatementBalancesRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LastStatementBalancesRequest")]
+  public partial class LastStatementBalancesRequest : global::ProtoBuf.IExtensible
   {
     public LastStatementBalancesRequest() {}
     
@@ -2311,8 +3432,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"LastStatementBalancesReport")]
-  internal partial class LastStatementBalancesReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LastStatementBalancesReport")]
+  public partial class LastStatementBalancesReport : global::ProtoBuf.IExtensible
   {
     public LastStatementBalancesReport() {}
     
@@ -2330,8 +3451,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Balance")]
-  internal partial class Balance : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Balance")]
+  public partial class Balance : global::ProtoBuf.IExtensible
   {
     public Balance() {}
     
@@ -2426,8 +3547,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CurrencyRatesRequest")]
-  internal partial class CurrencyRatesRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CurrencyRatesRequest")]
+  public partial class CurrencyRatesRequest : global::ProtoBuf.IExtensible
   {
     public CurrencyRatesRequest() {}
     
@@ -2438,8 +3559,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CurrencyRatesReport")]
-  internal partial class CurrencyRatesReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CurrencyRatesReport")]
+  public partial class CurrencyRatesReport : global::ProtoBuf.IExtensible
   {
     public CurrencyRatesReport() {}
     
@@ -2457,8 +3578,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"BrokerageCurrencyRates")]
-  internal partial class BrokerageCurrencyRates : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"BrokerageCurrencyRates")]
+  public partial class BrokerageCurrencyRates : global::ProtoBuf.IExtensible
   {
     public BrokerageCurrencyRates() {}
     
@@ -2497,8 +3618,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CurrencyRate")]
-  internal partial class CurrencyRate : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CurrencyRate")]
+  public partial class CurrencyRate : global::ProtoBuf.IExtensible
   {
     public CurrencyRate() {}
     
@@ -2523,8 +3644,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SessionInformationRequest")]
-  internal partial class SessionInformationRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionInformationRequest")]
+  public partial class SessionInformationRequest : global::ProtoBuf.IExtensible
   {
     public SessionInformationRequest() {}
     
@@ -2558,8 +3679,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SessionInformationReport")]
-  internal partial class SessionInformationReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionInformationReport")]
+  public partial class SessionInformationReport : global::ProtoBuf.IExtensible
   {
     public SessionInformationReport() {}
     
@@ -2584,8 +3705,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SessionSegment")]
-  internal partial class SessionSegment : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionSegment")]
+  public partial class SessionSegment : global::ProtoBuf.IExtensible
   {
     public SessionSegment() {}
     
@@ -2648,8 +3769,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SessionSchedule")]
-  internal partial class SessionSchedule : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionSchedule")]
+  public partial class SessionSchedule : global::ProtoBuf.IExtensible
   {
     public SessionSchedule() {}
     
@@ -2689,8 +3810,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TradingDay")]
-  internal partial class TradingDay : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TradingDay")]
+  public partial class TradingDay : global::ProtoBuf.IExtensible
   {
     public TradingDay() {}
     
@@ -2716,8 +3837,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SessionDay")]
-  internal partial class SessionDay : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionDay")]
+  public partial class SessionDay : global::ProtoBuf.IExtensible
   {
     public SessionDay() {}
     
@@ -2767,8 +3888,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SessionHoliday")]
-  internal partial class SessionHoliday : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionHoliday")]
+  public partial class SessionHoliday : global::ProtoBuf.IExtensible
   {
     public SessionHoliday() {}
     
@@ -2793,8 +3914,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SymbolsByUnderlyingRequest")]
-  internal partial class SymbolsByUnderlyingRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SymbolsByUnderlyingRequest")]
+  public partial class SymbolsByUnderlyingRequest : global::ProtoBuf.IExtensible
   {
     public SymbolsByUnderlyingRequest() {}
     
@@ -2812,8 +3933,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"SymbolsByUnderlyingReport")]
-  internal partial class SymbolsByUnderlyingReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SymbolsByUnderlyingReport")]
+  public partial class SymbolsByUnderlyingReport : global::ProtoBuf.IExtensible
   {
     public SymbolsByUnderlyingReport() {}
     
@@ -2831,8 +3952,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ChildSymbolsRequest")]
-  internal partial class ChildSymbolsRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ChildSymbolsRequest")]
+  public partial class ChildSymbolsRequest : global::ProtoBuf.IExtensible
   {
     public ChildSymbolsRequest() {}
     
@@ -2850,8 +3971,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ChildSymbolsReport")]
-  internal partial class ChildSymbolsReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ChildSymbolsReport")]
+  public partial class ChildSymbolsReport : global::ProtoBuf.IExtensible
   {
     public ChildSymbolsReport() {}
     
@@ -2869,8 +3990,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"AtTheMoneyStrikeRequest")]
-  internal partial class AtTheMoneyStrikeRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"AtTheMoneyStrikeRequest")]
+  public partial class AtTheMoneyStrikeRequest : global::ProtoBuf.IExtensible
   {
     public AtTheMoneyStrikeRequest() {}
     
@@ -2888,8 +4009,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"AtTheMoneyStrikeReport")]
-  internal partial class AtTheMoneyStrikeReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"AtTheMoneyStrikeReport")]
+  public partial class AtTheMoneyStrikeReport : global::ProtoBuf.IExtensible
   {
     public AtTheMoneyStrikeReport() {}
     
@@ -2908,8 +4029,245 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Symbol")]
-  internal partial class Symbol : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionTimeRangeRequest")]
+  public partial class SessionTimeRangeRequest : global::ProtoBuf.IExtensible
+  {
+    public SessionTimeRangeRequest() {}
+    
+    private int _session_info_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"session_info_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int session_info_id
+    {
+      get { return _session_info_id; }
+      set { _session_info_id = value; }
+    }
+    private long _from_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"from_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long from_utc_time
+    {
+      get { return _from_utc_time; }
+      set { _from_utc_time = value; }
+    }
+    private long _to_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"to_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long to_utc_time
+    {
+      get { return _to_utc_time; }
+      set { _to_utc_time = value; }
+    }
+    private uint _count = default(uint);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"count", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint count
+    {
+      get { return _count; }
+      set { _count = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionTimeRangeReport")]
+  public partial class SessionTimeRangeReport : global::ProtoBuf.IExtensible
+  {
+    public SessionTimeRangeReport() {}
+    
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.SessionTimeRange> _session_time_ranges = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.SessionTimeRange>();
+    [global::ProtoBuf.ProtoMember(1, Name=@"session_time_ranges", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.SessionTimeRange> session_time_ranges
+    {
+      get { return _session_time_ranges; }
+    }
+  
+    private bool _truncated = default(bool);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"truncated", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool truncated
+    {
+      get { return _truncated; }
+      set { _truncated = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SessionTimeRange")]
+  public partial class SessionTimeRange : global::ProtoBuf.IExtensible
+  {
+    public SessionTimeRange() {}
+    
+    private long _pre_open_utc_time;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"pre_open_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long pre_open_utc_time
+    {
+      get { return _pre_open_utc_time; }
+      set { _pre_open_utc_time = value; }
+    }
+    private long _open_utc_time;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"open_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long open_utc_time
+    {
+      get { return _open_utc_time; }
+      set { _open_utc_time = value; }
+    }
+    private long _close_utc_time;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"close_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long close_utc_time
+    {
+      get { return _close_utc_time; }
+      set { _close_utc_time = value; }
+    }
+    private long _post_close_utc_time;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"post_close_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long post_close_utc_time
+    {
+      get { return _post_close_utc_time; }
+      set { _post_close_utc_time = value; }
+    }
+    private long _trade_date;
+    [global::ProtoBuf.ProtoMember(5, IsRequired = true, Name=@"trade_date", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long trade_date
+    {
+      get { return _trade_date; }
+      set { _trade_date = value; }
+    }
+    private string _session_name;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = true, Name=@"session_name", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string session_name
+    {
+      get { return _session_name; }
+      set { _session_name = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TradingDayTimeRangeRequest")]
+  public partial class TradingDayTimeRangeRequest : global::ProtoBuf.IExtensible
+  {
+    public TradingDayTimeRangeRequest() {}
+    
+    private int _session_info_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"session_info_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int session_info_id
+    {
+      get { return _session_info_id; }
+      set { _session_info_id = value; }
+    }
+    private bool _include_holidays = default(bool);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"include_holidays", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool include_holidays
+    {
+      get { return _include_holidays; }
+      set { _include_holidays = value; }
+    }
+    private long _from_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"from_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long from_utc_time
+    {
+      get { return _from_utc_time; }
+      set { _from_utc_time = value; }
+    }
+    private long _to_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"to_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long to_utc_time
+    {
+      get { return _to_utc_time; }
+      set { _to_utc_time = value; }
+    }
+    private uint _count = default(uint);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"count", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint count
+    {
+      get { return _count; }
+      set { _count = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TradingDayTimeRangeReport")]
+  public partial class TradingDayTimeRangeReport : global::ProtoBuf.IExtensible
+  {
+    public TradingDayTimeRangeReport() {}
+    
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.TradingDayTimeRange> _trading_day_time_ranges = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.TradingDayTimeRange>();
+    [global::ProtoBuf.ProtoMember(1, Name=@"trading_day_time_ranges", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.TradingDayTimeRange> trading_day_time_ranges
+    {
+      get { return _trading_day_time_ranges; }
+    }
+  
+    private bool _truncated = default(bool);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"truncated", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool truncated
+    {
+      get { return _truncated; }
+      set { _truncated = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TradingDayTimeRange")]
+  public partial class TradingDayTimeRange : global::ProtoBuf.IExtensible
+  {
+    public TradingDayTimeRange() {}
+    
+    private long _trade_date;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"trade_date", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long trade_date
+    {
+      get { return _trade_date; }
+      set { _trade_date = value; }
+    }
+    private long _start_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"start_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long start_utc_time
+    {
+      get { return _start_utc_time; }
+      set { _start_utc_time = value; }
+    }
+    private long _end_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"end_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long end_utc_time
+    {
+      get { return _end_utc_time; }
+      set { _end_utc_time = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Symbol")]
+  public partial class Symbol : global::ProtoBuf.IExtensible
   {
     public Symbol() {}
     
@@ -2996,8 +4354,46 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TradeSubscription")]
-  internal partial class TradeSubscription : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyDefinitionRequest")]
+  public partial class StrategyDefinitionRequest : global::ProtoBuf.IExtensible
+  {
+    public StrategyDefinitionRequest() {}
+    
+    private Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinition _strategy_definition;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"strategy_definition", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public Polygon.Connector.CQGContinuum.WebAPI.StrategyDefinition strategy_definition
+    {
+      get { return _strategy_definition; }
+      set { _strategy_definition = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyDefinitionReport")]
+  public partial class StrategyDefinitionReport : global::ProtoBuf.IExtensible
+  {
+    public StrategyDefinitionReport() {}
+    
+    private Polygon.Connector.CQGContinuum.WebAPI.ContractMetadata _contract_metadata;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"contract_metadata", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public Polygon.Connector.CQGContinuum.WebAPI.ContractMetadata contract_metadata
+    {
+      get { return _contract_metadata; }
+      set { _contract_metadata = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TradeSubscription")]
+  public partial class TradeSubscription : global::ProtoBuf.IExtensible
   {
     public TradeSubscription() {}
     
@@ -3055,12 +4451,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       set { _subscribe = value; }
     }
     private long _last_order_update_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"last_order_update_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"last_order_update_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long last_order_update_utc_time
     {
       get { return _last_order_update_utc_time; }
       set { _last_order_update_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _last_order_update_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"last_order_update_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp last_order_update_utc_timestamp
+    {
+      get { return _last_order_update_utc_timestamp; }
+      set { _last_order_update_utc_timestamp = value; }
     }
     private bool _skip_orders_snapshot = default(bool);
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"skip_orders_snapshot", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -3154,8 +4558,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TradeSubscriptionStatus")]
-  internal partial class TradeSubscriptionStatus : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TradeSubscriptionStatus")]
+  public partial class TradeSubscriptionStatus : global::ProtoBuf.IExtensible
   {
     public TradeSubscriptionStatus() {}
     
@@ -3195,7 +4599,10 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       FAILURE = 101,
             
       [global::ProtoBuf.ProtoEnum(Name=@"REQUEST_LIMIT_VIOLATION", Value=102)]
-      REQUEST_LIMIT_VIOLATION = 102
+      REQUEST_LIMIT_VIOLATION = 102,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"INVALID_PUBLICATION_ID", Value=103)]
+      INVALID_PUBLICATION_ID = 103
     }
   
     private global::ProtoBuf.IExtension extensionObject;
@@ -3205,8 +4612,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TradeSnapshotCompletion")]
-  internal partial class TradeSnapshotCompletion : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TradeSnapshotCompletion")]
+  public partial class TradeSnapshotCompletion : global::ProtoBuf.IExtensible
   {
     public TradeSnapshotCompletion() {}
     
@@ -3231,8 +4638,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"OrderRequest")]
-  internal partial class OrderRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"OrderRequest")]
+  public partial class OrderRequest : global::ProtoBuf.IExtensible
   {
     public OrderRequest() {}
     
@@ -3267,6 +4674,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _cancel_order; }
       set { _cancel_order = value; }
     }
+    private Polygon.Connector.CQGContinuum.WebAPI.CancelAllOrders _cancel_all_orders = null;
+    [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"cancel_all_orders", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.CancelAllOrders cancel_all_orders
+    {
+      get { return _cancel_all_orders; }
+      set { _cancel_all_orders = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SuspendOrder _suspend_order = null;
+    [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"suspend_order", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SuspendOrder suspend_order
+    {
+      get { return _suspend_order; }
+      set { _suspend_order = value; }
+    }
     private Polygon.Connector.CQGContinuum.WebAPI.ActivateOrder _activate_order = null;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"activate_order", DataFormat = global::ProtoBuf.DataFormat.Default)]
     [global::System.ComponentModel.DefaultValue(null)]
@@ -3283,14 +4706,6 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _modify_user_attributes; }
       set { _modify_user_attributes = value; }
     }
-    private string _on_behalf_of_user = "";
-    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"on_behalf_of_user", DataFormat = global::ProtoBuf.DataFormat.Default)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string on_behalf_of_user
-    {
-      get { return _on_behalf_of_user; }
-      set { _on_behalf_of_user = value; }
-    }
     private Polygon.Connector.CQGContinuum.WebAPI.NewCompoundOrder _new_compound_order = null;
     [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"new_compound_order", DataFormat = global::ProtoBuf.DataFormat.Default)]
     [global::System.ComponentModel.DefaultValue(null)]
@@ -3298,6 +4713,38 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
     {
       get { return _new_compound_order; }
       set { _new_compound_order = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SyntheticLiquidate _synthetic_liquidate = null;
+    [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"synthetic_liquidate", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SyntheticLiquidate synthetic_liquidate
+    {
+      get { return _synthetic_liquidate; }
+      set { _synthetic_liquidate = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SyntheticScratch _synthetic_scratch = null;
+    [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"synthetic_scratch", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SyntheticScratch synthetic_scratch
+    {
+      get { return _synthetic_scratch; }
+      set { _synthetic_scratch = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.GoMarket _go_market = null;
+    [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"go_market", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.GoMarket go_market
+    {
+      get { return _go_market; }
+      set { _go_market = value; }
+    }
+    private string _on_behalf_of_user = "";
+    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"on_behalf_of_user", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string on_behalf_of_user
+    {
+      get { return _on_behalf_of_user; }
+      set { _on_behalf_of_user = value; }
     }
     private uint _client_regulatory_algorithm_id = default(uint);
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"client_regulatory_algorithm_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -3307,6 +4754,30 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _client_regulatory_algorithm_id; }
       set { _client_regulatory_algorithm_id = value; }
     }
+    private string _mifid_algorithm_id = "";
+    [global::ProtoBuf.ProtoMember(15, IsRequired = false, Name=@"mifid_algorithm_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string mifid_algorithm_id
+    {
+      get { return _mifid_algorithm_id; }
+      set { _mifid_algorithm_id = value; }
+    }
+    private uint _mifid_algorithm_id_type = default(uint);
+    [global::ProtoBuf.ProtoMember(16, IsRequired = false, Name=@"mifid_algorithm_id_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint mifid_algorithm_id_type
+    {
+      get { return _mifid_algorithm_id_type; }
+      set { _mifid_algorithm_id_type = value; }
+    }
+    private bool _override_execution_within_firm_with_nore = (bool)false;
+    [global::ProtoBuf.ProtoMember(17, IsRequired = false, Name=@"override_execution_within_firm_with_nore", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue((bool)false)]
+    public bool override_execution_within_firm_with_nore
+    {
+      get { return _override_execution_within_firm_with_nore; }
+      set { _override_execution_within_firm_with_nore = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -3314,8 +4785,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"OrderRequestReject")]
-  internal partial class OrderRequestReject : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"OrderRequestReject")]
+  public partial class OrderRequestReject : global::ProtoBuf.IExtensible
   {
     public OrderRequestReject() {}
     
@@ -3348,8 +4819,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"NewOrder")]
-  internal partial class NewOrder : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"NewOrder")]
+  public partial class NewOrder : global::ProtoBuf.IExtensible
   {
     public NewOrder() {}
     
@@ -3375,8 +4846,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Order")]
-  internal partial class Order : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Order")]
+  public partial class Order : global::ProtoBuf.IExtensible
   {
     public Order() {}
     
@@ -3387,12 +4858,21 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _account_id; }
       set { _account_id = value; }
     }
-    private long _when_utc_time;
-    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long when_utc_time
     {
       get { return _when_utc_time; }
       set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(27, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
     }
     private uint _contract_id;
     [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"contract_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -3444,18 +4924,18 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _side; }
       set { _side = value; }
     }
-    private int _limit_price = default(int);
+    private long _limit_price = default(long);
     [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"limit_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int limit_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long limit_price
     {
       get { return _limit_price; }
       set { _limit_price = value; }
     }
-    private int _stop_price = default(int);
+    private long _stop_price = default(long);
     [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"stop_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int stop_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long stop_price
     {
       get { return _stop_price; }
       set { _stop_price = value; }
@@ -3531,20 +5011,36 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       set { _trigger_qty = value; }
     }
     private long _activation_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(21, IsRequired = false, Name=@"activation_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(21, IsRequired = false, Name=@"activation_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long activation_utc_time
     {
       get { return _activation_utc_time; }
       set { _activation_utc_time = value; }
     }
+    private google.protobuf.Timestamp _activation_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(28, IsRequired = false, Name=@"activation_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp activation_utc_timestamp
+    {
+      get { return _activation_utc_timestamp; }
+      set { _activation_utc_timestamp = value; }
+    }
     private long _suspension_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(22, IsRequired = false, Name=@"suspension_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(22, IsRequired = false, Name=@"suspension_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long suspension_utc_time
     {
       get { return _suspension_utc_time; }
       set { _suspension_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _suspension_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(29, IsRequired = false, Name=@"suspension_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp suspension_utc_timestamp
+    {
+      get { return _suspension_utc_timestamp; }
+      set { _suspension_utc_timestamp = value; }
     }
     private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.UserAttribute> _user_attribute = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.UserAttribute>();
     [global::ProtoBuf.ProtoMember(23, Name=@"user_attribute", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -3554,12 +5050,36 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
     }
   
     private long _good_thru_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(24, IsRequired = false, Name=@"good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(24, IsRequired = false, Name=@"good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long good_thru_utc_time
     {
       get { return _good_thru_utc_time; }
       set { _good_thru_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _good_thru_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(30, IsRequired = false, Name=@"good_thru_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp good_thru_utc_timestamp
+    {
+      get { return _good_thru_utc_timestamp; }
+      set { _good_thru_utc_timestamp = value; }
+    }
+    private bool _is_user_attribute_checked = (bool)true;
+    [global::ProtoBuf.ProtoMember(25, IsRequired = false, Name=@"is_user_attribute_checked", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue((bool)true)]
+    public bool is_user_attribute_checked
+    {
+      get { return _is_user_attribute_checked; }
+      set { _is_user_attribute_checked = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.StrategyTradingParameters _strategy_trading_parameters = null;
+    [global::ProtoBuf.ProtoMember(26, IsRequired = false, Name=@"strategy_trading_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.StrategyTradingParameters strategy_trading_parameters
+    {
+      get { return _strategy_trading_parameters; }
+      set { _strategy_trading_parameters = value; }
     }
     [global::ProtoBuf.ProtoContract(Name=@"Side")]
     public enum Side
@@ -3665,8 +5185,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"UserAttribute")]
-  internal partial class UserAttribute : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"UserAttribute")]
+  public partial class UserAttribute : global::ProtoBuf.IExtensible
   {
     public UserAttribute() {}
     
@@ -3700,8 +5220,52 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ModifyOrder")]
-  internal partial class ModifyOrder : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SyntheticStrategyProperties")]
+  public partial class SyntheticStrategyProperties : global::ProtoBuf.IExtensible
+  {
+    public SyntheticStrategyProperties() {}
+    
+    private Polygon.Connector.CQGContinuum.WebAPI.StrategyTradingParameters _strategy_trading_parameters = null;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"strategy_trading_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.StrategyTradingParameters strategy_trading_parameters
+    {
+      get { return _strategy_trading_parameters; }
+      set { _strategy_trading_parameters = value; }
+    }
+    private string _origin_order_id = "";
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"origin_order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string origin_order_id
+    {
+      get { return _origin_order_id; }
+      set { _origin_order_id = value; }
+    }
+    private string _root_order_id = "";
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"root_order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string root_order_id
+    {
+      get { return _root_order_id; }
+      set { _root_order_id = value; }
+    }
+    private uint _node_index = default(uint);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ModifyOrder")]
+  public partial class ModifyOrder : global::ProtoBuf.IExtensible
   {
     public ModifyOrder() {}
     
@@ -3733,12 +5297,21 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _cl_order_id; }
       set { _cl_order_id = value; }
     }
-    private long _when_utc_time;
-    [global::ProtoBuf.ProtoMember(5, IsRequired = true, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long when_utc_time
     {
       get { return _when_utc_time; }
       set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(18, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
     }
     private uint _qty = default(uint);
     [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -3764,29 +5337,37 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _min_visible_qty; }
       set { _min_visible_qty = value; }
     }
-    private int _limit_price = default(int);
+    private long _limit_price = default(long);
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"limit_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int limit_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long limit_price
     {
       get { return _limit_price; }
       set { _limit_price = value; }
     }
-    private int _stop_price = default(int);
+    private long _stop_price = default(long);
     [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"stop_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int stop_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long stop_price
     {
       get { return _stop_price; }
       set { _stop_price = value; }
     }
     private long _activation_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"activation_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"activation_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long activation_utc_time
     {
       get { return _activation_utc_time; }
       set { _activation_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _activation_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(19, IsRequired = false, Name=@"activation_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp activation_utc_timestamp
+    {
+      get { return _activation_utc_timestamp; }
+      set { _activation_utc_timestamp = value; }
     }
     private bool _remove_activation_time = default(bool);
     [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"remove_activation_time", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -3797,12 +5378,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       set { _remove_activation_time = value; }
     }
     private long _suspension_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"suspension_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"suspension_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long suspension_utc_time
     {
       get { return _suspension_utc_time; }
       set { _suspension_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _suspension_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(20, IsRequired = false, Name=@"suspension_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp suspension_utc_timestamp
+    {
+      get { return _suspension_utc_timestamp; }
+      set { _suspension_utc_timestamp = value; }
     }
     private bool _remove_suspension_utc_time = default(bool);
     [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"remove_suspension_utc_time", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -3829,12 +5418,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       set { _good_thru_date = value; }
     }
     private long _good_thru_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(17, IsRequired = false, Name=@"good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(17, IsRequired = false, Name=@"good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long good_thru_utc_time
     {
       get { return _good_thru_utc_time; }
       set { _good_thru_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _good_thru_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(21, IsRequired = false, Name=@"good_thru_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp good_thru_utc_timestamp
+    {
+      get { return _good_thru_utc_timestamp; }
+      set { _good_thru_utc_timestamp = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -3843,8 +5440,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CancelOrder")]
-  internal partial class CancelOrder : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CancelOrder")]
+  public partial class CancelOrder : global::ProtoBuf.IExtensible
   {
     public CancelOrder() {}
     
@@ -3876,12 +5473,21 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _cl_order_id; }
       set { _cl_order_id = value; }
     }
-    private long _when_utc_time;
-    [global::ProtoBuf.ProtoMember(5, IsRequired = true, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long when_utc_time
     {
       get { return _when_utc_time; }
       set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -3890,8 +5496,110 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ActivateOrder")]
-  internal partial class ActivateOrder : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"AccountOrderFilter")]
+  public partial class AccountOrderFilter : global::ProtoBuf.IExtensible
+  {
+    public AccountOrderFilter() {}
+    
+    private int _account_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int account_id
+    {
+      get { return _account_id; }
+      set { _account_id = value; }
+    }
+    private bool _mine = (bool)true;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"mine", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue((bool)true)]
+    public bool mine
+    {
+      get { return _mine; }
+      set { _mine = value; }
+    }
+    private bool _suspended = (bool)false;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"suspended", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue((bool)false)]
+    public bool suspended
+    {
+      get { return _suspended; }
+      set { _suspended = value; }
+    }
+    private uint _side = default(uint);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"side", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint side
+    {
+      get { return _side; }
+      set { _side = value; }
+    }
+    private uint _contract_id = default(uint);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"contract_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint contract_id
+    {
+      get { return _contract_id; }
+      set { _contract_id = value; }
+    }
+    private bool _current_day_only = (bool)false;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"current_day_only", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue((bool)false)]
+    public bool current_day_only
+    {
+      get { return _current_day_only; }
+      set { _current_day_only = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CancelAllOrders")]
+  public partial class CancelAllOrders : global::ProtoBuf.IExtensible
+  {
+    public CancelAllOrders() {}
+    
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long when_utc_time
+    {
+      get { return _when_utc_time; }
+      set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
+    }
+    private string _cl_order_id = "";
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"cl_order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string cl_order_id
+    {
+      get { return _cl_order_id; }
+      set { _cl_order_id = value; }
+    }
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.AccountOrderFilter> _account_order_filter = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.AccountOrderFilter>();
+    [global::ProtoBuf.ProtoMember(3, Name=@"account_order_filter", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.AccountOrderFilter> account_order_filter
+    {
+      get { return _account_order_filter; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ActivateOrder")]
+  public partial class ActivateOrder : global::ProtoBuf.IExtensible
   {
     public ActivateOrder() {}
     
@@ -3923,12 +5631,21 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _cl_order_id; }
       set { _cl_order_id = value; }
     }
-    private long _when_utc_time;
-    [global::ProtoBuf.ProtoMember(5, IsRequired = true, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long when_utc_time
     {
       get { return _when_utc_time; }
       set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -3937,8 +5654,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ModifyUserAttributes")]
-  internal partial class ModifyUserAttributes : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ModifyUserAttributes")]
+  public partial class ModifyUserAttributes : global::ProtoBuf.IExtensible
   {
     public ModifyUserAttributes() {}
     
@@ -3963,6 +5680,14 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _user_attribute; }
     }
   
+    private bool _is_checked = default(bool);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"is_checked", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool is_checked
+    {
+      get { return _is_checked; }
+      set { _is_checked = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -3970,8 +5695,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"NewCompoundOrder")]
-  internal partial class NewCompoundOrder : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"NewCompoundOrder")]
+  public partial class NewCompoundOrder : global::ProtoBuf.IExtensible
   {
     public NewCompoundOrder() {}
     
@@ -3997,8 +5722,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CompoundOrder")]
-  internal partial class CompoundOrder : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CompoundOrder")]
+  public partial class CompoundOrder : global::ProtoBuf.IExtensible
   {
     public CompoundOrder() {}
     
@@ -4023,6 +5748,30 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _compound_order_entry; }
     }
   
+    private int _profit_tick_offset = default(int);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"profit_tick_offset", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int profit_tick_offset
+    {
+      get { return _profit_tick_offset; }
+      set { _profit_tick_offset = value; }
+    }
+    private int _loss_tick_offset = default(int);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"loss_tick_offset", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int loss_tick_offset
+    {
+      get { return _loss_tick_offset; }
+      set { _loss_tick_offset = value; }
+    }
+    private int _stop_limit_tick_offset = default(int);
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"stop_limit_tick_offset", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int stop_limit_tick_offset
+    {
+      get { return _stop_limit_tick_offset; }
+      set { _stop_limit_tick_offset = value; }
+    }
     [global::ProtoBuf.ProtoContract(Name=@"Type")]
     public enum Type
     {
@@ -4041,8 +5790,34 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CompoundOrderEntry")]
-  internal partial class CompoundOrderEntry : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"UseOrder")]
+  public partial class UseOrder : global::ProtoBuf.IExtensible
+  {
+    public UseOrder() {}
+    
+    private string _order_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string order_id
+    {
+      get { return _order_id; }
+      set { _order_id = value; }
+    }
+    private int _account_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int account_id
+    {
+      get { return _account_id; }
+      set { _account_id = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CompoundOrderEntry")]
+  public partial class CompoundOrderEntry : global::ProtoBuf.IExtensible
   {
     public CompoundOrderEntry() {}
     
@@ -4062,6 +5837,14 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _compound_order; }
       set { _compound_order = value; }
     }
+    private Polygon.Connector.CQGContinuum.WebAPI.UseOrder _use_order = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"use_order", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.UseOrder use_order
+    {
+      get { return _use_order; }
+      set { _use_order = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -4069,8 +5852,80 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"OrderStatus")]
-  internal partial class OrderStatus : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SuspendOrder")]
+  public partial class SuspendOrder : global::ProtoBuf.IExtensible
+  {
+    public SuspendOrder() {}
+    
+    private string _order_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string order_id
+    {
+      get { return _order_id; }
+      set { _order_id = value; }
+    }
+    private int _account_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int account_id
+    {
+      get { return _account_id; }
+      set { _account_id = value; }
+    }
+    private string _orig_cl_order_id;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"orig_cl_order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string orig_cl_order_id
+    {
+      get { return _orig_cl_order_id; }
+      set { _orig_cl_order_id = value; }
+    }
+    private string _cl_order_id;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"cl_order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string cl_order_id
+    {
+      get { return _cl_order_id; }
+      set { _cl_order_id = value; }
+    }
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long when_utc_time
+    {
+      get { return _when_utc_time; }
+      set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
+    }
+    private long _activation_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"activation_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long activation_utc_time
+    {
+      get { return _activation_utc_time; }
+      set { _activation_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _activation_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"activation_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp activation_utc_timestamp
+    {
+      get { return _activation_utc_timestamp; }
+      set { _activation_utc_timestamp = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"OrderStatus")]
+  public partial class OrderStatus : global::ProtoBuf.IExtensible
   {
     public OrderStatus() {}
     
@@ -4118,19 +5973,35 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _exec_order_id; }
       set { _exec_order_id = value; }
     }
-    private long _status_utc_time;
-    [global::ProtoBuf.ProtoMember(7, IsRequired = true, Name=@"status_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private long _status_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"status_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long status_utc_time
     {
       get { return _status_utc_time; }
       set { _status_utc_time = value; }
     }
-    private long _submission_utc_time;
-    [global::ProtoBuf.ProtoMember(8, IsRequired = true, Name=@"submission_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private google.protobuf.Timestamp _status_utc_timestamp;
+    [global::ProtoBuf.ProtoMember(24, IsRequired = true, Name=@"status_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public google.protobuf.Timestamp status_utc_timestamp
+    {
+      get { return _status_utc_timestamp; }
+      set { _status_utc_timestamp = value; }
+    }
+    private long _submission_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"submission_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long submission_utc_time
     {
       get { return _submission_utc_time; }
       set { _submission_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _submission_utc_timestamp;
+    [global::ProtoBuf.ProtoMember(25, IsRequired = true, Name=@"submission_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public google.protobuf.Timestamp submission_utc_timestamp
+    {
+      get { return _submission_utc_timestamp; }
+      set { _submission_utc_timestamp = value; }
     }
     private uint _fill_qty;
     [global::ProtoBuf.ProtoMember(9, IsRequired = true, Name=@"fill_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -4146,20 +6017,35 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _fill_cnt; }
       set { _fill_cnt = value; }
     }
-    private int _avg_fill_price;
+    private long _avg_fill_price;
     [global::ProtoBuf.ProtoMember(11, IsRequired = true, Name=@"avg_fill_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    public int avg_fill_price
+    public long avg_fill_price
     {
       get { return _avg_fill_price; }
       set { _avg_fill_price = value; }
     }
+    private double _avg_fill_price_correct;
+    [global::ProtoBuf.ProtoMember(27, IsRequired = true, Name=@"avg_fill_price_correct", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public double avg_fill_price_correct
+    {
+      get { return _avg_fill_price_correct; }
+      set { _avg_fill_price_correct = value; }
+    }
     private long _active_at_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"active_at_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"active_at_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long active_at_utc_time
     {
       get { return _active_at_utc_time; }
       set { _active_at_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _active_at_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(26, IsRequired = false, Name=@"active_at_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp active_at_utc_timestamp
+    {
+      get { return _active_at_utc_timestamp; }
+      set { _active_at_utc_timestamp = value; }
     }
     private uint _remaining_qty;
     [global::ProtoBuf.ProtoMember(13, IsRequired = true, Name=@"remaining_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -4227,44 +6113,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _compound_order_structure; }
       set { _compound_order_structure = value; }
     }
-    [global::ProtoBuf.ProtoContract(Name=@"Status")]
-    public enum Status
+    private uint _hang_count = default(uint);
+    [global::ProtoBuf.ProtoMember(22, IsRequired = false, Name=@"hang_count", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint hang_count
     {
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"IN_TRANSIT", Value=1)]
-      IN_TRANSIT = 1,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"REJECTED", Value=2)]
-      REJECTED = 2,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"WORKING", Value=3)]
-      WORKING = 3,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"EXPIRED", Value=4)]
-      EXPIRED = 4,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"IN_CANCEL", Value=5)]
-      IN_CANCEL = 5,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"IN_MODIFY", Value=6)]
-      IN_MODIFY = 6,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"CANCELLED", Value=7)]
-      CANCELLED = 7,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"FILLED", Value=8)]
-      FILLED = 8,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"SUSPENDED", Value=9)]
-      SUSPENDED = 9,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"DISCONNECTED", Value=10)]
-      DISCONNECTED = 10,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"ACTIVEAT", Value=11)]
-      ACTIVEAT = 11
+      get { return _hang_count; }
+      set { _hang_count = value; }
     }
-  
+    private Polygon.Connector.CQGContinuum.WebAPI.SyntheticStrategyProperties _strategy_properties = null;
+    [global::ProtoBuf.ProtoMember(23, IsRequired = false, Name=@"strategy_properties", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SyntheticStrategyProperties strategy_properties
+    {
+      get { return _strategy_properties; }
+      set { _strategy_properties = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -4272,8 +6136,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TransactionStatus")]
-  internal partial class TransactionStatus : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TransactionStatus")]
+  public partial class TransactionStatus : global::ProtoBuf.IExtensible
   {
     public TransactionStatus() {}
     
@@ -4291,12 +6155,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _trans_id; }
       set { _trans_id = value; }
     }
-    private long _trans_utc_time;
-    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"trans_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private long _trans_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"trans_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long trans_utc_time
     {
       get { return _trans_utc_time; }
       set { _trans_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _trans_utc_timestamp;
+    [global::ProtoBuf.ProtoMember(40, IsRequired = true, Name=@"trans_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public google.protobuf.Timestamp trans_utc_timestamp
+    {
+      get { return _trans_utc_timestamp; }
+      set { _trans_utc_timestamp = value; }
     }
     private ulong _ref_trans_id = default(ulong);
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"ref_trans_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -4329,10 +6201,10 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _fill_qty; }
       set { _fill_qty = value; }
     }
-    private int _fill_price = default(int);
+    private long _fill_price = default(long);
     [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"fill_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int fill_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long fill_price
     {
       get { return _fill_price; }
       set { _fill_price = value; }
@@ -4344,6 +6216,21 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _trade; }
     }
   
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyLegFill> _strategy_leg_fills = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyLegFill>();
+    [global::ProtoBuf.ProtoMember(38, Name=@"strategy_leg_fills", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyLegFill> strategy_leg_fills
+    {
+      get { return _strategy_leg_fills; }
+    }
+  
+    private Polygon.Connector.CQGContinuum.WebAPI.SyntheticHang _synthetic_hang = null;
+    [global::ProtoBuf.ProtoMember(39, IsRequired = false, Name=@"synthetic_hang", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SyntheticHang synthetic_hang
+    {
+      get { return _synthetic_hang; }
+      set { _synthetic_hang = value; }
+    }
     private uint _prev_order_qty = default(uint);
     [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"prev_order_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     [global::System.ComponentModel.DefaultValue(default(uint))]
@@ -4360,34 +6247,34 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _order_qty; }
       set { _order_qty = value; }
     }
-    private int _prev_limit_price = default(int);
+    private long _prev_limit_price = default(long);
     [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"prev_limit_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int prev_limit_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long prev_limit_price
     {
       get { return _prev_limit_price; }
       set { _prev_limit_price = value; }
     }
-    private int _limit_price = default(int);
+    private long _limit_price = default(long);
     [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"limit_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int limit_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long limit_price
     {
       get { return _limit_price; }
       set { _limit_price = value; }
     }
-    private int _prev_stop_price = default(int);
+    private long _prev_stop_price = default(long);
     [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"prev_stop_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int prev_stop_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long prev_stop_price
     {
       get { return _prev_stop_price; }
       set { _prev_stop_price = value; }
     }
-    private int _stop_price = default(int);
+    private long _stop_price = default(long);
     [global::ProtoBuf.ProtoMember(15, IsRequired = false, Name=@"stop_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int stop_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long stop_price
     {
       get { return _stop_price; }
       set { _stop_price = value; }
@@ -4432,10 +6319,10 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _prev_fill_qty; }
       set { _prev_fill_qty = value; }
     }
-    private int _prev_fill_price = default(int);
+    private long _prev_fill_price = default(long);
     [global::ProtoBuf.ProtoMember(21, IsRequired = false, Name=@"prev_fill_price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
-    public int prev_fill_price
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long prev_fill_price
     {
       get { return _prev_fill_price; }
       set { _prev_fill_price = value; }
@@ -4535,20 +6422,36 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       set { _text_message = value; }
     }
     private long _prev_good_thru_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(34, IsRequired = false, Name=@"prev_good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(34, IsRequired = false, Name=@"prev_good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long prev_good_thru_utc_time
     {
       get { return _prev_good_thru_utc_time; }
       set { _prev_good_thru_utc_time = value; }
     }
+    private google.protobuf.Timestamp _prev_good_thru_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(41, IsRequired = false, Name=@"prev_good_thru_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp prev_good_thru_utc_timestamp
+    {
+      get { return _prev_good_thru_utc_timestamp; }
+      set { _prev_good_thru_utc_timestamp = value; }
+    }
     private long _good_thru_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(35, IsRequired = false, Name=@"good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(35, IsRequired = false, Name=@"good_thru_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long good_thru_utc_time
     {
       get { return _good_thru_utc_time; }
       set { _good_thru_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _good_thru_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(42, IsRequired = false, Name=@"good_thru_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp good_thru_utc_timestamp
+    {
+      get { return _good_thru_utc_timestamp; }
+      set { _good_thru_utc_timestamp = value; }
     }
     private uint _client_regulatory_algorithm_id = default(uint);
     [global::ProtoBuf.ProtoMember(36, IsRequired = false, Name=@"client_regulatory_algorithm_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -4566,68 +6469,46 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _effective_regulatory_algorithm_id; }
       set { _effective_regulatory_algorithm_id = value; }
     }
-    [global::ProtoBuf.ProtoContract(Name=@"Status")]
-    public enum Status
+    private string _mifid_algorithm_id = "";
+    [global::ProtoBuf.ProtoMember(43, IsRequired = false, Name=@"mifid_algorithm_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string mifid_algorithm_id
     {
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"IN_TRANSIT", Value=1)]
-      IN_TRANSIT = 1,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"REJECTED", Value=2)]
-      REJECTED = 2,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"ACK_PLACE", Value=3)]
-      ACK_PLACE = 3,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"EXPIRED", Value=4)]
-      EXPIRED = 4,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"IN_CANCEL", Value=5)]
-      IN_CANCEL = 5,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"ACK_CANCEL", Value=6)]
-      ACK_CANCEL = 6,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"REJECT_CANCEL", Value=7)]
-      REJECT_CANCEL = 7,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"IN_MODIFY", Value=8)]
-      IN_MODIFY = 8,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"ACK_MODIFY", Value=9)]
-      ACK_MODIFY = 9,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"REJECT_MODIFY", Value=10)]
-      REJECT_MODIFY = 10,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"FILL", Value=11)]
-      FILL = 11,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"SUSPEND", Value=12)]
-      SUSPEND = 12,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"FILL_CORRECT", Value=13)]
-      FILL_CORRECT = 13,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"FILL_CANCEL", Value=14)]
-      FILL_CANCEL = 14,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"FILL_BUST", Value=15)]
-      FILL_BUST = 15,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"ACTIVEAT", Value=16)]
-      ACTIVEAT = 16,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"DISCONNECT", Value=17)]
-      DISCONNECT = 17,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"SYNTHETIC_ACTIVATED", Value=18)]
-      SYNTHETIC_ACTIVATED = 18,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"UPDATE", Value=19)]
-      UPDATE = 19
+      get { return _mifid_algorithm_id; }
+      set { _mifid_algorithm_id = value; }
     }
-  
+    private uint _mifid_algorithm_id_type = default(uint);
+    [global::ProtoBuf.ProtoMember(44, IsRequired = false, Name=@"mifid_algorithm_id_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint mifid_algorithm_id_type
+    {
+      get { return _mifid_algorithm_id_type; }
+      set { _mifid_algorithm_id_type = value; }
+    }
+    private string _mifid_applied_algorithm_id = "";
+    [global::ProtoBuf.ProtoMember(45, IsRequired = false, Name=@"mifid_applied_algorithm_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string mifid_applied_algorithm_id
+    {
+      get { return _mifid_applied_algorithm_id; }
+      set { _mifid_applied_algorithm_id = value; }
+    }
+    private uint _mifid_applied_algorithm_id_type = default(uint);
+    [global::ProtoBuf.ProtoMember(46, IsRequired = false, Name=@"mifid_applied_algorithm_id_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint mifid_applied_algorithm_id_type
+    {
+      get { return _mifid_applied_algorithm_id_type; }
+      set { _mifid_applied_algorithm_id_type = value; }
+    }
+    private string _mifid_execution_decision = "";
+    [global::ProtoBuf.ProtoMember(47, IsRequired = false, Name=@"mifid_execution_decision", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string mifid_execution_decision
+    {
+      get { return _mifid_execution_decision; }
+      set { _mifid_execution_decision = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -4635,8 +6516,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Trade")]
-  internal partial class Trade : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Trade")]
+  public partial class Trade : global::ProtoBuf.IExtensible
   {
     public Trade() {}
     
@@ -4661,12 +6542,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _statement_date; }
       set { _statement_date = value; }
     }
-    private long _trade_utc_time;
-    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"trade_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    private long _trade_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"trade_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
     public long trade_utc_time
     {
       get { return _trade_utc_time; }
       set { _trade_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _trade_utc_timestamp;
+    [global::ProtoBuf.ProtoMember(12, IsRequired = true, Name=@"trade_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public google.protobuf.Timestamp trade_utc_timestamp
+    {
+      get { return _trade_utc_timestamp; }
+      set { _trade_utc_timestamp = value; }
     }
     private long _trade_date;
     [global::ProtoBuf.ProtoMember(5, IsRequired = true, Name=@"trade_date", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
@@ -4675,9 +6564,9 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _trade_date; }
       set { _trade_date = value; }
     }
-    private int _price;
+    private long _price;
     [global::ProtoBuf.ProtoMember(6, IsRequired = true, Name=@"price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-    public int price
+    public long price
     {
       get { return _price; }
       set { _price = value; }
@@ -4712,6 +6601,14 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _is_aggressive; }
       set { _is_aggressive = value; }
     }
+    private string _leg_execution_id = "";
+    [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"leg_execution_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string leg_execution_id
+    {
+      get { return _leg_execution_id; }
+      set { _leg_execution_id = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -4719,8 +6616,74 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CompoundOrderStructure")]
-  internal partial class CompoundOrderStructure : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyLegFill")]
+  public partial class StrategyLegFill : global::ProtoBuf.IExtensible
+  {
+    public StrategyLegFill() {}
+    
+    private string _leg_order_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"leg_order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string leg_order_id
+    {
+      get { return _leg_order_id; }
+      set { _leg_order_id = value; }
+    }
+    private string _leg_execution_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"leg_execution_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string leg_execution_id
+    {
+      get { return _leg_execution_id; }
+      set { _leg_execution_id = value; }
+    }
+    private double _qty;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public double qty
+    {
+      get { return _qty; }
+      set { _qty = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SyntheticHang")]
+  public partial class SyntheticHang : global::ProtoBuf.IExtensible
+  {
+    public SyntheticHang() {}
+    
+    private int _hang_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"hang_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int hang_id
+    {
+      get { return _hang_id; }
+      set { _hang_id = value; }
+    }
+    private uint _hung_qty;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"hung_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint hung_qty
+    {
+      get { return _hung_qty; }
+      set { _hung_qty = value; }
+    }
+    private readonly global::System.Collections.Generic.List<string> _order_id = new global::System.Collections.Generic.List<string>();
+    [global::ProtoBuf.ProtoMember(3, Name=@"order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<string> order_id
+    {
+      get { return _order_id; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CompoundOrderStructure")]
+  public partial class CompoundOrderStructure : global::ProtoBuf.IExtensible
   {
     public CompoundOrderStructure() {}
     
@@ -4752,8 +6715,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CompoundOrderStructureEntry")]
-  internal partial class CompoundOrderStructureEntry : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CompoundOrderStructureEntry")]
+  public partial class CompoundOrderStructureEntry : global::ProtoBuf.IExtensible
   {
     public CompoundOrderStructureEntry() {}
     
@@ -4780,8 +6743,928 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PositionStatus")]
-  internal partial class PositionStatus : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyOrderLegParameters")]
+  public partial class StrategyOrderLegParameters : global::ProtoBuf.IExtensible
+  {
+    public StrategyOrderLegParameters() {}
+    
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private int _account_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int account_id
+    {
+      get { return _account_id; }
+      set { _account_id = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyMarketOrderParameters")]
+  public partial class StrategyMarketOrderParameters : global::ProtoBuf.IExtensible
+  {
+    public StrategyMarketOrderParameters() {}
+    
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private bool _replenish_on_primary_fill = default(bool);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"replenish_on_primary_fill", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool replenish_on_primary_fill
+    {
+      get { return _replenish_on_primary_fill; }
+      set { _replenish_on_primary_fill = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PrimaryOrdersLimit")]
+  public partial class PrimaryOrdersLimit : global::ProtoBuf.IExtensible
+  {
+    public PrimaryOrdersLimit() {}
+    
+    private uint _min_qty_increment = default(uint);
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"min_qty_increment", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint min_qty_increment
+    {
+      get { return _min_qty_increment; }
+      set { _min_qty_increment = value; }
+    }
+    private uint _queue_holders_min_size = default(uint);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"queue_holders_min_size", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint queue_holders_min_size
+    {
+      get { return _queue_holders_min_size; }
+      set { _queue_holders_min_size = value; }
+    }
+    private uint _queue_holders_max_size = default(uint);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"queue_holders_max_size", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint queue_holders_max_size
+    {
+      get { return _queue_holders_max_size; }
+      set { _queue_holders_max_size = value; }
+    }
+    private uint _queue_holders_distance = default(uint);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"queue_holders_distance", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint queue_holders_distance
+    {
+      get { return _queue_holders_distance; }
+      set { _queue_holders_distance = value; }
+    }
+    private uint _order_size_restore_threshold = default(uint);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"order_size_restore_threshold", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint order_size_restore_threshold
+    {
+      get { return _order_size_restore_threshold; }
+      set { _order_size_restore_threshold = value; }
+    }
+    private uint _visible_qty = default(uint);
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"visible_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint visible_qty
+    {
+      get { return _visible_qty; }
+      set { _visible_qty = value; }
+    }
+    private uint _min_visible_qty = default(uint);
+    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"min_visible_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint min_visible_qty
+    {
+      get { return _min_visible_qty; }
+      set { _min_visible_qty = value; }
+    }
+    private uint _working_orders_price_range = default(uint);
+    [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"working_orders_price_range", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint working_orders_price_range
+    {
+      get { return _working_orders_price_range; }
+      set { _working_orders_price_range = value; }
+    }
+    private uint _min_price_change = default(uint);
+    [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"min_price_change", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint min_price_change
+    {
+      get { return _min_price_change; }
+      set { _min_price_change = value; }
+    }
+    private uint _primary_orders_fifo_queue_size = default(uint);
+    [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"primary_orders_fifo_queue_size", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint primary_orders_fifo_queue_size
+    {
+      get { return _primary_orders_fifo_queue_size; }
+      set { _primary_orders_fifo_queue_size = value; }
+    }
+    private uint _force_update_period = default(uint);
+    [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"force_update_period", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint force_update_period
+    {
+      get { return _force_update_period; }
+      set { _force_update_period = value; }
+    }
+    private bool _ignore_observed_markets = default(bool);
+    [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"ignore_observed_markets", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool ignore_observed_markets
+    {
+      get { return _ignore_observed_markets; }
+      set { _ignore_observed_markets = value; }
+    }
+    private uint _max_dimming = default(uint);
+    [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"max_dimming", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint max_dimming
+    {
+      get { return _max_dimming; }
+      set { _max_dimming = value; }
+    }
+    private uint _far_from_market_mode = default(uint);
+    [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"far_from_market_mode", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint far_from_market_mode
+    {
+      get { return _far_from_market_mode; }
+      set { _far_from_market_mode = value; }
+    }
+    private int _ticks_away_to_work = default(int);
+    [global::ProtoBuf.ProtoMember(15, IsRequired = false, Name=@"ticks_away_to_work", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int ticks_away_to_work
+    {
+      get { return _ticks_away_to_work; }
+      set { _ticks_away_to_work = value; }
+    }
+    private uint _dom_usage = default(uint);
+    [global::ProtoBuf.ProtoMember(16, IsRequired = false, Name=@"dom_usage", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint dom_usage
+    {
+      get { return _dom_usage; }
+      set { _dom_usage = value; }
+    }
+    private uint _dom_multilevel_qty = default(uint);
+    [global::ProtoBuf.ProtoMember(17, IsRequired = false, Name=@"dom_multilevel_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint dom_multilevel_qty
+    {
+      get { return _dom_multilevel_qty; }
+      set { _dom_multilevel_qty = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"FarFromMarketMode")]
+    public enum FarFromMarketMode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"NO_ORDERS", Value=1)]
+      NO_ORDERS = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MOVE_AWAY_ONLY", Value=2)]
+      MOVE_AWAY_ONLY = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DONT_MOVE", Value=3)]
+      DONT_MOVE = 3
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"DOMUsageMode")]
+    public enum DOMUsageMode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"TOP_ONLY", Value=1)]
+      TOP_ONLY = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MULTILEVELS", Value=2)]
+      MULTILEVELS = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FULL_SIZE_WORST_PRICE", Value=3)]
+      FULL_SIZE_WORST_PRICE = 3,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FULL_SIZE_AVERAGE_PRICE", Value=4)]
+      FULL_SIZE_AVERAGE_PRICE = 4
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PrimaryOrdersSniper")]
+  public partial class PrimaryOrdersSniper : global::ProtoBuf.IExtensible
+  {
+    public PrimaryOrdersSniper() {}
+    
+    private uint _leg_duration;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"leg_duration", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint leg_duration
+    {
+      get { return _leg_duration; }
+      set { _leg_duration = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"LegDuration")]
+    public enum LegDuration
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DAY", Value=1)]
+      DAY = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FAK", Value=2)]
+      FAK = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FOK", Value=3)]
+      FOK = 3
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SecondaryOrdersLimit")]
+  public partial class SecondaryOrdersLimit : global::ProtoBuf.IExtensible
+  {
+    public SecondaryOrdersLimit() {}
+    
+    private double _initial_offset = default(double);
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"initial_offset", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double initial_offset
+    {
+      get { return _initial_offset; }
+      set { _initial_offset = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SecondaryOrdersMarket")]
+  public partial class SecondaryOrdersMarket : global::ProtoBuf.IExtensible
+  {
+    public SecondaryOrdersMarket() {}
+    
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SecondaryOrdersPayUp")]
+  public partial class SecondaryOrdersPayUp : global::ProtoBuf.IExtensible
+  {
+    public SecondaryOrdersPayUp() {}
+    
+    private double _offset;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"offset", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public double offset
+    {
+      get { return _offset; }
+      set { _offset = value; }
+    }
+    private double _initial_offset = default(double);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"initial_offset", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double initial_offset
+    {
+      get { return _initial_offset; }
+      set { _initial_offset = value; }
+    }
+    private uint _condition_timeout = default(uint);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"condition_timeout", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint condition_timeout
+    {
+      get { return _condition_timeout; }
+      set { _condition_timeout = value; }
+    }
+    private uint _condition_absolute_volume = default(uint);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"condition_absolute_volume", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint condition_absolute_volume
+    {
+      get { return _condition_absolute_volume; }
+      set { _condition_absolute_volume = value; }
+    }
+    private double _condition_opposite_volume_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"condition_opposite_volume_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double condition_opposite_volume_ratio
+    {
+      get { return _condition_opposite_volume_ratio; }
+      set { _condition_opposite_volume_ratio = value; }
+    }
+    private double _condition_bba_volume_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"condition_bba_volume_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double condition_bba_volume_ratio
+    {
+      get { return _condition_bba_volume_ratio; }
+      set { _condition_bba_volume_ratio = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SecondaryOrdersTrailing")]
+  public partial class SecondaryOrdersTrailing : global::ProtoBuf.IExtensible
+  {
+    public SecondaryOrdersTrailing() {}
+    
+    private double _trailing_offset;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"trailing_offset", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public double trailing_offset
+    {
+      get { return _trailing_offset; }
+      set { _trailing_offset = value; }
+    }
+    private uint _trailing_peg;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"trailing_peg", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint trailing_peg
+    {
+      get { return _trailing_peg; }
+      set { _trailing_peg = value; }
+    }
+    private double _initial_offset = default(double);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"initial_offset", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double initial_offset
+    {
+      get { return _initial_offset; }
+      set { _initial_offset = value; }
+    }
+    private double _max_trail = default(double);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"max_trail", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double max_trail
+    {
+      get { return _max_trail; }
+      set { _max_trail = value; }
+    }
+    private uint _condition_absolute_volume = default(uint);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"condition_absolute_volume", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint condition_absolute_volume
+    {
+      get { return _condition_absolute_volume; }
+      set { _condition_absolute_volume = value; }
+    }
+    private double _condition_opposite_volume_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"condition_opposite_volume_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double condition_opposite_volume_ratio
+    {
+      get { return _condition_opposite_volume_ratio; }
+      set { _condition_opposite_volume_ratio = value; }
+    }
+    private double _condition_bba_volume_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"condition_bba_volume_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double condition_bba_volume_ratio
+    {
+      get { return _condition_bba_volume_ratio; }
+      set { _condition_bba_volume_ratio = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LimitOrderLegDescription")]
+  public partial class LimitOrderLegDescription : global::ProtoBuf.IExtensible
+  {
+    public LimitOrderLegDescription() {}
+    
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.PrimaryOrdersLimit _primary_order_limit = null;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"primary_order_limit", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.PrimaryOrdersLimit primary_order_limit
+    {
+      get { return _primary_order_limit; }
+      set { _primary_order_limit = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.PrimaryOrdersSniper _primary_order_sniper = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"primary_order_sniper", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.PrimaryOrdersSniper primary_order_sniper
+    {
+      get { return _primary_order_sniper; }
+      set { _primary_order_sniper = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersLimit _secondary_orders_limit = null;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"secondary_orders_limit", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersLimit secondary_orders_limit
+    {
+      get { return _secondary_orders_limit; }
+      set { _secondary_orders_limit = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersMarket _secondary_orders_market = null;
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"secondary_orders_market", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersMarket secondary_orders_market
+    {
+      get { return _secondary_orders_market; }
+      set { _secondary_orders_market = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersPayUp _secondary_orders_payup = null;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"secondary_orders_payup", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersPayUp secondary_orders_payup
+    {
+      get { return _secondary_orders_payup; }
+      set { _secondary_orders_payup = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersTrailing _secondary_orders_trailing = null;
+    [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"secondary_orders_trailing", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.SecondaryOrdersTrailing secondary_orders_trailing
+    {
+      get { return _secondary_orders_trailing; }
+      set { _secondary_orders_trailing = value; }
+    }
+    private double _proportional_execution_ratio = default(double);
+    [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"proportional_execution_ratio", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double proportional_execution_ratio
+    {
+      get { return _proportional_execution_ratio; }
+      set { _proportional_execution_ratio = value; }
+    }
+    private double _volume_multiplier = default(double);
+    [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"volume_multiplier", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double volume_multiplier
+    {
+      get { return _volume_multiplier; }
+      set { _volume_multiplier = value; }
+    }
+    private uint _work_threshold = default(uint);
+    [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"work_threshold", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint work_threshold
+    {
+      get { return _work_threshold; }
+      set { _work_threshold = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PriceShifting")]
+  public partial class PriceShifting : global::ProtoBuf.IExtensible
+  {
+    public PriceShifting() {}
+    
+    private int _price_step;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"price_step", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int price_step
+    {
+      get { return _price_step; }
+      set { _price_step = value; }
+    }
+    private uint _filled_qty_delta;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"filled_qty_delta", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint filled_qty_delta
+    {
+      get { return _filled_qty_delta; }
+      set { _filled_qty_delta = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyLimitOrderParameters")]
+  public partial class StrategyLimitOrderParameters : global::ProtoBuf.IExtensible
+  {
+    public StrategyLimitOrderParameters() {}
+    
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private bool _replenish_on_primary_fill = default(bool);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"replenish_on_primary_fill", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool replenish_on_primary_fill
+    {
+      get { return _replenish_on_primary_fill; }
+      set { _replenish_on_primary_fill = value; }
+    }
+    private uint _overfill_mode = default(uint);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"overfill_mode", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint overfill_mode
+    {
+      get { return _overfill_mode; }
+      set { _overfill_mode = value; }
+    }
+    private uint _align_to_strategy_lots = default(uint);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"align_to_strategy_lots", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint align_to_strategy_lots
+    {
+      get { return _align_to_strategy_lots; }
+      set { _align_to_strategy_lots = value; }
+    }
+    private uint _pricing_method = default(uint);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"pricing_method", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint pricing_method
+    {
+      get { return _pricing_method; }
+      set { _pricing_method = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.PriceShifting _price_shifting = null;
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"price_shifting", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.PriceShifting price_shifting
+    {
+      get { return _price_shifting; }
+      set { _price_shifting = value; }
+    }
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.LimitOrderLegDescription> _leg_description = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.LimitOrderLegDescription>();
+    [global::ProtoBuf.ProtoMember(7, Name=@"leg_description", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.LimitOrderLegDescription> leg_description
+    {
+      get { return _leg_description; }
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"OverfillMode")]
+    public enum OverfillMode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MANUAL", Value=1)]
+      MANUAL = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"AUTOMATIC_HEDGING", Value=2)]
+      AUTOMATIC_HEDGING = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"AVOID_OVERFILLS", Value=3)]
+      AVOID_OVERFILLS = 3
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"AlignToStrategyLots")]
+    public enum AlignToStrategyLots
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"NONE", Value=1)]
+      NONE = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SECONDARY_ONLY", Value=2)]
+      SECONDARY_ONLY = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ALL", Value=3)]
+      ALL = 3
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"PricingMethod")]
+    public enum PricingMethod
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"INDEPENDENT_LOT_PRICE", Value=1)]
+      INDEPENDENT_LOT_PRICE = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"AVERAGE_ORDER_PRICE", Value=2)]
+      AVERAGE_ORDER_PRICE = 2
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyStopOrderParameters")]
+  public partial class StrategyStopOrderParameters : global::ProtoBuf.IExtensible
+  {
+    public StrategyStopOrderParameters() {}
+    
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private uint _stop_side;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"stop_side", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint stop_side
+    {
+      get { return _stop_side; }
+      set { _stop_side = value; }
+    }
+    private bool _replenish_on_primary_fill = default(bool);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"replenish_on_primary_fill", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool replenish_on_primary_fill
+    {
+      get { return _replenish_on_primary_fill; }
+      set { _replenish_on_primary_fill = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"StopSide")]
+    public enum StopSide
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"BID", Value=1)]
+      BID = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ASK", Value=2)]
+      ASK = 2
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"MarketTakingParameters")]
+  public partial class MarketTakingParameters : global::ProtoBuf.IExtensible
+  {
+    public MarketTakingParameters() {}
+    
+    private double _allocation_percent;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"allocation_percent", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public double allocation_percent
+    {
+      get { return _allocation_percent; }
+      set { _allocation_percent = value; }
+    }
+    private uint _working_timeout;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"working_timeout", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint working_timeout
+    {
+      get { return _working_timeout; }
+      set { _working_timeout = value; }
+    }
+    private uint _order_type;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"order_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint order_type
+    {
+      get { return _order_type; }
+      set { _order_type = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"MarketTakingLimitOrderType")]
+    public enum MarketTakingLimitOrderType
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"LMT", Value=1)]
+      LMT = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MKT", Value=2)]
+      MKT = 2
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"MarketMakingParameters")]
+  public partial class MarketMakingParameters : global::ProtoBuf.IExtensible
+  {
+    public MarketMakingParameters() {}
+    
+    private double _allocation_percent = default(double);
+    [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"allocation_percent", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double allocation_percent
+    {
+      get { return _allocation_percent; }
+      set { _allocation_percent = value; }
+    }
+    private uint _visible_qty = default(uint);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"visible_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint visible_qty
+    {
+      get { return _visible_qty; }
+      set { _visible_qty = value; }
+    }
+    private uint _min_visible_qty = default(uint);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"min_visible_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint min_visible_qty
+    {
+      get { return _min_visible_qty; }
+      set { _min_visible_qty = value; }
+    }
+    private uint _native_visible_qty = default(uint);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"native_visible_qty", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint native_visible_qty
+    {
+      get { return _native_visible_qty; }
+      set { _native_visible_qty = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"AggregationLegDescription")]
+  public partial class AggregationLegDescription : global::ProtoBuf.IExtensible
+  {
+    public AggregationLegDescription() {}
+    
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private uint _working_threshold = default(uint);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"working_threshold", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint working_threshold
+    {
+      get { return _working_threshold; }
+      set { _working_threshold = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.MarketTakingParameters _market_taking_parameters;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"market_taking_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public Polygon.Connector.CQGContinuum.WebAPI.MarketTakingParameters market_taking_parameters
+    {
+      get { return _market_taking_parameters; }
+      set { _market_taking_parameters = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.MarketMakingParameters _market_making_parameters;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"market_making_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public Polygon.Connector.CQGContinuum.WebAPI.MarketMakingParameters market_making_parameters
+    {
+      get { return _market_making_parameters; }
+      set { _market_making_parameters = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyAggregationParameters")]
+  public partial class StrategyAggregationParameters : global::ProtoBuf.IExtensible
+  {
+    public StrategyAggregationParameters() {}
+    
+    private uint _node_index;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"node_index", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint node_index
+    {
+      get { return _node_index; }
+      set { _node_index = value; }
+    }
+    private uint _overfill_mode;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"overfill_mode", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint overfill_mode
+    {
+      get { return _overfill_mode; }
+      set { _overfill_mode = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.PriceShifting _price_shifting = null;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"price_shifting", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.PriceShifting price_shifting
+    {
+      get { return _price_shifting; }
+      set { _price_shifting = value; }
+    }
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.AggregationLegDescription> _pattern_legs = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.AggregationLegDescription>();
+    [global::ProtoBuf.ProtoMember(4, Name=@"pattern_legs", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.AggregationLegDescription> pattern_legs
+    {
+      get { return _pattern_legs; }
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"AggrOverfillMode")]
+    public enum AggrOverfillMode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"AVOID_OVERFILLS", Value=1)]
+      AVOID_OVERFILLS = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACCEPT_OVERFILL", Value=2)]
+      ACCEPT_OVERFILL = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"PRESERVE_QUEUE_POSITION", Value=3)]
+      PRESERVE_QUEUE_POSITION = 3
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"StrategyTradingParameters")]
+  public partial class StrategyTradingParameters : global::ProtoBuf.IExtensible
+  {
+    public StrategyTradingParameters() {}
+    
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyMarketOrderParameters> _market_order_parameters = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyMarketOrderParameters>();
+    [global::ProtoBuf.ProtoMember(1, Name=@"market_order_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyMarketOrderParameters> market_order_parameters
+    {
+      get { return _market_order_parameters; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyLimitOrderParameters> _limit_order_parameters = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyLimitOrderParameters>();
+    [global::ProtoBuf.ProtoMember(2, Name=@"limit_order_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyLimitOrderParameters> limit_order_parameters
+    {
+      get { return _limit_order_parameters; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyStopOrderParameters> _stop_order_parameters = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyStopOrderParameters>();
+    [global::ProtoBuf.ProtoMember(3, Name=@"stop_order_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyStopOrderParameters> stop_order_parameters
+    {
+      get { return _stop_order_parameters; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyAggregationParameters> _aggregation_parameters = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyAggregationParameters>();
+    [global::ProtoBuf.ProtoMember(4, Name=@"aggregation_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyAggregationParameters> aggregation_parameters
+    {
+      get { return _aggregation_parameters; }
+    }
+  
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyOrderLegParameters> _leg_parameters = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyOrderLegParameters>();
+    [global::ProtoBuf.ProtoMember(5, Name=@"leg_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.StrategyOrderLegParameters> leg_parameters
+    {
+      get { return _leg_parameters; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PositionStatus")]
+  public partial class PositionStatus : global::ProtoBuf.IExtensible
   {
     public PositionStatus() {}
     
@@ -4850,8 +7733,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"OpenPosition")]
-  internal partial class OpenPosition : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"OpenPosition")]
+  public partial class OpenPosition : global::ProtoBuf.IExtensible
   {
     public OpenPosition() {}
     
@@ -4891,12 +7774,27 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       set { _statement_date = value; }
     }
     private long _trade_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"trade_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"trade_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long trade_utc_time
     {
       get { return _trade_utc_time; }
       set { _trade_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _trade_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"trade_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp trade_utc_timestamp
+    {
+      get { return _trade_utc_timestamp; }
+      set { _trade_utc_timestamp = value; }
+    }
+    private bool _is_aggregated;
+    [global::ProtoBuf.ProtoMember(7, IsRequired = true, Name=@"is_aggregated", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public bool is_aggregated
+    {
+      get { return _is_aggregated; }
+      set { _is_aggregated = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -4905,8 +7803,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"PurchaseAndSalesGroup")]
-  internal partial class PurchaseAndSalesGroup : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PurchaseAndSalesGroup")]
+  public partial class PurchaseAndSalesGroup : global::ProtoBuf.IExtensible
   {
     public PurchaseAndSalesGroup() {}
     
@@ -4938,8 +7836,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"MatchedTrade")]
-  internal partial class MatchedTrade : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"MatchedTrade")]
+  public partial class MatchedTrade : global::ProtoBuf.IExtensible
   {
     public MatchedTrade() {}
     
@@ -4980,12 +7878,27 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       set { _statement_date = value; }
     }
     private long _trade_utc_time = default(long);
-    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"trade_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"trade_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
     [global::System.ComponentModel.DefaultValue(default(long))]
     public long trade_utc_time
     {
       get { return _trade_utc_time; }
       set { _trade_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _trade_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"trade_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp trade_utc_timestamp
+    {
+      get { return _trade_utc_timestamp; }
+      set { _trade_utc_timestamp = value; }
+    }
+    private bool _is_aggregated;
+    [global::ProtoBuf.ProtoMember(7, IsRequired = true, Name=@"is_aggregated", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public bool is_aggregated
+    {
+      get { return _is_aggregated; }
+      set { _is_aggregated = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -4994,8 +7907,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"CollateralStatus")]
-  internal partial class CollateralStatus : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CollateralStatus")]
+  public partial class CollateralStatus : global::ProtoBuf.IExtensible
   {
     public CollateralStatus() {}
     
@@ -5058,6 +7971,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _mvo; }
       set { _mvo = value; }
     }
+    private double _mvf = default(double);
+    [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"mvf", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double mvf
+    {
+      get { return _mvf; }
+      set { _mvf = value; }
+    }
+    private double _margin_credit = default(double);
+    [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"margin_credit", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(double))]
+    public double margin_credit
+    {
+      get { return _margin_credit; }
+      set { _margin_credit = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -5065,8 +7994,156 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"MarketDataSubscription")]
-  internal partial class MarketDataSubscription : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SyntheticLiquidate")]
+  public partial class SyntheticLiquidate : global::ProtoBuf.IExtensible
+  {
+    public SyntheticLiquidate() {}
+    
+    private int _account_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int account_id
+    {
+      get { return _account_id; }
+      set { _account_id = value; }
+    }
+    private string _order_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string order_id
+    {
+      get { return _order_id; }
+      set { _order_id = value; }
+    }
+    private int _hang_id;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"hang_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int hang_id
+    {
+      get { return _hang_id; }
+      set { _hang_id = value; }
+    }
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long when_utc_time
+    {
+      get { return _when_utc_time; }
+      set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SyntheticScratch")]
+  public partial class SyntheticScratch : global::ProtoBuf.IExtensible
+  {
+    public SyntheticScratch() {}
+    
+    private int _account_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int account_id
+    {
+      get { return _account_id; }
+      set { _account_id = value; }
+    }
+    private string _order_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string order_id
+    {
+      get { return _order_id; }
+      set { _order_id = value; }
+    }
+    private int _hang_id;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"hang_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int hang_id
+    {
+      get { return _hang_id; }
+      set { _hang_id = value; }
+    }
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long when_utc_time
+    {
+      get { return _when_utc_time; }
+      set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"GoMarket")]
+  public partial class GoMarket : global::ProtoBuf.IExtensible
+  {
+    public GoMarket() {}
+    
+    private int _account_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"account_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int account_id
+    {
+      get { return _account_id; }
+      set { _account_id = value; }
+    }
+    private string _order_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"order_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public string order_id
+    {
+      get { return _order_id; }
+      set { _order_id = value; }
+    }
+    private int _hang_id = default(int);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"hang_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int hang_id
+    {
+      get { return _hang_id; }
+      set { _hang_id = value; }
+    }
+    private long _when_utc_time = default(long);
+    [global::System.Obsolete, global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"when_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long when_utc_time
+    {
+      get { return _when_utc_time; }
+      set { _when_utc_time = value; }
+    }
+    private google.protobuf.Timestamp _when_utc_timestamp = null;
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"when_utc_timestamp", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public google.protobuf.Timestamp when_utc_timestamp
+    {
+      get { return _when_utc_timestamp; }
+      set { _when_utc_timestamp = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"MarketDataSubscription")]
+  public partial class MarketDataSubscription : global::ProtoBuf.IExtensible
   {
     public MarketDataSubscription() {}
     
@@ -5083,6 +8160,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
     {
       get { return _level; }
       set { _level = value; }
+    }
+    private bool _include_past_market_values = default(bool);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"include_past_market_values", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool include_past_market_values
+    {
+      get { return _include_past_market_values; }
+      set { _include_past_market_values = value; }
+    }
+    private long _account_cluster_id = default(long);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"account_cluster_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long account_cluster_id
+    {
+      get { return _account_cluster_id; }
+      set { _account_cluster_id = value; }
     }
     [global::ProtoBuf.ProtoContract(Name=@"Level")]
     public enum Level
@@ -5111,8 +8204,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"MarketDataSubscriptionStatus")]
-  internal partial class MarketDataSubscriptionStatus : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"MarketDataSubscriptionStatus")]
+  public partial class MarketDataSubscriptionStatus : global::ProtoBuf.IExtensible
   {
     public MarketDataSubscriptionStatus() {}
     
@@ -5145,6 +8238,14 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _text_message; }
       set { _text_message = value; }
     }
+    private long _account_cluster_id = default(long);
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"account_cluster_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long account_cluster_id
+    {
+      get { return _account_cluster_id; }
+      set { _account_cluster_id = value; }
+    }
     [global::ProtoBuf.ProtoContract(Name=@"StatusCode")]
     public enum StatusCode
     {
@@ -5168,7 +8269,10 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       DELETED = 104,
             
       [global::ProtoBuf.ProtoEnum(Name=@"REQUEST_LIMIT_VIOLATION", Value=105)]
-      REQUEST_LIMIT_VIOLATION = 105
+      REQUEST_LIMIT_VIOLATION = 105,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACCOUNT_CLUSTER_REQUIRED", Value=106)]
+      ACCOUNT_CLUSTER_REQUIRED = 106
     }
   
     private global::ProtoBuf.IExtension extensionObject;
@@ -5178,8 +8282,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"RealTimeMarketData")]
-  internal partial class RealTimeMarketData : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RealTimeMarketData")]
+  public partial class RealTimeMarketData : global::ProtoBuf.IExtensible
   {
     public RealTimeMarketData() {}
     
@@ -5213,13 +8317,20 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _collapsing_level; }
       set { _collapsing_level = value; }
     }
-    private Polygon.Connector.CQGContinuum.WebAPI.MarketValues _market_values = null;
-    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"market_values", DataFormat = global::ProtoBuf.DataFormat.Default)]
-    [global::System.ComponentModel.DefaultValue(null)]
-    public Polygon.Connector.CQGContinuum.WebAPI.MarketValues market_values
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.MarketValues> _market_values = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.MarketValues>();
+    [global::ProtoBuf.ProtoMember(5, Name=@"market_values", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.MarketValues> market_values
     {
       get { return _market_values; }
-      set { _market_values = value; }
+    }
+  
+    private long _account_cluster_id = default(long);
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"account_cluster_id", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long account_cluster_id
+    {
+      get { return _account_cluster_id; }
+      set { _account_cluster_id = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -5228,8 +8339,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"Quote")]
-  internal partial class Quote : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Quote")]
+  public partial class Quote : global::ProtoBuf.IExtensible
   {
     public Quote() {}
     
@@ -5263,11 +8374,11 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _volume; }
       set { _volume = value; }
     }
-    private readonly global::System.Collections.Generic.List<uint> _session_ohlc_indicator = new global::System.Collections.Generic.List<uint>();
-    [global::ProtoBuf.ProtoMember(5, Name=@"session_ohlc_indicator", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
-    public global::System.Collections.Generic.List<uint> session_ohlc_indicator
+    private readonly global::System.Collections.Generic.List<uint> _indicator = new global::System.Collections.Generic.List<uint>();
+    [global::ProtoBuf.ProtoMember(5, Name=@"indicator", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public global::System.Collections.Generic.List<uint> indicator
     {
-      get { return _session_ohlc_indicator; }
+      get { return _indicator; }
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"Type")]
@@ -5293,8 +8404,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       SETTLEMENT = 5
     }
   
-    [global::ProtoBuf.ProtoContract(Name=@"SessionOhlcIndicator")]
-    public enum SessionOhlcIndicator
+    [global::ProtoBuf.ProtoContract(Name=@"Indicator")]
+    public enum Indicator
     {
             
       [global::ProtoBuf.ProtoEnum(Name=@"OPEN", Value=1)]
@@ -5317,8 +8428,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"MarketValues")]
-  internal partial class MarketValues : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"MarketValues")]
+  public partial class MarketValues : global::ProtoBuf.IExtensible
   {
     public MarketValues() {}
     
@@ -5386,6 +8497,51 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _indicative_open; }
       set { _indicative_open = value; }
     }
+    private int _day_index;
+    [global::ProtoBuf.ProtoMember(9, IsRequired = true, Name=@"day_index", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int day_index
+    {
+      get { return _day_index; }
+      set { _day_index = value; }
+    }
+    private int _open_interest = default(int);
+    [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"open_interest", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int open_interest
+    {
+      get { return _open_interest; }
+      set { _open_interest = value; }
+    }
+    private uint _tick_volume = default(uint);
+    [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"tick_volume", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint tick_volume
+    {
+      get { return _tick_volume; }
+      set { _tick_volume = value; }
+    }
+    private int _settlement = default(int);
+    [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"settlement", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(int))]
+    public int settlement
+    {
+      get { return _settlement; }
+      set { _settlement = value; }
+    }
+    private readonly global::System.Collections.Generic.List<uint> _cleared_fields = new global::System.Collections.Generic.List<uint>();
+    [global::ProtoBuf.ProtoMember(13, Name=@"cleared_fields", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public global::System.Collections.Generic.List<uint> cleared_fields
+    {
+      get { return _cleared_fields; }
+    }
+  
+    private long _trade_date;
+    [global::ProtoBuf.ProtoMember(14, IsRequired = true, Name=@"trade_date", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public long trade_date
+    {
+      get { return _trade_date; }
+      set { _trade_date = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -5393,8 +8549,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ReadUserAttributeRequest")]
-  internal partial class ReadUserAttributeRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ReadUserAttributeRequest")]
+  public partial class ReadUserAttributeRequest : global::ProtoBuf.IExtensible
   {
     public ReadUserAttributeRequest() {}
     
@@ -5419,8 +8575,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ReadUserAttributeResult")]
-  internal partial class ReadUserAttributeResult : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ReadUserAttributeResult")]
+  public partial class ReadUserAttributeResult : global::ProtoBuf.IExtensible
   {
     public ReadUserAttributeResult() {}
     
@@ -5474,8 +8630,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ModifyUserAttributeRequest")]
-  internal partial class ModifyUserAttributeRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ModifyUserAttributeRequest")]
+  public partial class ModifyUserAttributeRequest : global::ProtoBuf.IExtensible
   {
     public ModifyUserAttributeRequest() {}
     
@@ -5500,8 +8656,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"ModifyUserAttributeResult")]
-  internal partial class ModifyUserAttributeResult : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ModifyUserAttributeResult")]
+  public partial class ModifyUserAttributeResult : global::ProtoBuf.IExtensible
   {
     public ModifyUserAttributeResult() {}
     
@@ -5548,8 +8704,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TimeAndSalesParameters")]
-  internal partial class TimeAndSalesParameters : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TimeAndSalesParameters")]
+  public partial class TimeAndSalesParameters : global::ProtoBuf.IExtensible
   {
     public TimeAndSalesParameters() {}
     
@@ -5600,8 +8756,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TimeAndSalesRequest")]
-  internal partial class TimeAndSalesRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TimeAndSalesRequest")]
+  public partial class TimeAndSalesRequest : global::ProtoBuf.IExtensible
   {
     public TimeAndSalesRequest() {}
     
@@ -5646,8 +8802,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TimeAndSalesReport")]
-  internal partial class TimeAndSalesReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TimeAndSalesReport")]
+  public partial class TimeAndSalesReport : global::ProtoBuf.IExtensible
   {
     public TimeAndSalesReport() {}
     
@@ -5740,8 +8896,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TimeBarParameters")]
-  internal partial class TimeBarParameters : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TimeBarParameters")]
+  public partial class TimeBarParameters : global::ProtoBuf.IExtensible
   {
     public TimeBarParameters() {}
     
@@ -5826,8 +8982,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TimeBarRequest")]
-  internal partial class TimeBarRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TimeBarRequest")]
+  public partial class TimeBarRequest : global::ProtoBuf.IExtensible
   {
     public TimeBarRequest() {}
     
@@ -5875,8 +9031,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TimeBar")]
-  internal partial class TimeBar : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TimeBar")]
+  public partial class TimeBar : global::ProtoBuf.IExtensible
   {
     public TimeBar() {}
     
@@ -5967,6 +9123,22 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
       get { return _settlement_price; }
       set { _settlement_price = value; }
     }
+    private ulong _tick_volume = default(ulong);
+    [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"tick_volume", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(ulong))]
+    public ulong tick_volume
+    {
+      get { return _tick_volume; }
+      set { _tick_volume = value; }
+    }
+    private ulong _commodity_tick_volume = default(ulong);
+    [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"commodity_tick_volume", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(ulong))]
+    public ulong commodity_tick_volume
+    {
+      get { return _commodity_tick_volume; }
+      set { _commodity_tick_volume = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
   { 
@@ -5974,8 +9146,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"TimeBarReport")]
-  internal partial class TimeBarReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TimeBarReport")]
+  public partial class TimeBarReport : global::ProtoBuf.IExtensible
   {
     public TimeBarReport() {}
     
@@ -6077,8 +9249,201 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"HistoricalOrdersRequest")]
-  internal partial class HistoricalOrdersRequest : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"VolumeProfileRequest")]
+  public partial class VolumeProfileRequest : global::ProtoBuf.IExtensible
+  {
+    public VolumeProfileRequest() {}
+    
+    private uint _request_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"request_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint request_id
+    {
+      get { return _request_id; }
+      set { _request_id = value; }
+    }
+    private Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileParameters _volume_profile_parameters = null;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"volume_profile_parameters", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(null)]
+    public Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileParameters volume_profile_parameters
+    {
+      get { return _volume_profile_parameters; }
+      set { _volume_profile_parameters = value; }
+    }
+    private uint _request_type = default(uint);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"request_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(uint))]
+    public uint request_type
+    {
+      get { return _request_type; }
+      set { _request_type = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"RequestType")]
+    public enum RequestType
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"GET", Value=1)]
+      GET = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DROP", Value=3)]
+      DROP = 3
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"VolumeProfileParameters")]
+  public partial class VolumeProfileParameters : global::ProtoBuf.IExtensible
+  {
+    public VolumeProfileParameters() {}
+    
+    private uint _contract_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"contract_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint contract_id
+    {
+      get { return _contract_id; }
+      set { _contract_id = value; }
+    }
+    private long _start_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"start_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long start_utc_time
+    {
+      get { return _start_utc_time; }
+      set { _start_utc_time = value; }
+    }
+    private long _end_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"end_utc_time", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long end_utc_time
+    {
+      get { return _end_utc_time; }
+      set { _end_utc_time = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"VolumeProfileReport")]
+  public partial class VolumeProfileReport : global::ProtoBuf.IExtensible
+  {
+    public VolumeProfileReport() {}
+    
+    private uint _request_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"request_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint request_id
+    {
+      get { return _request_id; }
+      set { _request_id = value; }
+    }
+    private uint _result_code;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"result_code", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public uint result_code
+    {
+      get { return _result_code; }
+      set { _result_code = value; }
+    }
+    private readonly global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileItem> _volume_profile_items = new global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileItem>();
+    [global::ProtoBuf.ProtoMember(3, Name=@"volume_profile_items", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<Polygon.Connector.CQGContinuum.WebAPI.VolumeProfileItem> volume_profile_items
+    {
+      get { return _volume_profile_items; }
+    }
+  
+    private long _up_to_utc_time = default(long);
+    [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"up_to_utc_time", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    [global::System.ComponentModel.DefaultValue(default(long))]
+    public long up_to_utc_time
+    {
+      get { return _up_to_utc_time; }
+      set { _up_to_utc_time = value; }
+    }
+    private string _text_message = "";
+    [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"text_message", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue("")]
+    public string text_message
+    {
+      get { return _text_message; }
+      set { _text_message = value; }
+    }
+    private bool _truncated = default(bool);
+    [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"truncated", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::System.ComponentModel.DefaultValue(default(bool))]
+    public bool truncated
+    {
+      get { return _truncated; }
+      set { _truncated = value; }
+    }
+    [global::ProtoBuf.ProtoContract(Name=@"ResultCode")]
+    public enum ResultCode
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SUCCESS", Value=0)]
+      SUCCESS = 0,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DROPPED", Value=2)]
+      DROPPED = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DISCONNECTED", Value=4)]
+      DISCONNECTED = 4,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FAILURE", Value=101)]
+      FAILURE = 101,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ACCESS_DENIED", Value=103)]
+      ACCESS_DENIED = 103,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"NOT_FOUND", Value=104)]
+      NOT_FOUND = 104,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"OUTSIDE_ALLOWED_RANGE", Value=105)]
+      OUTSIDE_ALLOWED_RANGE = 105,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"REQUEST_LIMIT_VIOLATION", Value=106)]
+      REQUEST_LIMIT_VIOLATION = 106
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"VolumeProfileItem")]
+  public partial class VolumeProfileItem : global::ProtoBuf.IExtensible
+  {
+    public VolumeProfileItem() {}
+    
+    private int _price;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"price", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+    public int price
+    {
+      get { return _price; }
+      set { _price = value; }
+    }
+    private ulong _volume;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"volume", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public ulong volume
+    {
+      get { return _volume; }
+      set { _volume = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+  { 
+      return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing);
+  }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"HistoricalOrdersRequest")]
+  public partial class HistoricalOrdersRequest : global::ProtoBuf.IExtensible
   {
     public HistoricalOrdersRequest() {}
     
@@ -6111,8 +9476,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
   }
   }
   
-  [global::ProtoBuf.ProtoContract(Name=@"HistoricalOrdersReport")]
-  internal partial class HistoricalOrdersReport : global::ProtoBuf.IExtensible
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"HistoricalOrdersReport")]
+  public partial class HistoricalOrdersReport : global::ProtoBuf.IExtensible
   {
     public HistoricalOrdersReport() {}
     
@@ -6142,8 +9507,8 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
     public enum ProtocolVersionMinor
     {
             
-      [global::ProtoBuf.ProtoEnum(Name=@"PROTOCOL_VERSION_MINOR", Value=32)]
-      PROTOCOL_VERSION_MINOR = 32
+      [global::ProtoBuf.ProtoEnum(Name=@"PROTOCOL_VERSION_MINOR", Value=78)]
+      PROTOCOL_VERSION_MINOR = 78
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"DayOfWeek")]
@@ -6170,6 +9535,17 @@ namespace Polygon.Connector.CQGContinuum.WebAPI
             
       [global::ProtoBuf.ProtoEnum(Name=@"Saturday", Value=6)]
       Saturday = 6
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"MiFIDAlgorithmIdType")]
+    public enum MiFIDAlgorithmIdType
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"EXTERNAL_MIFID_ALGO_ID", Value=1)]
+      EXTERNAL_MIFID_ALGO_ID = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"CQG_MIFID_ALGO_ID", Value=2)]
+      CQG_MIFID_ALGO_ID = 2
     }
   
 }

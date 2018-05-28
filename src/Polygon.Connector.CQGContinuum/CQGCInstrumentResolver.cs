@@ -314,7 +314,7 @@ namespace Polygon.Connector.CQGContinuum
         /// <returns>
         ///      Цена
         /// </returns>
-        public decimal ConvertPriceBack(uint contractId, int price)
+        public decimal ConvertPriceBack(uint contractId, long price)
         {
             using (cacheLock.Lock())
             {
@@ -346,7 +346,7 @@ namespace Polygon.Connector.CQGContinuum
         /// <returns>
         ///      Цена
         /// </returns>
-        public decimal ConvertPriceBack(Instrument instrument, int price)
+        public decimal ConvertPriceBack(Instrument instrument, long price)
         {
             using (cacheLock.Lock())
             {

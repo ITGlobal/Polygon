@@ -1,0 +1,160 @@
+// Rules server messages
+// Times are in google.protobuf.Timestamp since Unix Epoch on January 1st, 1970
+
+package rules_1;
+
+import "shared_1.proto";
+import "timestamp.proto";
+
+////------------------------------------------
+//// Rule messages
+
+// Client rule messages.
+// Only one rule operation is allowed.
+message RuleRequest
+{
+   // Request identifier.
+   required string request_id = 1;
+
+   // Create or update a rule.
+   optional SetRuleRequest set_rule_request = 2;
+
+   // Delete a rule.
+   optional DeleteRuleRequest delete_rule_request = 3;
+
+   // Get a list of rules.
+   optional RulesListRequest rules_list_request = 4;
+}
+
+// Server rule messages.
+message RuleResult
+{
+   enum ResultCode
+   {
+      /// success codes (0 - 100)
+      SUCCESS = 0;
+
+      //// failure codes (100+)
+      // General failure.
+      FAILURE = 101;
+   }
+   
+   // ID of a corresponding request.
+   // It must be unique to match with the response.
+   required string request_id = 1;
+
+   // Operation status.
+   // This field is associated with ResultCode enum.
+   required uint32 result_code = 2;
+
+   // Operation details.
+   optional shared_1.Text details = 3;
+
+   // Result of set rule operation.
+   optional SetRuleResult set_rule_result = 4;
+
+   // Result of delete rule operation.
+   optional DeleteRuleResult delete_rule_result = 5;
+
+   // Result of rules list request.
+   optional RulesListResult rules_list_result = 6;
+}
+
+
+////------------------------------------------
+//// Rule entities
+
+// Rule definition contains one of the specific rules.
+// Only one specific rule can be specified.
+message RuleDefinition
+{
+   // Client ID of the rule. 
+   // It has to be unique for this client.
+   required string rule_id = 1;
+
+   // List of optional client rule tags.
+   repeated string rule_tag = 2;
+
+   // Rule expiration time (30 days from now, if not present).
+   optional google.protobuf.Timestamp expiration_utc_time = 3;
+
+   // List of actions for rule execution.
+   repeated Action action = 4;
+
+   // Order event rule definition.
+   optional OrderEventRule order_event_rule = 5;
+}
+
+// Possible actions for rule execution.
+// Only notifications are supported at the moment.
+message Action
+{
+   // List of destinations to notify.
+   repeated shared_1.Destination destination = 4;
+}
+
+// Order event notification rule.
+// Use it to get notifications for order events.
+message OrderEventRule
+{
+   // Optional list of accounts.
+   // All accounts of the client if not specified.
+   repeated sint32 account_id = 1;
+
+   // Optional list of order statuses that server will notify about.
+   // The server will notify about all order statuses if not specified.
+   // Associated with shared_1.OrderStatus.Status enum type.
+   repeated uint32 order_status = 2;
+
+   // Optional list of transaction statuses that server will notify about.
+   // The server will notify about all transaction statuses if not specified.
+   // Note: if it's specified along with order_status field only notifications matching both filters will be sent.
+   // Associated with shared_1.TransactionStatus.Status enum type.
+   repeated uint32 transaction_status = 3;
+}
+
+
+////------------------------------------------
+//// Rule operations
+
+// Create or update a rule.
+message SetRuleRequest
+{
+   // Definition of the rule.
+   // The complete definition is expected 
+   // regardless if these are new rules of updates.
+   required RuleDefinition rule_definition = 1;
+}
+
+// Result of set rule operation.
+message SetRuleResult
+{
+}
+
+// Delete a rule.
+message DeleteRuleRequest
+{
+   // Rule to delete.
+   required string rule_id = 1;
+}
+
+// Result of delete rule operation.
+message DeleteRuleResult
+{
+}
+
+// Get a list of rules.
+message RulesListRequest
+{
+   // Optional filter with a list of tags.
+   // Only rules with all specified tags are returned. 
+   // All client rules are returned if the list is empty.
+   repeated string rule_tag = 1;
+}
+
+// Result of rules list request.
+message RulesListResult
+{
+   // List of found rules.
+   repeated RuleDefinition rule_definition = 1;
+}

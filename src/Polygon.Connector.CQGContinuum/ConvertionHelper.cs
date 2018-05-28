@@ -29,29 +29,29 @@ namespace Polygon.Connector.CQGContinuum
 
         public static OrderState GetOrderState(OrderStatus message)
         {
-            switch ((OrderStatus.Status)message.status)
+            switch ((shared_1.OrderStatus.Status)message.status)
             {
-                case OrderStatus.Status.IN_TRANSIT:
+                case shared_1.OrderStatus.Status.IN_TRANSIT:
                     return OrderState.New;
-                case OrderStatus.Status.REJECTED:
+                case shared_1.OrderStatus.Status.REJECTED:
                     return OrderState.Error;
-                case OrderStatus.Status.WORKING:
+                case shared_1.OrderStatus.Status.WORKING:
                     return message.fill_qty > 0 ? OrderState.PartiallyFilled : OrderState.Active;
-                case OrderStatus.Status.EXPIRED:
+                case shared_1.OrderStatus.Status.EXPIRED:
                     return OrderState.Cancelled;
-                case OrderStatus.Status.IN_CANCEL:
+                case shared_1.OrderStatus.Status.IN_CANCEL:
                     return OrderState.Active;
-                case OrderStatus.Status.IN_MODIFY:
+                case shared_1.OrderStatus.Status.IN_MODIFY:
                     return OrderState.Active;
-                case OrderStatus.Status.CANCELLED:
+                case shared_1.OrderStatus.Status.CANCELLED:
                     return OrderState.Cancelled;
-                case OrderStatus.Status.FILLED:
+                case shared_1.OrderStatus.Status.FILLED:
                     return OrderState.Filled;
-                case OrderStatus.Status.SUSPENDED:
+                case shared_1.OrderStatus.Status.SUSPENDED:
                     return OrderState.New;
-                case OrderStatus.Status.DISCONNECTED:
+                case shared_1.OrderStatus.Status.DISCONNECTED:
                     return OrderState.Error;
-                case OrderStatus.Status.ACTIVEAT:
+                case shared_1.OrderStatus.Status.ACTIVEAT:
                     return OrderState.Active;
                 default:
                     throw new ArgumentOutOfRangeException();

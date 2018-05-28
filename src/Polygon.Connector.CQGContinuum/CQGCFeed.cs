@@ -140,17 +140,19 @@ namespace Polygon.Connector.CQGContinuum
                 {
                     if (marketData.market_values != null)
                     {
+                        var lastMarketValue = marketData.market_values.Last();
+
                         InstrumentParams.LastPrice = instrumentResolver.ConvertPriceBack(ContractId,
-                            marketData.market_values.close_price != 0
-                                ? marketData.market_values.close_price
-                                : marketData.market_values.yesterday_close);
+                            lastMarketValue.close_price != 0
+                                ? lastMarketValue.close_price
+                                : lastMarketValue.yesterday_close);
 
                         InstrumentParams.Settlement = instrumentResolver.ConvertPriceBack(ContractId,
-                            marketData.market_values.yesterday_close != 0
-                                ? marketData.market_values.yesterday_close
-                                : marketData.market_values.yesterday_settlement);
+                            lastMarketValue.yesterday_close != 0
+                                ? lastMarketValue.yesterday_close
+                                : lastMarketValue.yesterday_settlement);
 
-                        InstrumentParams.PreviousSettlement = instrumentResolver.ConvertPriceBack(ContractId, marketData.market_values.yesterday_settlement);
+                        InstrumentParams.PreviousSettlement = instrumentResolver.ConvertPriceBack(ContractId, lastMarketValue.yesterday_settlement);
                         UpdatePriceStep(InstrumentParams.LastPrice);
                         result = SendMessageFlags.InstrumentParams;
                         result |= HandleQuotes(marketData.quote);

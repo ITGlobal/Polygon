@@ -939,10 +939,7 @@ namespace Polygon.Connector.CQGContinuum
                         }
 
                         // Пребразовываем цену
-                        var price =
-                            transaction.Price != null
-                                ? instrumentResolver.ConvertPrice(contractId, transaction.Price)
-                                : orderStatus.order.limit_price;
+                        var price = instrumentResolver.ConvertPrice(contractId, transaction.Price);
                         if (price == null)
                         {
                             OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to convert price"));
@@ -997,9 +994,9 @@ namespace Polygon.Connector.CQGContinuum
             {
                 foreach (var transactionStatus in orderStatus.transaction_status)
                 {
-                    switch ((TransactionStatus.Status)transactionStatus.status)
+                    switch ((shared_1.TransactionStatus.Status)transactionStatus.status)
                     {
-                        case TransactionStatus.Status.FILL:
+                        case shared_1.TransactionStatus.Status.FILL:
                             if (transactionStatus.trade == null)
                             {
                                 continue;
@@ -1057,11 +1054,11 @@ namespace Polygon.Connector.CQGContinuum
                     continue;
                 }
 
-                switch ((TransactionStatus.Status)transactionStatus.status)
+                switch ((shared_1.TransactionStatus.Status)transactionStatus.status)
                 {
-                    case TransactionStatus.Status.REJECTED:
-                    case TransactionStatus.Status.REJECT_MODIFY:
-                    case TransactionStatus.Status.REJECT_CANCEL:
+                    case shared_1.TransactionStatus.Status.REJECTED:
+                    case shared_1.TransactionStatus.Status.REJECT_MODIFY:
+                    case shared_1.TransactionStatus.Status.REJECT_CANCEL:
                         // Транзация не прошла
                         TrySendTransactionReplyRejected(
                             transactionId,
@@ -1069,9 +1066,9 @@ namespace Polygon.Connector.CQGContinuum
                             );
                         break;
 
-                    case TransactionStatus.Status.ACK_PLACE:
-                    case TransactionStatus.Status.ACK_MODIFY:
-                    case TransactionStatus.Status.ACK_CANCEL:
+                    case shared_1.TransactionStatus.Status.ACK_PLACE:
+                    case shared_1.TransactionStatus.Status.ACK_MODIFY:
+                    case shared_1.TransactionStatus.Status.ACK_CANCEL:
                         // Транзация прошла
                         TrySendTransactionReplyAccepted(transactionId);
                         break;
