@@ -216,128 +216,125 @@ namespace Polygon.Connector.CQGContinuum
         /// </summary>
         private async void PositionStatusReceived(AdapterEventArgs<PositionStatus> args)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                args.MarkHandled();
+
+                // Ищем счет для позиции
+                string accountCode;
+                using (accountsLock.ReadLock())
                 {
-                    args.MarkHandled();
-
-                    // Ищем счет для позиции
-                    string accountCode;
-                    using (accountsLock.ReadLock())
+                    if (!accountCodesById.TryGetValue(args.Message.account_id, out accountCode))
                     {
-                        if (!accountCodesById.TryGetValue(args.Message.account_id, out accountCode))
-                        {
-                            Logger.Error().PrintFormat(
-                                "Unable to process position on contract #{0}: account #{1} is unknown",
-                                args.Message.contract_id,
-                                args.Message.account_id);
-                            return;
-                        }
-                    }
-
-                    // Обрабатываем метаданные контрактов
-                    if (args.Message.contract_metadata != null)
-                    {
-                        await
-                            instrumentResolver.HandleMetadataAsync(args.Message.contract_metadata,
-                                $"A position in \"{accountCode}\" account");
-                    }
-
-                    // Ищем инструмент для позиции
-                    var instrument = instrumentResolver.GetInstrument(args.Message.contract_id);
-                    if (instrument == null)
-                    {
-                        Logger.Warn().PrintFormat(
-                            "Received a position on contract #{0} in account {1} but no matching instrument is found",
+                        Logger.Error().PrintFormat(
+                            "Unable to process position on contract #{0}: account #{1} is unknown",
                             args.Message.contract_id,
-                            accountCode);
+                            args.Message.account_id);
                         return;
                     }
-
-                    // Рассчитываем позицию
-                    var position = new PositionMessage
-                    {
-                        Account = accountCode,
-                        Instrument = instrument
-                    };
-
-                    var message = new StringBuilder();
-                    message.AppendFormat("Position received: {0} [ ", instrument.Code);
-
-                    using (openPositionsLock.Lock())
-                    {
-                        Dictionary<uint, Dictionary<int, OpenPosition>> d1;
-                        if (!openPositions.TryGetValue(args.Message.account_id, out d1))
-                        {
-                            d1 = new Dictionary<uint, Dictionary<int, OpenPosition>>();
-                            openPositions.Add(args.Message.account_id, d1);
-                        }
-
-                        Dictionary<int, OpenPosition> d2;
-                        if (!d1.TryGetValue(args.Message.contract_id, out d2))
-                        {
-                            d2 = new Dictionary<int, OpenPosition>();
-                            d1.Add(args.Message.contract_id, d2);
-                        }
-
-                        if (args.Message.is_snapshot)
-                        {
-                            d2.Clear();
-                        }
-
-                        position.Quantity = 0;
-                        foreach (var p in args.Message.open_position)
-                        {
-                            var fmt = ObjectLogFormatter.Create(PrintOption.Nested, "CQGC_POSITION");
-                            fmt.AddField(LogFieldNames.Id, p.id);
-                            fmt.AddField(LogFieldNames.Price, p.price);
-                            fmt.AddField(LogFieldNames.Quantity, p.qty);
-                            fmt.AddField(LogFieldNames.TradeDate, p.trade_date);
-                            fmt.AddField(LogFieldNames.TradeUtcTime, p.trade_utc_time);
-                            fmt.AddField(LogFieldNames.StatementDate, p.statement_date);
-
-                            message.Append(fmt.Print(PrintOption.Nested));
-                            message.Append(", ");
-
-                            position.Quantity = (int)p.qty;
-                            position.Price = (decimal)p.price;
-
-                            d2[p.id] = p;
-                        }
-
-                        var volume = 0d;
-                        var quantity = 0u;
-
-                        foreach (var pair in d2)
-                        {
-                            volume += pair.Value.price * pair.Value.qty;
-                            quantity += pair.Value.qty;
-                        }
-
-                        position.Quantity = (int)quantity;
-                        position.Price = quantity != 0u ? (decimal)(volume / quantity) : 0;
-                    }
-
-                    if (args.Message.is_short_open_position)
-                    {
-                        position.Quantity *= -1;
-                    }
-
-                    message.Append("]: ");
-                    message.Append(LogFields.Price(position.Price));
-                    message.Append(LogFields.Quantity(position.Quantity));
-                    message.Append(LogFields.IsSnapshot(args.Message.is_snapshot));
-
-                    Logger.Debug().Print(message.ToString().Preformatted());
-
-                    // Отправляем сообщение
-                    OnMessageReceived(position);
                 }
-                catch (Exception e)
+
+                // Обрабатываем метаданные контрактов
+                if (args.Message.contract_metadata != null)
                 {
-                    Logger.Error().Print(e, $"Failed to process {args.Message}");
+                    await
+                        instrumentResolver.HandleMetadataAsync(args.Message.contract_metadata,
+                            $"A position in \"{accountCode}\" account");
                 }
+
+                // Ищем инструмент для позиции
+                var instrument = instrumentResolver.GetInstrument(args.Message.contract_id);
+                if (instrument == null)
+                {
+                    Logger.Warn().PrintFormat(
+                        "Received a position on contract #{0} in account {1} but no matching instrument is found",
+                        args.Message.contract_id,
+                        accountCode);
+                    return;
+                }
+
+                // Рассчитываем позицию
+                var position = new PositionMessage
+                {
+                    Account = accountCode,
+                    Instrument = instrument
+                };
+
+                var message = new StringBuilder();
+                message.AppendFormat("Position received: {0} [ ", instrument.Code);
+
+                using (openPositionsLock.Lock())
+                {
+                    Dictionary<uint, Dictionary<int, OpenPosition>> d1;
+                    if (!openPositions.TryGetValue(args.Message.account_id, out d1))
+                    {
+                        d1 = new Dictionary<uint, Dictionary<int, OpenPosition>>();
+                        openPositions.Add(args.Message.account_id, d1);
+                    }
+
+                    Dictionary<int, OpenPosition> d2;
+                    if (!d1.TryGetValue(args.Message.contract_id, out d2))
+                    {
+                        d2 = new Dictionary<int, OpenPosition>();
+                        d1.Add(args.Message.contract_id, d2);
+                    }
+
+                    if (args.Message.is_snapshot)
+                    {
+                        d2.Clear();
+                    }
+
+                    position.Quantity = 0;
+                    foreach (var p in args.Message.open_position)
+                    {
+                        var fmt = ObjectLogFormatter.Create(PrintOption.Nested, "CQGC_POSITION");
+                        fmt.AddField(LogFieldNames.Id, p.id);
+                        fmt.AddField(LogFieldNames.Price, p.price);
+                        fmt.AddField(LogFieldNames.Quantity, p.qty);
+                        fmt.AddField(LogFieldNames.TradeDate, p.trade_date);
+                        fmt.AddField(LogFieldNames.TradeUtcTime, p.trade_utc_time);
+                        fmt.AddField(LogFieldNames.StatementDate, p.statement_date);
+
+                        message.Append(fmt.Print(PrintOption.Nested));
+                        message.Append(", ");
+
+                        position.Quantity = (int) p.qty;
+                        position.Price = (decimal) p.price;
+
+                        d2[p.id] = p;
+                    }
+
+                    var volume = 0d;
+                    var quantity = 0u;
+
+                    foreach (var pair in d2)
+                    {
+                        volume += pair.Value.price * pair.Value.qty;
+                        quantity += pair.Value.qty;
+                    }
+
+                    position.Quantity = (int) quantity;
+                    position.Price = quantity != 0u ? (decimal) (volume / quantity) : 0;
+                }
+
+                if (args.Message.is_short_open_position)
+                {
+                    position.Quantity *= -1;
+                }
+
+                message.Append("]: ");
+                message.Append(LogFields.Price(position.Price));
+                message.Append(LogFields.Quantity(position.Quantity));
+                message.Append(LogFields.IsSnapshot(args.Message.is_snapshot));
+
+                Logger.Debug().Print(message.ToString().Preformatted());
+
+                // Отправляем сообщение
+                OnMessageReceived(position);
+            }
+            catch (Exception e)
+            {
+                Logger.Error().Print(e, $"Failed to process {args.Message}");
             }
         }
 
@@ -374,61 +371,58 @@ namespace Polygon.Connector.CQGContinuum
         /// </summary>
         private async void OrderStatusReceived(AdapterEventArgs<OrderStatus> args)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                Logger.Debug().Print(
+                    "Order status received",
+                    LogFields.ExchangeOrderId(args.Message.order_id),
+                    LogFields.ChainOrderId(args.Message.chain_order_id),
+                    LogFields.State(ConvertionHelper.GetOrderState(args.Message)),
+                    LogFields.AccountId(args.Message.account_id),
+                    LogFields.ExecOrderId(args.Message.exec_order_id)
+                );
+
+                args.MarkHandled();
+
+                // Обрабатываем метаданные контрактов
+                if (args.Message.contract_metadata != null)
                 {
-                    Logger.Debug().Print(
-                        "Order status received",
-                        LogFields.ExchangeOrderId(args.Message.order_id),
-                        LogFields.ChainOrderId(args.Message.chain_order_id),
-                        LogFields.State(ConvertionHelper.GetOrderState(args.Message)),
-                        LogFields.AccountId(args.Message.account_id),
-                        LogFields.ExecOrderId(args.Message.exec_order_id)
-                        );
-
-                    args.MarkHandled();
-
-                    // Обрабатываем метаданные контрактов
-                    if (args.Message.contract_metadata != null)
+                    foreach (var metadata in args.Message.contract_metadata)
                     {
-                        foreach (var metadata in args.Message.contract_metadata)
-                        {
-                            await instrumentResolver.HandleMetadataAsync(metadata);
-                        }
-                    }
-
-                    // Пытаемся выбрать заявку из контейнера
-                    Order order;
-                    using (ordersLock.Lock())
-                        ordersByOrderExchangeId.TryGetValue(args.Message.chain_order_id, out order);
-
-                    Message message;
-                    // Обрабатываем изменение статуса заявки
-                    if (order != null)
-                    {
-                        message = HandleOrderStateAsOrderStateChange(order, args.Message);
-                    }
-                    // Обрабатываем заявку как новую
-                    else
-                    {
-                        message = HandleOrderStateAsNewOrder(args.Message, out order);
-                    }
-
-                    // Отправляем сообщение и TransactionReply
-                    if (message != null)
-                    {
-                        OnMessageReceived(message);
-                        TryEmitTransactionReplies(args.Message);
-
-                        // Обрабатываем сделки
-                        TryEmitFills(args.Message, order);
+                        await instrumentResolver.HandleMetadataAsync(metadata);
                     }
                 }
-                catch (Exception e)
+
+                // Пытаемся выбрать заявку из контейнера
+                Order order;
+                using (ordersLock.Lock())
+                    ordersByOrderExchangeId.TryGetValue(args.Message.chain_order_id, out order);
+
+                Message message;
+                // Обрабатываем изменение статуса заявки
+                if (order != null)
                 {
-                    Logger.Error().Print(e, $"Failed to process {args.Message}");
+                    message = HandleOrderStateAsOrderStateChange(order, args.Message);
                 }
+                // Обрабатываем заявку как новую
+                else
+                {
+                    message = HandleOrderStateAsNewOrder(args.Message, out order);
+                }
+
+                // Отправляем сообщение и TransactionReply
+                if (message != null)
+                {
+                    OnMessageReceived(message);
+                    TryEmitTransactionReplies(args.Message);
+
+                    // Обрабатываем сделки
+                    TryEmitFills(args.Message, order);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error().Print(e, $"Failed to process {args.Message}");
             }
         }
 
@@ -648,8 +642,6 @@ namespace Polygon.Connector.CQGContinuum
 
             Task.Factory.StartNew(() =>
             {
-                LogManager.BreakScope();
-
                 try
                 {
                     while (waiter.Wait())
@@ -708,103 +700,100 @@ namespace Polygon.Connector.CQGContinuum
         /// </summary>
         private async void SendTransactionInternal(NewOrderTransaction transaction)
         {
-            using (LogManager.Scope())
+            try
             {
+                // Получаем счет для транзакции
+                int accountId;
+                var hasAccountId = true;
+                using (accountsLock.ReadLock())
+                {
+                    if (!accountIdsByCode.TryGetValue(transaction.Account, out accountId))
+                    {
+                        hasAccountId = false;
+                    }
+                }
+
+                if (!hasAccountId)
+                {
+                    OnMessageReceived(TransactionReply.Rejected(
+                        transaction,
+                        $"Account \"{transaction.Account}\" is unknown"));
+                    return;
+                }
+
+                // Получаем инструмент для транзации
+                uint contractId;
                 try
                 {
-                    // Получаем счет для транзакции
-                    int accountId;
-                    var hasAccountId = true;
-                    using (accountsLock.ReadLock())
-                    {
-                        if (!accountIdsByCode.TryGetValue(transaction.Account, out accountId))
-                        {
-                            hasAccountId = false;
-                        }
-                    }
+                    contractId = await instrumentResolver.GetContractIdAsync(transaction.Instrument);
 
-                    if (!hasAccountId)
-                    {
-                        OnMessageReceived(TransactionReply.Rejected(
-                            transaction,
-                            $"Account \"{transaction.Account}\" is unknown"));
+                    if (contractId == uint.MaxValue)
                         return;
-                    }
-
-                    // Получаем инструмент для транзации
-                    uint contractId;
-                    try
-                    {
-                        contractId = await instrumentResolver.GetContractIdAsync(transaction.Instrument);
-
-                        if (contractId == uint.MaxValue)
-                            return;
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        OnMessageReceived(TransactionReply.Rejected(
-                            transaction,
-                            $"Instrument \"{transaction.Instrument.Code}\" is unknown"));
-                        return;
-                    }
-
-                    // Пребразовываем цену
-                    var price = instrumentResolver.ConvertPrice(contractId, transaction.Price);
-                    if (price == null)
-                    {
-                        OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to convert price"));
-                        return;
-                    }
-
-                    // Формируем запрос
-                    var msg = new OrderRequest
-                    {
-                        new_order = new NewOrder
-                        {
-                            order = new WebAPI.Order
-                            {
-                                cl_order_id = transaction.TransactionId.ToString("N"),
-                                account_id = accountId,
-                                contract_id = contractId,
-                                side = (uint)ConvertionHelper.GetSide(transaction.Operation),
-                                order_type = (uint)ConvertionHelper.GetOrderType(transaction.Type),
-                                duration = (uint)ConvertionHelper.GetDuration(transaction.ExecutionCondition),
-                                limit_price = price.Value,
-                                qty = transaction.Quantity,
-                                is_manual = transaction.IsManual,
-
-                                user_attribute =
-                        {
-                            new UserAttribute
-                            {
-                                name = CommentAttributeName,
-                                value = transaction.Comment
-                            }
-                        }
-                            },
-                            suspend = false
-                        },
-                        request_id = adapter.GetNextRequestId()
-                    };
-
-                    // Запоминаем заявку
-                    using (ordersLock.Lock())
-                    {
-                        var order = new Order(transaction);
-                        ordersByTransactionId.Add(transaction.TransactionId, order);
-                    }
-
-                    // Запоминаем транзакцию
-                    StoreTransaction(msg.request_id, transaction);
-
-                    Logger.Debug().PrintFormat("Sending {0}", transaction);
-                    adapter.SendMessage(msg);
                 }
-                catch (Exception e)
+                catch (OperationCanceledException)
                 {
-                    Logger.Error().Print(e, $"Failed to send {transaction}");
-                    OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to send order"));
+                    OnMessageReceived(TransactionReply.Rejected(
+                        transaction,
+                        $"Instrument \"{transaction.Instrument.Code}\" is unknown"));
+                    return;
                 }
+
+                // Пребразовываем цену
+                var price = instrumentResolver.ConvertPrice(contractId, transaction.Price);
+                if (price == null)
+                {
+                    OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to convert price"));
+                    return;
+                }
+
+                // Формируем запрос
+                var msg = new OrderRequest
+                {
+                    new_order = new NewOrder
+                    {
+                        order = new WebAPI.Order
+                        {
+                            cl_order_id = transaction.TransactionId.ToString("N"),
+                            account_id = accountId,
+                            contract_id = contractId,
+                            side = (uint) ConvertionHelper.GetSide(transaction.Operation),
+                            order_type = (uint) ConvertionHelper.GetOrderType(transaction.Type),
+                            duration = (uint) ConvertionHelper.GetDuration(transaction.ExecutionCondition),
+                            limit_price = price.Value,
+                            qty = transaction.Quantity,
+                            is_manual = transaction.IsManual,
+
+                            user_attribute =
+                            {
+                                new UserAttribute
+                                {
+                                    name = CommentAttributeName,
+                                    value = transaction.Comment
+                                }
+                            }
+                        },
+                        suspend = false
+                    },
+                    request_id = adapter.GetNextRequestId()
+                };
+
+                // Запоминаем заявку
+                using (ordersLock.Lock())
+                {
+                    var order = new Order(transaction);
+                    ordersByTransactionId.Add(transaction.TransactionId, order);
+                }
+
+                // Запоминаем транзакцию
+                StoreTransaction(msg.request_id, transaction);
+
+                Logger.Debug().PrintFormat("Sending {0}", transaction);
+                adapter.SendMessage(msg);
+            }
+            catch (Exception e)
+            {
+                Logger.Error().Print(e, $"Failed to send {transaction}");
+                OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to send order"));
             }
         }
 
@@ -881,99 +870,97 @@ namespace Polygon.Connector.CQGContinuum
         /// </summary>
         private async void SendTransactionInternal(ModifyOrderTransaction transaction)
         {
-            using (LogManager.Scope())
+            try
             {
+                // Получаем счет для транзакции
+                int accountId;
+                var hasAccountId = true;
+                using (accountsLock.ReadLock())
+                {
+                    if (!accountIdsByCode.TryGetValue(transaction.Account, out accountId))
+                    {
+                        hasAccountId = false;
+                    }
+                }
+
+                if (!hasAccountId)
+                {
+                    OnMessageReceived(TransactionReply.Rejected(
+                        transaction,
+                        $"Account \"{transaction.Account}\" is unknown"));
+                    return;
+                }
+
+                // Получаем инструмент для транзации
+                uint contractId;
                 try
                 {
-                    // Получаем счет для транзакции
-                    int accountId;
-                    var hasAccountId = true;
-                    using (accountsLock.ReadLock())
-                    {
-                        if (!accountIdsByCode.TryGetValue(transaction.Account, out accountId))
-                        {
-                            hasAccountId = false;
-                        }
-                    }
+                    contractId = await instrumentResolver.GetContractIdAsync(transaction.Instrument);
 
-                    if (!hasAccountId)
-                    {
-                        OnMessageReceived(TransactionReply.Rejected(
-                            transaction,
-                            $"Account \"{transaction.Account}\" is unknown"));
+                    if (contractId == uint.MaxValue)
                         return;
-                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    OnMessageReceived(TransactionReply.Rejected(
+                        transaction,
+                        $"Instrument \"{transaction.Instrument.Code}\" is unknown"));
+                    return;
+                }
 
-                    // Получаем инструмент для транзации
-                    uint contractId;
-                    try
-                    {
-                        contractId = await instrumentResolver.GetContractIdAsync(transaction.Instrument);
-
-                        if (contractId == uint.MaxValue)
-                            return;
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        OnMessageReceived(TransactionReply.Rejected(
-                            transaction,
-                            $"Instrument \"{transaction.Instrument.Code}\" is unknown"));
-                        return;
-                    }
-
-                    // Формируем запрос
-                    OrderRequest msg;
+                // Формируем запрос
+                OrderRequest msg;
+                using (ordersLock.Lock())
+                {
+                    OrderStatus orderStatus;
                     using (ordersLock.Lock())
                     {
-                        OrderStatus orderStatus;
-                        using (ordersLock.Lock())
-                        {
-                            orderStatusByChainOrderId.TryGetValue(transaction.OrderExchangeId, out orderStatus);
-                        }
-                        if (orderStatus == null)
-                        {
-                            OnMessageReceived(TransactionReply.Rejected(
-                                transaction,
-                                $"Order \"{transaction.OrderExchangeId}\" doesn't exist or is not active"));
-                            return;
-                        }
-
-                        // Пребразовываем цену
-                        var price = instrumentResolver.ConvertPrice(contractId, transaction.Price);
-                        if (price == null)
-                        {
-                            OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to convert price"));
-                            return;
-                        }
-
-                        msg = new OrderRequest
-                        {
-                            modify_order = new ModifyOrder
-                            {
-                                order_id = orderStatus.order_id,
-                                cl_order_id = transaction.TransactionId.ToString("N"),
-                                orig_cl_order_id = orderStatus.order.cl_order_id,
-                                account_id = accountId,
-                                limit_price = price.Value,
-                                qty = transaction.Quantity,
-                                when_utc_time = adapter.ResolveDateTime(DateTime.UtcNow)
-                            },
-                            request_id = adapter.GetNextRequestId()
-                        };
+                        orderStatusByChainOrderId.TryGetValue(transaction.OrderExchangeId, out orderStatus);
                     }
 
-                    // Запоминаем транзакцию
-                    StoreTransaction(msg.request_id, transaction);
+                    if (orderStatus == null)
+                    {
+                        OnMessageReceived(TransactionReply.Rejected(
+                            transaction,
+                            $"Order \"{transaction.OrderExchangeId}\" doesn't exist or is not active"));
+                        return;
+                    }
 
-                    // Отправляем заявку
-                    Logger.Debug().PrintFormat("Sending {0}", transaction);
-                    adapter.SendMessage(msg);
+                    // Пребразовываем цену
+                    var price = instrumentResolver.ConvertPrice(contractId, transaction.Price);
+                    if (price == null)
+                    {
+                        OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to convert price"));
+                        return;
+                    }
+
+                    msg = new OrderRequest
+                    {
+                        modify_order = new ModifyOrder
+                        {
+                            order_id = orderStatus.order_id,
+                            cl_order_id = transaction.TransactionId.ToString("N"),
+                            orig_cl_order_id = orderStatus.order.cl_order_id,
+                            account_id = accountId,
+                            limit_price = price.Value,
+                            qty = transaction.Quantity,
+                            when_utc_time = adapter.ResolveDateTime(DateTime.UtcNow)
+                        },
+                        request_id = adapter.GetNextRequestId()
+                    };
                 }
-                catch (Exception e)
-                {
-                    Logger.Error().Print(e, $"Failed to send {transaction}");
-                    OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to send order"));
-                }
+
+                // Запоминаем транзакцию
+                StoreTransaction(msg.request_id, transaction);
+
+                // Отправляем заявку
+                Logger.Debug().PrintFormat("Sending {0}", transaction);
+                adapter.SendMessage(msg);
+            }
+            catch (Exception e)
+            {
+                Logger.Error().Print(e, $"Failed to send {transaction}");
+                OnMessageReceived(TransactionReply.Rejected(transaction, "Unable to send order"));
             }
         }
 
