@@ -249,45 +249,42 @@ namespace Polygon.Connector.IQFeed
         /// </param>
         public async Task<SubscriptionResult> Subscribe(Instrument instrument)
         {
-            using (LogManager.Scope())
+            var data = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+            if (data == null)
             {
-                var data = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
-                if (data == null)
-                {
-                    return SubscriptionResult.Error(instrument, $"Unable to resolve symbol for {instrument}");
-                }
-
-                // Забираем подписку из коллекции или создаем новую
-                InstrumentSubscription subscription;
-                bool isNewSubscription;
-                using (instrumentSubscriptionsLock.Lock())
-                {
-                    if (instrumentSubscriptionsByInstrument.TryGetValue(instrument, out subscription))
-                    {
-                        isNewSubscription = false;
-                    }
-                    else
-                    {
-                        subscription = new InstrumentSubscription(instrument, data, OnInstrumentSubscriptionTimedOut);
-                        instrumentSubscriptionsByInstrument.Add(instrument, subscription);
-
-                        instrumentSubscriptionsByCode[subscription.Code] = subscription;
-                        isNewSubscription = true;
-                    }
-                }
-
-                if (isNewSubscription)
-                {
-                    // Если подписка уже существовала, то ничего не делаем
-                    // В противном случае требуется подписаться
-
-                    // Подписываемся
-                    socketL1.Subscribe(subscription.Code);
-                    subscription.BeginTimeout();
-                }
-
-                return await subscription.Task;
+                return SubscriptionResult.Error(instrument, $"Unable to resolve symbol for {instrument}");
             }
+
+            // Забираем подписку из коллекции или создаем новую
+            InstrumentSubscription subscription;
+            bool isNewSubscription;
+            using (instrumentSubscriptionsLock.Lock())
+            {
+                if (instrumentSubscriptionsByInstrument.TryGetValue(instrument, out subscription))
+                {
+                    isNewSubscription = false;
+                }
+                else
+                {
+                    subscription = new InstrumentSubscription(instrument, data, OnInstrumentSubscriptionTimedOut);
+                    instrumentSubscriptionsByInstrument.Add(instrument, subscription);
+
+                    instrumentSubscriptionsByCode[subscription.Code] = subscription;
+                    isNewSubscription = true;
+                }
+            }
+
+            if (isNewSubscription)
+            {
+                // Если подписка уже существовала, то ничего не делаем
+                // В противном случае требуется подписаться
+
+                // Подписываемся
+                socketL1.Subscribe(subscription.Code);
+                subscription.BeginTimeout();
+            }
+
+            return await subscription.Task;
         }
 
         /// <summary>
@@ -524,28 +521,25 @@ namespace Polygon.Connector.IQFeed
             HistoryProviderSpan span,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            using (LogManager.Scope())
+            var instrumentData = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+            if (instrumentData == null)
             {
-                var instrumentData = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
-                if (instrumentData == null)
-                {
-                    consumer.Error($"Unable to resolve symbol for {instrument}");
-                    return;
-                }
-
-                // Выгружаем список точек
-                var points = await FetchHistoryDataAsync(instrumentData.Symbol, begin, end, span, cancellationToken);
-
-                // Собираем результат
-                var data = new HistoryData(instrument, begin, end, span);
-                foreach (var p in points.OrderBy(_ => _.Point))
-                {
-                    data.Points.Add(p);
-                }
-
-                // Передаем результат потребителю
-                consumer.Update(data, HistoryDataUpdateType.Batch);
+                consumer.Error($"Unable to resolve symbol for {instrument}");
+                return;
             }
+
+            // Выгружаем список точек
+            var points = await FetchHistoryDataAsync(instrumentData.Symbol, begin, end, span, cancellationToken);
+
+            // Собираем результат
+            var data = new HistoryData(instrument, begin, end, span);
+            foreach (var p in points.OrderBy(_ => _.Point))
+            {
+                data.Points.Add(p);
+            }
+
+            // Передаем результат потребителю
+            consumer.Update(data, HistoryDataUpdateType.Batch);
         }
 
         /// <summary>
@@ -576,20 +570,17 @@ namespace Polygon.Connector.IQFeed
             DateTime begin,
             HistoryProviderSpan span)
         {
-            using (LogManager.Scope())
+            var instrumentData = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
+            if (instrumentData == null)
             {
-                var instrumentData = await instrumentConverter.ResolveInstrumentAsync(this, instrument);
-                if (instrumentData == null)
-                {
-                    consumer.Error($"Unable to resolve symbol for {instrument}");
-                    return new NullHistoryDataSubscription();
-                }
-
-                // Создаем подписку
-                var subscription = new HistorySubscription(this, consumer, instrument, instrumentData.Symbol, span);
-                subscription.StartFetch(begin);
-                return subscription;
+                consumer.Error($"Unable to resolve symbol for {instrument}");
+                return new NullHistoryDataSubscription();
             }
+
+            // Создаем подписку
+            var subscription = new HistorySubscription(this, consumer, instrument, instrumentData.Symbol, span);
+            subscription.StartFetch(begin);
+            return subscription;
         }
 
         internal async Task<IList<HistoryDataPoint>> FetchHistoryDataAsync(
@@ -705,30 +696,27 @@ namespace Polygon.Connector.IQFeed
         /// </summary>
         public async Task<Tuple<bool, string>> TrySubscribeAsync(string code, SecurityType type)
         {
-            using (LogManager.Scope())
+            await securityTypeIndexCompleted.Task;
+
+            int typeId;
+            if (!securityTypeIndex.TryGetValue(type, out typeId))
             {
-                await securityTypeIndexCompleted.Task;
-
-                int typeId;
-                if (!securityTypeIndex.TryGetValue(type, out typeId))
-                {
-                    var message = LogMessage.Format($"Failed to find an identifier for {type}").ToString();
-                    Logger.Warn().Print(message);
-                    return Tuple.Create(false, message);
-                }
-
-                var operation = new SubscriptionTest(code, type);
-                var requestId = LookupSocketWrapper.RequestIdPrefix + Guid.NewGuid().ToString("N");
-                using (subscriptionTestsLock.Lock())
-                {
-                    subscriptionTests[requestId] = operation;
-                }
-
-                lookupSocket.RequestSymbolLookup(code, typeId, requestId);
-
-                var result = await operation.Task;
-                return Tuple.Create(result, operation.Message);
+                var message = LogMessage.Format($"Failed to find an identifier for {type}").ToString();
+                Logger.Warn().Print(message);
+                return Tuple.Create(false, message);
             }
+
+            var operation = new SubscriptionTest(code, type);
+            var requestId = LookupSocketWrapper.RequestIdPrefix + Guid.NewGuid().ToString("N");
+            using (subscriptionTestsLock.Lock())
+            {
+                subscriptionTests[requestId] = operation;
+            }
+
+            lookupSocket.RequestSymbolLookup(code, typeId, requestId);
+
+            var result = await operation.Task;
+            return Tuple.Create(result, operation.Message);
         }
 
         private bool SubscriptionTestOnResultMsg(IQMessageArgs args)
@@ -818,20 +806,17 @@ namespace Polygon.Connector.IQFeed
 
         public async Task<string[]> LookupSymbols(string code, int? maxResults)
         {
-            using (LogManager.Scope())
+            var operation = new SymbolLookupRequest(maxResults);
+            var requestId = LookupSocketWrapper.RequestIdPrefix + Guid.NewGuid().ToString("N");
+            using (symbolLookupRequestsLock.Lock())
             {
-                var operation = new SymbolLookupRequest(maxResults);
-                var requestId = LookupSocketWrapper.RequestIdPrefix + Guid.NewGuid().ToString("N");
-                using (symbolLookupRequestsLock.Lock())
-                {
-                    symbolLookupRequests[requestId] = operation;
-                }
-
-                lookupSocket.RequestSymbolLookup(code, null, requestId);
-
-                var result = await operation.Task;
-                return result;
+                symbolLookupRequests[requestId] = operation;
             }
+
+            lookupSocket.RequestSymbolLookup(code, null, requestId);
+
+            var result = await operation.Task;
+            return result;
         }
 
         private bool SymbolLookupOnResultMsg(IQMessageArgs args)
@@ -966,35 +951,32 @@ namespace Polygon.Connector.IQFeed
         ///     Проверить подписку
         /// </summary>
         async Task<SubscriptionTestResult> ISubscriptionTester<IQFeedInstrumentData>.TestSubscriptionAsync(IQFeedInstrumentData data)
-        { 
-            using (LogManager.Scope())
+        {
+            await securityTypeIndexCompleted.Task;
+
+            if (!securityTypeIndex.TryGetValue(data.SecurityType, out var typeId))
             {
-                await securityTypeIndexCompleted.Task;
-
-                if (!securityTypeIndex.TryGetValue(data.SecurityType, out var typeId))
-                {
-                    var message = LogMessage.Format($"Failed to find an identifier for {data.SecurityType}").ToString();
-                    Logger.Warn().Print(message);
-                    return SubscriptionTestResult.Failed(message);
-                }
-
-                var operation = new SubscriptionTest(data.Symbol, data.SecurityType);
-                var requestId = LookupSocketWrapper.RequestIdPrefix + Guid.NewGuid().ToString("N");
-                using (subscriptionTestsLock.Lock())
-                {
-                    subscriptionTests[requestId] = operation;
-                }
-
-                lookupSocket.RequestSymbolLookup(data.Symbol, typeId, requestId);
-
-                var result = await operation.Task;
-                if (result)
-                {
-                    return SubscriptionTestResult.Passed();
-                }
-
-                return SubscriptionTestResult.Failed();
+                var message = LogMessage.Format($"Failed to find an identifier for {data.SecurityType}").ToString();
+                Logger.Warn().Print(message);
+                return SubscriptionTestResult.Failed(message);
             }
+
+            var operation = new SubscriptionTest(data.Symbol, data.SecurityType);
+            var requestId = LookupSocketWrapper.RequestIdPrefix + Guid.NewGuid().ToString("N");
+            using (subscriptionTestsLock.Lock())
+            {
+                subscriptionTests[requestId] = operation;
+            }
+
+            lookupSocket.RequestSymbolLookup(data.Symbol, typeId, requestId);
+
+            var result = await operation.Task;
+            if (result)
+            {
+                return SubscriptionTestResult.Passed();
+            }
+
+            return SubscriptionTestResult.Failed();
         }
 
         #endregion      

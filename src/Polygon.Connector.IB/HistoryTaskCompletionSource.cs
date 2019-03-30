@@ -68,19 +68,16 @@ namespace Polygon.Connector.InteractiveBrokers
             // Если прилетело "Historical Market Data Service error message:Time length exceed max",
             // то уменьшаем размер таймфрема и передергиваем запрос
 
-            using (LogManager.Scope())
+            try
             {
-                try
-                {
-                    IBAdapter.Log.Debug().Print($"Historical data request: time length exceed max");
-                    request.ReduceTimeFrame();
-                    await request.ReissueAsync(this, cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    IBAdapter.Log.Error().Print(e, "Unable to reissue historical data request");
-                    TrySetException(e);
-                }
+                IBAdapter.Log.Debug().Print($"Historical data request: time length exceed max");
+                request.ReduceTimeFrame();
+                await request.ReissueAsync(this, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                IBAdapter.Log.Error().Print(e, "Unable to reissue historical data request");
+                TrySetException(e);
             }
         }
     }

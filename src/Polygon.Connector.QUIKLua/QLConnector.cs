@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Polygon.Connector.QUIKLua.Adapter;
 
 namespace Polygon.Connector.QUIKLua
@@ -22,12 +23,13 @@ namespace Polygon.Connector.QUIKLua
 
         public QLConnector(QLParameters settings, IDateTimeProvider dateTimeProvider)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             this.settings = settings;
             adapter = new QLAdapter(settings.IpAddress, settings.Port, dateTimeProvider, settings.ReceiveMarketdata, settings.InstrumentConverter);
             feed = new QLFeed(adapter);
             router = new QLRouter(adapter);
             historyProvider = new QLHistoryProvider(adapter);
-
             ConnectionStatusProviders = new IConnectionStatusProvider[] {this};
         }
 

@@ -93,45 +93,42 @@ namespace Polygon.Connector.CQGContinuum
         /// </returns>
         public async Task<uint> GetContractIdAsync(Instrument instrument)
         {
-            using (LogManager.Scope())
+            // Ищем ID контракта в кеше
+            uint contractId;
+            using (cacheLock.Lock())
             {
-                // Ищем ID контракта в кеше
-                uint contractId;
-                using (cacheLock.Lock())
+                if (cachedContractIds.TryGetValue(instrument, out contractId))
                 {
-                    if (cachedContractIds.TryGetValue(instrument, out contractId))
-                    {
-                        return contractId;
-                    }
+                    return contractId;
                 }
-
-                // Ищем или создаем запрос инструмента
-                ResolutionRequest request;
-                var sendRequest = false;
-                using (resolutionRequestsLock.Lock())
-                {
-                    if (!resolutionRequestsByInstrument.TryGetValue(instrument, out request))
-                    {
-                        var requestId = adapter.GetNextRequestId();
-                        request = new ResolutionRequest(requestId, instrument);
-
-                        resolutionRequestsById.Add(requestId, request);
-                        resolutionRequestsByInstrument.Add(instrument, request);
-
-                        sendRequest = true;
-                    }
-                }
-
-                // Отправляем запрос инструмента, если он был создан
-                if (sendRequest)
-                {
-                    await SendResolutionRequestAsync(request);
-                }
-
-                // Дожидаемся отработки запроса
-                contractId = await request.Task;
-                return contractId;
             }
+
+            // Ищем или создаем запрос инструмента
+            ResolutionRequest request;
+            var sendRequest = false;
+            using (resolutionRequestsLock.Lock())
+            {
+                if (!resolutionRequestsByInstrument.TryGetValue(instrument, out request))
+                {
+                    var requestId = adapter.GetNextRequestId();
+                    request = new ResolutionRequest(requestId, instrument);
+
+                    resolutionRequestsById.Add(requestId, request);
+                    resolutionRequestsByInstrument.Add(instrument, request);
+
+                    sendRequest = true;
+                }
+            }
+
+            // Отправляем запрос инструмента, если он был создан
+            if (sendRequest)
+            {
+                await SendResolutionRequestAsync(request);
+            }
+
+            // Дожидаемся отработки запроса
+            contractId = await request.Task;
+            return contractId;
         }
 
         /// <summary>
@@ -168,47 +165,46 @@ namespace Polygon.Connector.CQGContinuum
         /// </param>
         public async Task HandleMetadataAsync(ContractMetadata metadata, string dependentObjectDescription = null)
         {
-            using (LogManager.Scope())
+            _Log.Debug().Print(
+                "Contract metadata received",
+                LogFields.ContractId(metadata.contract_id),
+                LogFields.Symbol(metadata.contract_symbol),
+                LogFields.CorrectPriceScale(metadata.correct_price_scale),
+                LogFields.DisplayPriceScale(metadata.display_price_scale)
+            );
+            using (cacheLock.Lock())
             {
-                _Log.Debug().Print(
-                    "Contract metadata received",
-                    LogFields.ContractId(metadata.contract_id),
-                    LogFields.Symbol(metadata.contract_symbol),
-                    LogFields.CorrectPriceScale(metadata.correct_price_scale),
-                    LogFields.DisplayPriceScale(metadata.display_price_scale)
-                );
-                using (cacheLock.Lock())
+                if (cachedContracts.ContainsKey(metadata.contract_id))
                 {
-                    if (cachedContracts.ContainsKey(metadata.contract_id))
-                    {
-                        _Log.Debug().Print("Already cached", LogFields.ContractId(metadata.contract_id));
-                        return;
-                    }
-                }
-
-                Instrument instrument = await InstrumentConverter.ResolveSymbolAsync(adapter, metadata.contract_symbol, dependentObjectDescription);
-                if(instrument == null)
-                {
-                    _Log.Warn().Print("Instrument not resolved", LogFields.Symbol(metadata.contract_symbol));
+                    _Log.Debug().Print("Already cached", LogFields.ContractId(metadata.contract_id));
                     return;
                 }
-
-                using (cacheLock.Lock())
-                {
-                    _Log.Debug().Print(
-                        "Caching instrument",
-                        LogFields.ContractId(metadata.contract_id),
-                        LogFields.Symbol(metadata.contract_symbol),
-                        LogFields.Instrument(instrument)
-                        );
-
-                    cachedContractIds[instrument] = metadata.contract_id;
-                    cachedContracts[metadata.contract_id] = instrument;
-                    cachedContractPriceScales[metadata.contract_id] = (decimal)metadata.correct_price_scale;
-                }
-
-                OnInstrumentResolved(metadata.contract_id);
             }
+
+            Instrument instrument =
+                await InstrumentConverter.ResolveSymbolAsync(adapter, metadata.contract_symbol,
+                    dependentObjectDescription);
+            if (instrument == null)
+            {
+                _Log.Warn().Print("Instrument not resolved", LogFields.Symbol(metadata.contract_symbol));
+                return;
+            }
+
+            using (cacheLock.Lock())
+            {
+                _Log.Debug().Print(
+                    "Caching instrument",
+                    LogFields.ContractId(metadata.contract_id),
+                    LogFields.Symbol(metadata.contract_symbol),
+                    LogFields.Instrument(instrument)
+                );
+
+                cachedContractIds[instrument] = metadata.contract_id;
+                cachedContracts[metadata.contract_id] = instrument;
+                cachedContractPriceScales[metadata.contract_id] = (decimal) metadata.correct_price_scale;
+            }
+
+            OnInstrumentResolved(metadata.contract_id);
         }
 
         /// <summary>
@@ -362,38 +358,35 @@ namespace Polygon.Connector.CQGContinuum
 
         private async Task SendResolutionRequestAsync(ResolutionRequest request)
         {
-            using (LogManager.Scope())
+            var instrument = request.Instrument;
+            var data = await InstrumentConverter.ResolveInstrumentAsync(adapter, instrument);
+
+            // если символ не зарезолвился, выходим
+            if (data == null)
             {
-                var instrument = request.Instrument;
-                var data = await InstrumentConverter.ResolveInstrumentAsync(adapter, instrument);
-
-                // если символ не зарезолвился, выходим
-                if (data == null)
-                {
-                    request.Resolve(uint.MaxValue);
-                    return;
-                }
-
-                var message = new InformationRequest
-                {
-                    symbol_resolution_request = new SymbolResolutionRequest { symbol = data.Symbol },
-                    id = request.Id
-                };
-
-                request.OnSent();
-
-                using (requestBatchLock.Lock())
-                {
-                    requestBatch.Add(message);
-                }
-
-                _Log.Debug().PrintFormat(
-                    "Sending a symbol resolution request {0} for instrument {1} mapped to symbol {2}",
-                    request.Id,
-                    instrument,
-                    data.Symbol
-                    );
+                request.Resolve(uint.MaxValue);
+                return;
             }
+
+            var message = new InformationRequest
+            {
+                symbol_resolution_request = new SymbolResolutionRequest {symbol = data.Symbol},
+                id = request.Id
+            };
+
+            request.OnSent();
+
+            using (requestBatchLock.Lock())
+            {
+                requestBatch.Add(message);
+            }
+
+            _Log.Debug().PrintFormat(
+                "Sending a symbol resolution request {0} for instrument {1} mapped to symbol {2}",
+                request.Id,
+                instrument,
+                data.Symbol
+            );
         }
 
         private void SendBatchRequest()
@@ -464,17 +457,14 @@ namespace Polygon.Connector.CQGContinuum
 
         private async void ContractMetadataReceived(AdapterEventArgs<ContractMetadata> args)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
-                {
-                    args.MarkHandled();
+                args.MarkHandled();
 
-                    await Task.Yield();
-                    await HandleMetadataAsync(args.Message);
-                }
-                catch { }
+                await Task.Yield();
+                await HandleMetadataAsync(args.Message);
             }
+            catch { }
         }
     }
 }

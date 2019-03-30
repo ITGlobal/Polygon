@@ -231,42 +231,40 @@ namespace Polygon.Connector.InteractiveBrokers
             HistoryProviderSpan span,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            using (LogManager.Scope())
+            // Получаем контракт по инструменту
+            var contract =
+                await connector.ContractContainer.GetContractAsync(instrument, cancellationToken: cancellationToken);
+            if (contract == null)
             {
-                // Получаем контракт по инструменту
-                var contract = await connector.ContractContainer.GetContractAsync(instrument, cancellationToken: cancellationToken);
-                if (contract == null)
-                {
-                    throw new InvalidOperationException($"Can't find instrument \"{instrument}\"");
-                }
-
-                // Загружаем блок исторических данных
-                var points = await FetchHistoryDataBlock(consumer, contract, begin, end, span, cancellationToken);
-
-                // Собираем объект HistoryData
-                var minDate = DateTime.MaxValue;
-                var maxDate = DateTime.MinValue;
-                var data = new HistoryData(instrument, begin, end, span);
-                foreach (var point in points.OrderBy(_ => _.Point))
-                {
-                    data.Points.Add(point);
-
-                    if (minDate > point.Point)
-                    {
-                        minDate = point.Point;
-                    }
-
-                    if (maxDate < point.Point)
-                    {
-                        maxDate = point.Point;
-                    }
-                }
-
-                data.Begin = minDate;
-                data.End = maxDate;
-
-                consumer.Update(data, HistoryDataUpdateType.Batch);
+                throw new InvalidOperationException($"Can't find instrument \"{instrument}\"");
             }
+
+            // Загружаем блок исторических данных
+            var points = await FetchHistoryDataBlock(consumer, contract, begin, end, span, cancellationToken);
+
+            // Собираем объект HistoryData
+            var minDate = DateTime.MaxValue;
+            var maxDate = DateTime.MinValue;
+            var data = new HistoryData(instrument, begin, end, span);
+            foreach (var point in points.OrderBy(_ => _.Point))
+            {
+                data.Points.Add(point);
+
+                if (minDate > point.Point)
+                {
+                    minDate = point.Point;
+                }
+
+                if (maxDate < point.Point)
+                {
+                    maxDate = point.Point;
+                }
+            }
+
+            data.Begin = minDate;
+            data.End = maxDate;
+
+            consumer.Update(data, HistoryDataUpdateType.Batch);
         }
 
         /// <summary>
@@ -297,20 +295,17 @@ namespace Polygon.Connector.InteractiveBrokers
             DateTime begin,
             HistoryProviderSpan span)
         {
-            using (LogManager.Scope())
+            // Получаем контракт по инструменту
+            var contract = await connector.ContractContainer.GetContractAsync(instrument);
+            if (contract == null)
             {
-                // Получаем контракт по инструменту
-                var contract = await connector.ContractContainer.GetContractAsync(instrument);
-                if (contract == null)
-                {
-                    throw new InvalidOperationException($"Can't find instrument \"{instrument}\"");
-                }
-
-                // Создаем подписку
-                var subscription = new IBHistoryDataSubscription(this, consumer, instrument, contract, span);
-                subscription.StartFetch(begin);
-                return subscription;
+                throw new InvalidOperationException($"Can't find instrument \"{instrument}\"");
             }
+
+            // Создаем подписку
+            var subscription = new IBHistoryDataSubscription(this, consumer, instrument, contract, span);
+            subscription.StartFetch(begin);
+            return subscription;
         }
 
         internal async Task<IList<HistoryDataPoint>> FetchHistoryDataBlock(
@@ -321,28 +316,25 @@ namespace Polygon.Connector.InteractiveBrokers
             HistoryProviderSpan span,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            using (LogManager.Scope())
-            {
-                // Формируем параметры запроса
-                ApplyHistoryDataLimits(span, ref begin, ref end);
+            // Формируем параметры запроса
+            ApplyHistoryDataLimits(span, ref begin, ref end);
 
-                // Ждем, чтобы не превысить лимиты по частоте запросов
-                var request = new IBHistoricalDataRequest(
-                    this,
-                    consumer,
-                    contract: contract,
-                    begin: begin,
-                    end: end,
-                    span: span,
-                    whatToShow: "TRADES",
-                    useRth: 1,
-                    formatDate: 1
-                    );
+            // Ждем, чтобы не превысить лимиты по частоте запросов
+            var request = new IBHistoricalDataRequest(
+                this,
+                consumer,
+                contract: contract,
+                begin: begin,
+                end: end,
+                span: span,
+                whatToShow: "TRADES",
+                useRth: 1,
+                formatDate: 1
+            );
 
-                // Отправляем запрос
-                var points = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
-                return points;
-            }
+            // Отправляем запрос
+            var points = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
+            return points;
         }
         private static void ApplyHistoryDataLimits(HistoryProviderSpan span, ref DateTime begin, ref DateTime end)
         {
@@ -380,31 +372,28 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </param>
         public async Task<SubscriptionResult> Subscribe(Instrument instrument)
         {
-            using (LogManager.Scope())
+            // Получаем контракт по инструменту
+            var contract = await connector.ContractContainer.GetContractAsync(instrument);
+
+            if (contract == null)
             {
-                // Получаем контракт по инструменту
-                var contract = await connector.ContractContainer.GetContractAsync(instrument);
-
-                if (contract == null)
-                {
-                    return new SubscriptionResult(instrument, false, $"Can't subscribe to \"{instrument}\"");
-                }
-
-                var tickerId = NextTickerId();
-
-                var pendingTestResult = new PendingTestResult();
-                // Сохраняем тикер
-                marketDataTickers.Store(tickerId, instrument, pendingTestResult);
-
-                // Подписываемся на рыночные данные
-                const string genericTickList = "165"; // Miscellaneous Stats
-
-                Socket.reqMktData(tickerId, contract, genericTickList, snapshot: false);
-
-                var result = await pendingTestResult.WaitAsync();
-
-                return new SubscriptionResult(instrument, result);
+                return new SubscriptionResult(instrument, false, $"Can't subscribe to \"{instrument}\"");
             }
+
+            var tickerId = NextTickerId();
+
+            var pendingTestResult = new PendingTestResult();
+            // Сохраняем тикер
+            marketDataTickers.Store(tickerId, instrument, pendingTestResult);
+
+            // Подписываемся на рыночные данные
+            const string genericTickList = "165"; // Miscellaneous Stats
+
+            Socket.reqMktData(tickerId, contract, genericTickList, snapshot: false);
+
+            var result = await pendingTestResult.WaitAsync();
+
+            return new SubscriptionResult(instrument, result);
         }
 
         /// <summary>
@@ -445,57 +434,55 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </param>
         public async void SubscribeOrderBook(Instrument instrument)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                // Получаем контракт по инструменту
+                var contract = await connector.ContractContainer.GetContractAsync(instrument);
+
+                if (contract == null)
                 {
-                    // Получаем контракт по инструменту
-                    var contract = await connector.ContractContainer.GetContractAsync(instrument);
-
-                    if (contract == null)
-                    {
-                        return;
-                    }
-
-                    var depth = connector.IBFeed.MarketDepth;
-                    var tickerId = NextTickerId();
-
-                    // Сохраняем тикер
-                    marketDepthTickers.Store(tickerId, instrument);
-
-                    // Инициализируем построитель стакана
-                    mktDepthBuilders.Get(instrument).MarketDepth = depth;
-
-                    // Подписываемся на рыночные данные
-                    Socket.reqMarketDepth(tickerId, contract, depth);
-
-                    // Выброс псевдостакана (из лучших бида и аска)
-                    var instrumentParams = connector.InstrumentParamsCache.GetInstrumentParams(instrument);
-                    if (instrumentParams != null && instrumentParams.BestBidQuantity != 0 && instrumentParams.BestOfferQuantity != 0)
-                    {
-                        var orderBook = new OrderBook(2) { Instrument = instrument };
-
-                        orderBook.Items.Add(new OrderBookItem
-                        {
-                            Operation = OrderOperation.Sell,
-                            Price = instrumentParams.BestOfferPrice,
-                            Quantity = instrumentParams.BestOfferQuantity
-                        });
-
-                        orderBook.Items.Add(new OrderBookItem
-                        {
-                            Operation = OrderOperation.Buy,
-                            Price = instrumentParams.BestBidPrice,
-                            Quantity = instrumentParams.BestBidQuantity
-                        });
-
-                        connector.IBFeed.Transmit(orderBook);
-                    }
+                    return;
                 }
-                catch (IBNoConnectionException e)
+
+                var depth = connector.IBFeed.MarketDepth;
+                var tickerId = NextTickerId();
+
+                // Сохраняем тикер
+                marketDepthTickers.Store(tickerId, instrument);
+
+                // Инициализируем построитель стакана
+                mktDepthBuilders.Get(instrument).MarketDepth = depth;
+
+                // Подписываемся на рыночные данные
+                Socket.reqMarketDepth(tickerId, contract, depth);
+
+                // Выброс псевдостакана (из лучших бида и аска)
+                var instrumentParams = connector.InstrumentParamsCache.GetInstrumentParams(instrument);
+                if (instrumentParams != null && instrumentParams.BestBidQuantity != 0 &&
+                    instrumentParams.BestOfferQuantity != 0)
                 {
-                    Log.Error().Print(e, $"Failed to subscribe to order book on {instrument}");
+                    var orderBook = new OrderBook(2) {Instrument = instrument};
+
+                    orderBook.Items.Add(new OrderBookItem
+                    {
+                        Operation = OrderOperation.Sell,
+                        Price = instrumentParams.BestOfferPrice,
+                        Quantity = instrumentParams.BestOfferQuantity
+                    });
+
+                    orderBook.Items.Add(new OrderBookItem
+                    {
+                        Operation = OrderOperation.Buy,
+                        Price = instrumentParams.BestBidPrice,
+                        Quantity = instrumentParams.BestBidQuantity
+                    });
+
+                    connector.IBFeed.Transmit(orderBook);
                 }
+            }
+            catch (IBNoConnectionException e)
+            {
+                Log.Error().Print(e, $"Failed to subscribe to order book on {instrument}");
             }
         }
 
@@ -540,31 +527,28 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </param>
         public async Task PlaceOrderAsync(NewOrderTransaction transaction, IBOrder order)
         {
-            using (LogManager.Scope())
+            var instrument = transaction.Instrument;
+
+            var contract = await connector.ContractContainer.GetContractAsync(instrument, null);
+            if (contract == null)
             {
-                var instrument = transaction.Instrument;
+                throw new TransactionRejectedException($"Details of contract {instrument.Code} are not available");
+            }
 
-                var contract = await connector.ContractContainer.GetContractAsync(instrument, null);
-                if (contract == null)
+            using (orderInfoContainerLock.Lock())
+            {
+                var tickerId = NextTickerId();
+                order.OrderId = tickerId;
+
+                // Сохраняем заявку по ее тикеру
+                var orderInfo = new OrderInfo(order, transaction.Instrument)
                 {
-                    throw new TransactionRejectedException($"Details of contract {instrument.Code} are not available");
-                }
+                    State = OrderState.New,
+                    NewOrderTransactionId = transaction.TransactionId
+                };
+                orderInfoContainer.StoreByTickerId(tickerId, orderInfo, true);
 
-                using (orderInfoContainerLock.Lock())
-                {
-                    var tickerId = NextTickerId();
-                    order.OrderId = tickerId;
-
-                    // Сохраняем заявку по ее тикеру
-                    var orderInfo = new OrderInfo(order, transaction.Instrument)
-                    {
-                        State = OrderState.New,
-                        NewOrderTransactionId = transaction.TransactionId
-                    };
-                    orderInfoContainer.StoreByTickerId(tickerId, orderInfo, true);
-
-                    Socket.placeOrder(tickerId, contract, order);
-                }
+                Socket.placeOrder(tickerId, contract, order);
             }
         }
 

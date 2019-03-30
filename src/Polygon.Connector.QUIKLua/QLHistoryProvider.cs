@@ -129,34 +129,31 @@ namespace Polygon.Connector.QUIKLua
             HistoryProviderSpan span,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            using (LogManager.Scope())
+            var symbol = await adapter.ResolveSymbolAsync(instrument);
+            if (symbol == null)
             {
-                var symbol = await adapter.ResolveSymbolAsync(instrument);
-                if (symbol == null)
-                {
-                    consumer.Error($"Unable to resolve symbol for {instrument}");
-                    return;
-                }
-
-                QLAdapter.Log.Debug().Print($"Candles request: {symbol}, span {span}, from {begin} to {end}");
-                var dataRequestMessage = new QLHistoryDataRequest(symbol, span);
-                var request = new HistoryDataRequest(dataRequestMessage.id, instrument, begin, end, span);
-
-                using (requestsLock.Lock())
-                {
-                    requests[request.Id] = request;
-                }
-
-                // Поддержка отмены запроса
-                cancellationToken.RegisterSafe(() => request.TrySetCanceled());
-
-                adapter.SendMessage(dataRequestMessage);
-
-                var data = await request.Task;
-
-                QLAdapter.Log.Debug().Print("Push candles to consumer. ", LogFields.RequestId(request.Id));
-                consumer.Update(data, HistoryDataUpdateType.Batch);
+                consumer.Error($"Unable to resolve symbol for {instrument}");
+                return;
             }
+
+            QLAdapter.Log.Debug().Print($"Candles request: {symbol}, span {span}, from {begin} to {end}");
+            var dataRequestMessage = new QLHistoryDataRequest(symbol, span);
+            var request = new HistoryDataRequest(dataRequestMessage.id, instrument, begin, end, span);
+
+            using (requestsLock.Lock())
+            {
+                requests[request.Id] = request;
+            }
+
+            // Поддержка отмены запроса
+            cancellationToken.RegisterSafe(() => request.TrySetCanceled());
+
+            adapter.SendMessage(dataRequestMessage);
+
+            var data = await request.Task;
+
+            QLAdapter.Log.Debug().Print("Push candles to consumer. ", LogFields.RequestId(request.Id));
+            consumer.Update(data, HistoryDataUpdateType.Batch);
         }
 
         /// <summary>
@@ -187,28 +184,26 @@ namespace Polygon.Connector.QUIKLua
             DateTime begin,
             HistoryProviderSpan span)
         {
-            using (LogManager.Scope())
+            var symbol = await adapter.ResolveSymbolAsync(instrument);
+            if (symbol == null)
             {
-                var symbol = await adapter.ResolveSymbolAsync(instrument);
-                if (symbol == null)
-                {
-                    consumer.Error($"Unable to resolve symbol for {instrument}");
-                    return new NullHistoryDataSubscription();
-                }
-
-                QLAdapter.Log.Debug().Print($"Candles subscription: {symbol}, span {span}, from {begin}");
-                var subscriptionMessage = new QLHistoryDataSubscription(symbol, begin, span);
-                var subscription = new HistoryDataSubscription(subscriptionMessage.id, instrument, begin, span, adapter, consumer);
-
-                using (requestsLock.Lock())
-                {
-                    subscriptions[subscription.Id] = subscription;
-                }
-
-                adapter.SendMessage(subscriptionMessage);
-
-                return subscription;
+                consumer.Error($"Unable to resolve symbol for {instrument}");
+                return new NullHistoryDataSubscription();
             }
+
+            QLAdapter.Log.Debug().Print($"Candles subscription: {symbol}, span {span}, from {begin}");
+            var subscriptionMessage = new QLHistoryDataSubscription(symbol, begin, span);
+            var subscription =
+                new HistoryDataSubscription(subscriptionMessage.id, instrument, begin, span, adapter, consumer);
+
+            using (requestsLock.Lock())
+            {
+                subscriptions[subscription.Id] = subscription;
+            }
+
+            adapter.SendMessage(subscriptionMessage);
+
+            return subscription;
         }
 
         private void AdapterOnMessageReceived(object sender, QLMessageEventArgs e)

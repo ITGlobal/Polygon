@@ -595,8 +595,6 @@ namespace Polygon.Connector.CQGContinuum
         {
             Task.Factory.StartNew(() =>
             {
-                LogManager.BreakScope();
-
                 var cancellationToken = cancellationTokenSource.Token;
                 Thread.CurrentThread.Name = "CQGC_CONN";
 

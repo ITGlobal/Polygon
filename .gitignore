@@ -35,10 +35,10 @@ artifacts
 # Visual C++ cache files
 ipch/
 *.aps
-*.ncb
 *.opendb
 *.opensdf
 *.sdf
 *.cachefile
 *.VC.db
 /Hermes.Connectors/Hermes.Connectors.sln
+*.json

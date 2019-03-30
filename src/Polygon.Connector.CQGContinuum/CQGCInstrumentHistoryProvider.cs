@@ -101,32 +101,30 @@ namespace Polygon.Connector.CQGContinuum
             HistoryProviderSpan span, 
             CancellationToken cancellationToken = new CancellationToken())
         {
-            using (LogManager.Scope())
+            var message =
+                await PrepareTimeBarRequestAsync(instrument, begin, end, span, TimeBarRequest.RequestType.GET);
+            if (message == null)
             {
-                var message = await PrepareTimeBarRequestAsync(instrument, begin, end, span, TimeBarRequest.RequestType.GET);
-                if (message == null)
-                {
-                    throw new ArgumentException($"Unable to resolve instrument {instrument}");
-                }
-
-                var request = new HistoryDataRequest(this, consumer, instrument, begin, end, span, message);
-                using (requestsLock.Lock())
-                {
-                    requests[message.request_id] = request;
-                }
-
-                CQGCAdapter.Log.Debug().Print(
-                    "Requesting history data block",
-                    LogFields.RequestId(message.request_id),
-                    LogFields.ContractId(message.time_bar_parameters.contract_id));
-                adapter.SendMessage(message);
-
-                // Поддержка отмены запроса
-                cancellationToken.RegisterSafe(() => request.TrySetCanceled());
-
-                var data = await request.Task;
-                consumer.Update(data, HistoryDataUpdateType.Batch);
+                throw new ArgumentException($"Unable to resolve instrument {instrument}");
             }
+
+            var request = new HistoryDataRequest(this, consumer, instrument, begin, end, span, message);
+            using (requestsLock.Lock())
+            {
+                requests[message.request_id] = request;
+            }
+
+            CQGCAdapter.Log.Debug().Print(
+                "Requesting history data block",
+                LogFields.RequestId(message.request_id),
+                LogFields.ContractId(message.time_bar_parameters.contract_id));
+            adapter.SendMessage(message);
+
+            // Поддержка отмены запроса
+            cancellationToken.RegisterSafe(() => request.TrySetCanceled());
+
+            var data = await request.Task;
+            consumer.Update(data, HistoryDataUpdateType.Batch);
         }
 
         /// <summary>
@@ -157,36 +155,34 @@ namespace Polygon.Connector.CQGContinuum
             DateTime begin,
             HistoryProviderSpan span)
         {
-            using (LogManager.Scope())
+            var message = await PrepareTimeBarRequestAsync(instrument, begin, DateTime.Now, span,
+                TimeBarRequest.RequestType.SUBSCRIBE);
+            if (message == null)
             {
-                var message = await PrepareTimeBarRequestAsync(instrument, begin, DateTime.Now, span, TimeBarRequest.RequestType.SUBSCRIBE);
-                if (message == null)
-                {
-                    throw new ArgumentException($"Unable to resolve instrument {instrument}");
-                }
-
-                message.time_bar_parameters.to_utc_time = 0;
-
-                var request = new HistoryDataSubscription(
-                    this, 
-                    new HistoryData(instrument, begin, DateTime.Now, span),
-                    consumer, 
-                    message.time_bar_parameters.contract_id, 
-                    message.request_id);
-
-                using (requestsLock.Lock())
-                {
-                    requests[message.request_id] = request;
-                }
-
-                CQGCAdapter.Log.Debug().Print(
-                    "Requesting history data stream", 
-                    LogFields.RequestId(message.request_id), 
-                    LogFields.ContractId(message.time_bar_parameters.contract_id));
-                adapter.SendMessage(message);
-
-                return request;
+                throw new ArgumentException($"Unable to resolve instrument {instrument}");
             }
+
+            message.time_bar_parameters.to_utc_time = 0;
+
+            var request = new HistoryDataSubscription(
+                this,
+                new HistoryData(instrument, begin, DateTime.Now, span),
+                consumer,
+                message.time_bar_parameters.contract_id,
+                message.request_id);
+
+            using (requestsLock.Lock())
+            {
+                requests[message.request_id] = request;
+            }
+
+            CQGCAdapter.Log.Debug().Print(
+                "Requesting history data stream",
+                LogFields.RequestId(message.request_id),
+                LogFields.ContractId(message.time_bar_parameters.contract_id));
+            adapter.SendMessage(message);
+
+            return request;
         }
 
         internal void DropHistoryDataSubscription(uint requestId)
@@ -208,79 +204,76 @@ namespace Polygon.Connector.CQGContinuum
             HistoryProviderSpan span, 
             TimeBarRequest.RequestType type)
         {
-            using (LogManager.Scope())
+            var contractId = await instrumentResolver.GetContractIdAsync(instrument);
+            if (contractId == uint.MaxValue)
             {
-                var contractId = await instrumentResolver.GetContractIdAsync(instrument);
-                if (contractId == uint.MaxValue)
-                {
-                    return await Task.FromResult<TimeBarRequest>(null);
-                }
-
-                TimeBarParameters.BarUnit barUnit;
-                uint unitsNumber = 0;
-
-                switch (span)
-                {
-                    case HistoryProviderSpan.Minute:
-                        barUnit = TimeBarParameters.BarUnit.MIN;
-                        unitsNumber = 1;
-                        break;
-                    case HistoryProviderSpan.Minute5:
-                        barUnit = TimeBarParameters.BarUnit.MIN;
-                        unitsNumber = 5;
-                        break;
-                    case HistoryProviderSpan.Minute10:
-                        barUnit = TimeBarParameters.BarUnit.MIN;
-                        unitsNumber = 10;
-                        break;
-                    case HistoryProviderSpan.Minute15:
-                        barUnit = TimeBarParameters.BarUnit.MIN;
-                        unitsNumber = 15;
-                        break;
-                    case HistoryProviderSpan.Minute30:
-                        barUnit = TimeBarParameters.BarUnit.MIN;
-                        unitsNumber = 30;
-                        break;
-                    case HistoryProviderSpan.Hour:
-                        barUnit = TimeBarParameters.BarUnit.HOUR;
-                        unitsNumber = 1;
-                        break;
-                    case HistoryProviderSpan.Hour4:
-                        barUnit = TimeBarParameters.BarUnit.HOUR;
-                        unitsNumber = 4;
-                        break;
-                    case HistoryProviderSpan.Day:
-                        // Для DAY units_number не заполняется
-                        barUnit = TimeBarParameters.BarUnit.DAY;
-                        break;
-                    case HistoryProviderSpan.Week:
-                        // Для WEEK units_number не заполняется
-                        barUnit = TimeBarParameters.BarUnit.WEEK;
-                        break;
-                    case HistoryProviderSpan.Month:
-                        // Для MONTH units_number не заполняется
-                        barUnit = TimeBarParameters.BarUnit.MONTH;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(span), span, $"Invalid time span - {span}");
-                }
-
-                var message = new TimeBarRequest
-                {
-                    request_id = adapter.GetNextRequestId(),
-                    request_type = (uint)type,
-                    time_bar_parameters = new TimeBarParameters
-                    {
-                        contract_id = contractId,
-                        bar_unit = (uint)barUnit,
-                        units_number = unitsNumber,
-                        from_utc_time = adapter.ResolveDateTime(begin),
-                        to_utc_time = adapter.ResolveDateTime(end)
-                    }
-                };
-
-                return message;
+                return await Task.FromResult<TimeBarRequest>(null);
             }
+
+            TimeBarParameters.BarUnit barUnit;
+            uint unitsNumber = 0;
+
+            switch (span)
+            {
+                case HistoryProviderSpan.Minute:
+                    barUnit = TimeBarParameters.BarUnit.MIN;
+                    unitsNumber = 1;
+                    break;
+                case HistoryProviderSpan.Minute5:
+                    barUnit = TimeBarParameters.BarUnit.MIN;
+                    unitsNumber = 5;
+                    break;
+                case HistoryProviderSpan.Minute10:
+                    barUnit = TimeBarParameters.BarUnit.MIN;
+                    unitsNumber = 10;
+                    break;
+                case HistoryProviderSpan.Minute15:
+                    barUnit = TimeBarParameters.BarUnit.MIN;
+                    unitsNumber = 15;
+                    break;
+                case HistoryProviderSpan.Minute30:
+                    barUnit = TimeBarParameters.BarUnit.MIN;
+                    unitsNumber = 30;
+                    break;
+                case HistoryProviderSpan.Hour:
+                    barUnit = TimeBarParameters.BarUnit.HOUR;
+                    unitsNumber = 1;
+                    break;
+                case HistoryProviderSpan.Hour4:
+                    barUnit = TimeBarParameters.BarUnit.HOUR;
+                    unitsNumber = 4;
+                    break;
+                case HistoryProviderSpan.Day:
+                    // Для DAY units_number не заполняется
+                    barUnit = TimeBarParameters.BarUnit.DAY;
+                    break;
+                case HistoryProviderSpan.Week:
+                    // Для WEEK units_number не заполняется
+                    barUnit = TimeBarParameters.BarUnit.WEEK;
+                    break;
+                case HistoryProviderSpan.Month:
+                    // Для MONTH units_number не заполняется
+                    barUnit = TimeBarParameters.BarUnit.MONTH;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(span), span, $"Invalid time span - {span}");
+            }
+
+            var message = new TimeBarRequest
+            {
+                request_id = adapter.GetNextRequestId(),
+                request_type = (uint) type,
+                time_bar_parameters = new TimeBarParameters
+                {
+                    contract_id = contractId,
+                    bar_unit = (uint) barUnit,
+                    units_number = unitsNumber,
+                    from_utc_time = adapter.ResolveDateTime(begin),
+                    to_utc_time = adapter.ResolveDateTime(end)
+                }
+            };
+
+            return message;
         }
 
         private void TimeBarReportReceived(AdapterEventArgs<TimeBarReport> args)

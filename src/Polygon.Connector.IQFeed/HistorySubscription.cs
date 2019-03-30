@@ -71,66 +71,63 @@ namespace Polygon.Connector.IQFeed
 
         private async Task UpdateLoopAsync(DateTime begin)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                while (true)
                 {
-                    while (true)
+                    // Загружаем блок исторических данных
+                    var end = DateTime.Now;
+                    // TODO handle OperationCanceledException
+                    var fetchedPoints = await gateway.FetchHistoryDataAsync(instrumentSymbol, begin, end, span, token);
+
+                    // Обновляем точку старта на последнюю свечу, чтобы не грузить повторно
+                    if (fetchedPoints.Any())
                     {
-                        // Загружаем блок исторических данных
-                        var end = DateTime.Now;
-                        // TODO handle OperationCanceledException
-                        var fetchedPoints = await gateway.FetchHistoryDataAsync(instrumentSymbol, begin, end, span, token);
+                        begin = fetchedPoints.Select(_ => _.Point).OrderByDescending(_ => _).First();
+                    }
 
-                        // Обновляем точку старта на последнюю свечу, чтобы не грузить повторно
-                        if (fetchedPoints.Any())
+                    using (syncRoot.Lock())
+                    {
+                        // Объединяем с набором данных
+                        int added, updated;
+                        MergePoints(fetchedPoints, out added, out updated);
+
+                        // Оповещаем потребителя
+                        if (added > 0 || updated > 0)
                         {
-                            begin = fetchedPoints.Select(_ => _.Point).OrderByDescending(_ => _).First();
-                        }
+                            begin = data.End;
 
-                        using (syncRoot.Lock())
-                        {
-                            // Объединяем с набором данных
-                            int added, updated;
-                            MergePoints(fetchedPoints, out added, out updated);
-
-                            // Оповещаем потребителя
-                            if (added > 0 || updated > 0)
+                            if (added == 1 && updated == 0)
                             {
-                                begin = data.End;
-
-                                if (added == 1 && updated == 0)
-                                {
-                                    consumer.Update(data, HistoryDataUpdateType.OnePointAdded);
-                                }
-                                else if (added == 0 && updated == 1)
-                                {
-                                    consumer.Update(data, HistoryDataUpdateType.OnePointUpdated);
-                                }
-                                else
-                                {
-                                    consumer.Update(data, HistoryDataUpdateType.Batch);
-                                }
+                                consumer.Update(data, HistoryDataUpdateType.OnePointAdded);
+                            }
+                            else if (added == 0 && updated == 1)
+                            {
+                                consumer.Update(data, HistoryDataUpdateType.OnePointUpdated);
                             }
                             else
                             {
-                                begin = end;
+                                consumer.Update(data, HistoryDataUpdateType.Batch);
                             }
                         }
-
-                        // Ждем до следущего обновления
-                        await Task.Delay(FetchInterval, token);
+                        else
+                        {
+                            begin = end;
+                        }
                     }
+
+                    // Ждем до следущего обновления
+                    await Task.Delay(FetchInterval, token);
                 }
-                catch (OperationCanceledException) { }
-                catch (NoHistoryDataException)
-                {
-                    _Log.Debug().Print($"No more historical data is available", LogFields.Symbol(instrumentSymbol));
-                }
-                catch (Exception e)
-                {
-                    HandleException(e, e.Message);
-                }
+            }
+            catch (OperationCanceledException) { }
+            catch (NoHistoryDataException)
+            {
+                _Log.Debug().Print($"No more historical data is available", LogFields.Symbol(instrumentSymbol));
+            }
+            catch (Exception e)
+            {
+                HandleException(e, e.Message);
             }
         }
 

@@ -932,8 +932,6 @@ namespace Polygon.Connector.CGate
 
         private void ProcessPendingMessages()
         {
-            LogManager.BreakScope();
-
             var waitHandles = new[] { cancellationTokenSource.Token.WaitHandle, processPendingMessagesEvent };
             int i;
             while ((i = WaitHandle.WaitAny(waitHandles, 100)) != WaitHandle.WaitTimeout)

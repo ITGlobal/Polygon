@@ -87,35 +87,29 @@ namespace Polygon.Connector.InteractiveBrokers
         public async Task<IList<HistoryDataPoint>> ExecuteAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            using (LogManager.Scope())
+            var tickerId = adapter.NextTickerId();
+            await adapter.HistoryDataLimits.WaitForPaceLimitAsync(this, cancellationToken);
+            var request = new HistoryTaskCompletionSource(this, cancellationToken);
+
+            adapter.HistoricalDepthTickers.Store(tickerId, request);
+            ReqHistoricalData(tickerId);
+
+            cancellationToken.RegisterSafe(() =>
             {
-                var tickerId = adapter.NextTickerId();
-                await adapter.HistoryDataLimits.WaitForPaceLimitAsync(this, cancellationToken);
-                var request = new HistoryTaskCompletionSource(this, cancellationToken);
+                adapter.Socket.cancelHistoricalData(tickerId);
+                request.Cancel();
+            });
 
-                adapter.HistoricalDepthTickers.Store(tickerId, request);
-                ReqHistoricalData(tickerId);
-
-                cancellationToken.RegisterSafe(() =>
-                {
-                    adapter.Socket.cancelHistoricalData(tickerId);
-                    request.Cancel();
-                });
-
-                var points = await request.Task;
-                return points;
-            }
+            var points = await request.Task;
+            return points;
         }
 
         public async Task ReissueAsync(HistoryTaskCompletionSource tcs, CancellationToken cancellationToken = default(CancellationToken))
         {
-            using (LogManager.Scope())
-            {
-                var tickerId = adapter.NextTickerId();
-                await adapter.HistoryDataLimits.WaitForPaceLimitAsync(this, cancellationToken);
-                adapter.HistoricalDepthTickers.Store(tickerId, tcs);
-                ReqHistoricalData(tickerId);
-            }
+            var tickerId = adapter.NextTickerId();
+            await adapter.HistoryDataLimits.WaitForPaceLimitAsync(this, cancellationToken);
+            adapter.HistoricalDepthTickers.Store(tickerId, tcs);
+            ReqHistoricalData(tickerId);
         }
 
         public void ReduceTimeFrame()

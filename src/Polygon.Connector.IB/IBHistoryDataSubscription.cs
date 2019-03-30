@@ -62,65 +62,63 @@ namespace Polygon.Connector.InteractiveBrokers
 
         private async Task UpdateLoopAsync(DateTime begin)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                while (true)
                 {
-                    while (true)
+                    // Ждем до следущего обновления
+                    await Task.Delay(FetchInterval);
+
+                    if (terminated.IsSet)
                     {
-                        // Ждем до следущего обновления
-                        await Task.Delay(FetchInterval);
+                        return;
+                    }
 
-                        if (terminated.IsSet)
+                    // Загружаем блок исторических данных
+                    var end = DateTime.Now;
+                    // TODO handle OperationCanceledException
+                    var fetchedPoints = await adapter.FetchHistoryDataBlock(consumer, contract, begin, end, span);
+
+                    using (syncRoot.Lock())
+                    {
+                        // Объединяем с набором данных
+                        int added, updated;
+                        MergePoints(fetchedPoints, out added, out updated);
+
+                        // Оповещаем потребителя
+                        if (added > 0 || updated > 0)
                         {
-                            return;
-                        }
+                            begin = historyData.End;
 
-                        // Загружаем блок исторических данных
-                        var end = DateTime.Now;
-                        // TODO handle OperationCanceledException
-                        var fetchedPoints = await adapter.FetchHistoryDataBlock(consumer, contract, begin, end, span);
-
-                        using (syncRoot.Lock())
-                        {
-                            // Объединяем с набором данных
-                            int added, updated;
-                            MergePoints(fetchedPoints, out added, out updated);
-
-                            // Оповещаем потребителя
-                            if (added > 0 || updated > 0)
+                            if (added == 1 && updated == 0)
                             {
-                                begin = historyData.End;
-
-                                if (added == 1 && updated == 0)
-                                {
-                                    consumer.Update(historyData, HistoryDataUpdateType.OnePointAdded);
-                                }
-                                else if (added == 0 && updated == 1)
-                                {
-                                    consumer.Update(historyData, HistoryDataUpdateType.OnePointUpdated);
-                                }
-                                else
-                                {
-                                    consumer.Update(historyData, HistoryDataUpdateType.Batch);
-                                }
+                                consumer.Update(historyData, HistoryDataUpdateType.OnePointAdded);
+                            }
+                            else if (added == 0 && updated == 1)
+                            {
+                                consumer.Update(historyData, HistoryDataUpdateType.OnePointUpdated);
                             }
                             else
                             {
-                                begin = end;
+                                consumer.Update(historyData, HistoryDataUpdateType.Batch);
                             }
+                        }
+                        else
+                        {
+                            begin = end;
                         }
                     }
                 }
-                //catch (OperationCanceledException) { }
-                catch (NoHistoryDataException)
-                {
-                    _Log.Debug().Print($"No more historical data is available", LogFields.Instrument(historyData.Instrument));
-                }
-                catch (Exception e)
-                {
-                    HandleException(e, e.Message);
-                }
+            }
+            //catch (OperationCanceledException) { }
+            catch (NoHistoryDataException)
+            {
+                _Log.Debug().Print($"No more historical data is available",
+                    LogFields.Instrument(historyData.Instrument));
+            }
+            catch (Exception e)
+            {
+                HandleException(e, e.Message);
             }
         }
 

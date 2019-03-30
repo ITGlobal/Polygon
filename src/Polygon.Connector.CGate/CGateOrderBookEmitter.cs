@@ -228,8 +228,6 @@ namespace Polygon.Connector.CGate
 
         private void ProcessOrderBookUpdates()
         {
-            LogManager.BreakScope();
-
             const int numberOfCyclesToFireEvent = 10; // каждые 10 циклов нижлежащего while мы райзим эвент об обновлении стаканов
             var cyclesCount = 0;
 

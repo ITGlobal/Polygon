@@ -153,8 +153,6 @@ namespace Polygon.Connector.CGate
         /// </summary>
         private void PendingMessagesProcessing()
         {
-            LogManager.BreakScope();
-
             var objectsToWait = new WaitHandle[2] { processPendingMessagesEvent, cancellationTokenSource.Token.WaitHandle };
             int risedObjectIndex;
 
@@ -193,8 +191,6 @@ namespace Polygon.Connector.CGate
         /// </summary>
         private void MessagesReadyToFireProcessing()
         {
-            LogManager.BreakScope();
-
             var objectsToWait = new WaitHandle[2] { messagesReadyToFireEvent, cancellationTokenSource.Token.WaitHandle };
             int risedObjectIndex;
 
@@ -433,39 +429,36 @@ namespace Polygon.Connector.CGate
 
         public async void SubscribeOrderBook(Instrument instrument)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                using (subscribedInstrumentsLock.UpgradableReadLock())
                 {
-                    using (subscribedInstrumentsLock.UpgradableReadLock())
+                    if (!subscribedOrderBooks.Contains(instrument))
                     {
-                        if (!subscribedOrderBooks.Contains(instrument))
+                        using (subscribedInstrumentsLock.WriteLock())
                         {
-                            using (subscribedInstrumentsLock.WriteLock())
-                            {
-                                subscribedOrderBooks.Add(instrument);
-                            }
+                            subscribedOrderBooks.Add(instrument);
                         }
                     }
-
-                    var instrumentType = instrumentResolver.GetInstrumentType(instrument.Code);
-                    var ob =
-                        (instrumentType == InstrumentType.Futures ? futOrderBookEmitter : optOrderBookEmitter)
-                        .GetOrderBook(instrument);
-
-                    if (ob != null)
-                    {
-                        EnqueueTransportMessage(ob);
-                    }
-
-                    var tcSource = new TaskCompletionSource<SubscriptionResult>();
-                    tcSource.SetResult(new SubscriptionResult(instrument, true));
-                    await tcSource.Task;
                 }
-                catch (Exception e)
+
+                var instrumentType = instrumentResolver.GetInstrumentType(instrument.Code);
+                var ob =
+                    (instrumentType == InstrumentType.Futures ? futOrderBookEmitter : optOrderBookEmitter)
+                    .GetOrderBook(instrument);
+
+                if (ob != null)
                 {
-                    _Log.Error().Print(e, $"Failed to subscribe to order book on {instrument}");
+                    EnqueueTransportMessage(ob);
                 }
+
+                var tcSource = new TaskCompletionSource<SubscriptionResult>();
+                tcSource.SetResult(new SubscriptionResult(instrument, true));
+                await tcSource.Task;
+            }
+            catch (Exception e)
+            {
+                _Log.Error().Print(e, $"Failed to subscribe to order book on {instrument}");
             }
         }
 

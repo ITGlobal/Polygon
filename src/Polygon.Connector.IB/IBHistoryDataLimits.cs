@@ -135,25 +135,23 @@ namespace Polygon.Connector.InteractiveBrokers
         public async Task WaitForPaceLimitAsync(IBHistoricalDataRequest request,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            using (LogManager.Scope())
+            var waitTime = ComputeEffectiveWaitTime(DateTime.UtcNow, request);
+
+            if (waitTime > 0)
             {
-                var waitTime = ComputeEffectiveWaitTime(DateTime.UtcNow, request);
+                const int LongEnough = 5 * 1000; // 5 sec
 
-                if (waitTime > 0)
+                if (waitTime >= LongEnough)
                 {
-                    const int LongEnough = 5*1000; // 5 sec
-
-                    if (waitTime >= LongEnough)
-                    {
-                        IBAdapter.Log.Warn().PrintFormat("Will wait for history data for {0}s due to pace limits", waitTime/1000);
-                    }
-                    else
-                    {
-                        IBAdapter.Log.Debug().PrintFormat("Pace limit wait time: {0}ms", waitTime);
-                    }
-
-                    await Task.Delay(waitTime, cancellationToken);
+                    IBAdapter.Log.Warn().PrintFormat("Will wait for history data for {0}s due to pace limits",
+                        waitTime / 1000);
                 }
+                else
+                {
+                    IBAdapter.Log.Debug().PrintFormat("Pace limit wait time: {0}ms", waitTime);
+                }
+
+                await Task.Delay(waitTime, cancellationToken);
             }
         }
 

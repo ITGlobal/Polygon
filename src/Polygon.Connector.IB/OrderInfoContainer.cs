@@ -99,27 +99,24 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </summary>
         public async Task WaitOrderForFill(Execution fill)
         {
-            using (LogManager.Scope())
+            PendingTestResult pendingResult;
+
+            using (containerLock.ReadLock())
             {
-                PendingTestResult pendingResult;
-
-                using (containerLock.ReadLock())
+                // Если заявка уже пришла или не ждём транзакций, то сделку можно отправлять сразу
+                if (ordersByPermId.ContainsKey(fill.PermId) || !pendingTransactions.Any())
                 {
-                    // Если заявка уже пришла или не ждём транзакций, то сделку можно отправлять сразу
-                    if (ordersByPermId.ContainsKey(fill.PermId) || !pendingTransactions.Any())
-                    {
-                        return;
-                    }
-
-                    if (!pendingFillByPermId.TryGetValue(fill.PermId, out pendingResult))
-                    {
-                        pendingFillByPermId[fill.PermId] = pendingResult = new PendingTestResult();
-                    }
+                    return;
                 }
 
-                // Иначе ждём информации по заявке
-                await pendingResult.WaitAsync();
+                if (!pendingFillByPermId.TryGetValue(fill.PermId, out pendingResult))
+                {
+                    pendingFillByPermId[fill.PermId] = pendingResult = new PendingTestResult();
+                }
             }
+
+            // Иначе ждём информации по заявке
+            await pendingResult.WaitAsync();
         }
     }
 }

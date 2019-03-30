@@ -77,20 +77,18 @@ namespace Polygon.Connector.InteractiveBrokers
         public async Task<Contract> GetContractAsync(Instrument instrument, Contract contractStub = null, CancellationToken cancellationToken = new CancellationToken())
 
         {
-            using (LogManager.Scope())
+            using (containerLock.UpgradableReadLock())
             {
-                using (containerLock.UpgradableReadLock())
+                // Запрашиваем контракт из кеша
+                Contract contract;
+                if (contractByInstrument.TryGetValue(instrument, out contract))
                 {
-                    // Запрашиваем контракт из кеша
-                    Contract contract;
-                    if (contractByInstrument.TryGetValue(instrument, out contract))
-                    {
-                        return contract;
-                    }
+                    return contract;
                 }
-                // Запрашиваем контракт
-                return await RequestContract(instrument, contractStub).ConfigureAwait(false);
             }
+
+            // Запрашиваем контракт
+            return await RequestContract(instrument, contractStub).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,47 +133,25 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </param>
         public async void GetInstrumentAsync(Contract contract, string objectDescription, Action<Instrument> continuation)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                string code;
+                Instrument instrument = null;
+                var tryNumber = 0;
+
+                // Если поле Exchange не указано в contract, тогда нужно сделать дополнительный запрос
+                if (string.IsNullOrEmpty(contract.Exchange))
                 {
-                    string code;
-                    Instrument instrument = null;
-                    var tryNumber = 0;
+                    // Используем временный инструмент с заведомо уникальным кодом
+                    contract = await RequestContract(new Instrument($"TEMPORARY_INSTRUMENT_{Guid.NewGuid():N}"),
+                        contract);
+                }
 
-                    // Если поле Exchange не указано в contract, тогда нужно сделать дополнительный запрос
-                    if (string.IsNullOrEmpty(contract.Exchange))
-                    {
-                        // Используем временный инструмент с заведомо уникальным кодом
-                        contract = await RequestContract(new Instrument($"TEMPORARY_INSTRUMENT_{Guid.NewGuid():N}"), contract);
-                    }
-
-                    // Попытка 1 - сначала пытаемся найти по коду с доп.полями и с указанием родной биржи
-                    // Поиск будет идти только по локальному кэшу конвертера
-                    if (!string.IsNullOrEmpty(contract.Exchange))
-                    {
-                        code = $"exchange:{contract.Exchange};{contract.LocalSymbol}";
-                        instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
-                        tryNumber++;
-                        if (instrument != null)
-                        {
-                            continuation(instrument);
-                            _Log.Debug().Print(
-                                $"Instrument {contract.LocalSymbol} was resolved by InstrumentConverter as {instrument}.",
-                                LogFields.Code(code),
-                                LogFields.Symbol(contract.LocalSymbol),
-                                LogFields.Exchange(contract.Exchange),
-                                LogFields.Instrument(instrument),
-                                LogFields.Attempt(tryNumber)
-                                );
-                            return;
-                        }
-                    }
-
-                    // Попытка 2 - сначала пытаемся найти по коду с доп.полями и с указанием квазибиржи SMART или GLOBEX
-                    // поиск будет идти только по локальному кэшу конвертера
-                    var exchangeCode = contract.SecType == "FUT" || contract.SecType == "FOP" ? GLOBEX : SMART;
-                    code = $"exchange:{exchangeCode};{contract.LocalSymbol}";
+                // Попытка 1 - сначала пытаемся найти по коду с доп.полями и с указанием родной биржи
+                // Поиск будет идти только по локальному кэшу конвертера
+                if (!string.IsNullOrEmpty(contract.Exchange))
+                {
+                    code = $"exchange:{contract.Exchange};{contract.LocalSymbol}";
                     instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
                     tryNumber++;
                     if (instrument != null)
@@ -188,41 +164,61 @@ namespace Polygon.Connector.InteractiveBrokers
                             LogFields.Exchange(contract.Exchange),
                             LogFields.Instrument(instrument),
                             LogFields.Attempt(tryNumber)
-                            );
+                        );
                         return;
                     }
-
-
-                    // Попытка 3 - ищем просто по коду
-                    code = contract.LocalSymbol;
-                    instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
-                    tryNumber++;
-                    if (instrument != null)
-                    {
-                        continuation(instrument);
-                        _Log.Debug().Print(
-                            $"Instrument {contract.LocalSymbol} was resolved by InstrumentConverter as {instrument}.",
-                            LogFields.Code(code),
-                            LogFields.Symbol(contract.LocalSymbol),
-                            LogFields.Exchange(contract.Exchange),
-                            LogFields.Instrument(instrument),
-                            LogFields.Attempt(tryNumber)
-                            );
-                        return;
-                    }
-
-                    _Log.Error().Print(
-                           $"Instrument {contract.LocalSymbol} wasn't resolved by InstrumentConverter.",
-                           LogFields.Code(code),
-                           LogFields.Symbol(contract.LocalSymbol),
-                           LogFields.Exchange(contract.Exchange),
-                           LogFields.Attempt(tryNumber)
-                           );
                 }
-                catch (Exception e)
+
+                // Попытка 2 - сначала пытаемся найти по коду с доп.полями и с указанием квазибиржи SMART или GLOBEX
+                // поиск будет идти только по локальному кэшу конвертера
+                var exchangeCode = contract.SecType == "FUT" || contract.SecType == "FOP" ? GLOBEX : SMART;
+                code = $"exchange:{exchangeCode};{contract.LocalSymbol}";
+                instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
+                tryNumber++;
+                if (instrument != null)
                 {
-                    _Log.Error().Print(e, $"Failed to get instrument from {contract}");
+                    continuation(instrument);
+                    _Log.Debug().Print(
+                        $"Instrument {contract.LocalSymbol} was resolved by InstrumentConverter as {instrument}.",
+                        LogFields.Code(code),
+                        LogFields.Symbol(contract.LocalSymbol),
+                        LogFields.Exchange(contract.Exchange),
+                        LogFields.Instrument(instrument),
+                        LogFields.Attempt(tryNumber)
+                    );
+                    return;
                 }
+
+
+                // Попытка 3 - ищем просто по коду
+                code = contract.LocalSymbol;
+                instrument = await instrumentConverter.ResolveSymbolAsync(adapter, code, objectDescription);
+                tryNumber++;
+                if (instrument != null)
+                {
+                    continuation(instrument);
+                    _Log.Debug().Print(
+                        $"Instrument {contract.LocalSymbol} was resolved by InstrumentConverter as {instrument}.",
+                        LogFields.Code(code),
+                        LogFields.Symbol(contract.LocalSymbol),
+                        LogFields.Exchange(contract.Exchange),
+                        LogFields.Instrument(instrument),
+                        LogFields.Attempt(tryNumber)
+                    );
+                    return;
+                }
+
+                _Log.Error().Print(
+                    $"Instrument {contract.LocalSymbol} wasn't resolved by InstrumentConverter.",
+                    LogFields.Code(code),
+                    LogFields.Symbol(contract.LocalSymbol),
+                    LogFields.Exchange(contract.Exchange),
+                    LogFields.Attempt(tryNumber)
+                );
+            }
+            catch (Exception e)
+            {
+                _Log.Error().Print(e, $"Failed to get instrument from {contract}");
             }
         }
 
@@ -286,59 +282,54 @@ namespace Polygon.Connector.InteractiveBrokers
 
         private async Task<Contract> RequestContract(Instrument instrument, Contract contractStub = null)
         {
-            using (LogManager.Scope())
+            PendingContract pendingContract;
+
+            using (containerLock.WriteLock())
             {
-                PendingContract pendingContract;
+                pendingContracts.TryGetValue(instrument, out pendingContract);
+            }
+
+            if (pendingContract != null)
+            {
+                return await pendingContract.Task.ConfigureAwait(false);
+            }
+
+
+            // Такого контракта еще нет в списке ожидающих
+            // Запрашиваем контракт из адаптера, используя фейковый контракт
+            var contract = contractStub ?? await ResolveContractStubAsync(instrument);
+
+            if (contract != null)
+            {
+                var tickerId = adapter.RequestContractDetails(instrument, contract);
 
                 using (containerLock.WriteLock())
                 {
-                    pendingContracts.TryGetValue(instrument, out pendingContract);
+                    // Сохраняем номер тикера
+                    pendingContractTickerIds.Add(tickerId, instrument);
+
+                    pendingContract = new PendingContract(tickerId);
+                    pendingContracts.Add(instrument, pendingContract);
                 }
 
-                if (pendingContract != null)
-                {
-                    return await pendingContract.Task.ConfigureAwait(false);
-                }
-
-
-                // Такого контракта еще нет в списке ожидающих
-                // Запрашиваем контракт из адаптера, используя фейковый контракт
-                var contract = contractStub ?? await ResolveContractStubAsync(instrument);
-
-                if (contract != null)
-                {
-                    var tickerId = adapter.RequestContractDetails(instrument, contract);
-
-                    using (containerLock.WriteLock())
-                    {
-                        // Сохраняем номер тикера
-                        pendingContractTickerIds.Add(tickerId, instrument);
-
-                        pendingContract = new PendingContract(tickerId);
-                        pendingContracts.Add(instrument, pendingContract);
-                    }
-
-                    return await pendingContract.Task;
-                }
-
-                return null;
+                return await pendingContract.Task;
             }
+
+            return null;
         }
 
         private async Task<Contract> ResolveContractStubAsync(Instrument instrument)
         {
-            using (LogManager.Scope())
+            var instrumentData = await instrumentConverter.ResolveInstrumentAsync(adapter, instrument);
+            if (instrumentData == null)
             {
-                var instrumentData = await instrumentConverter.ResolveInstrumentAsync(adapter, instrument);
-                if (instrumentData == null)
-                {
-                    _Log.Error().Print("Unable to resolve vendor symbol for an instrument", LogFields.Instrument(instrument));
-                    return null;
-                }
-
-                var contract = GetContractStub(instrumentData);
-                return contract;
+                _Log.Error().Print("Unable to resolve vendor symbol for an instrument",
+                    LogFields.Instrument(instrument));
+                return null;
             }
+
+            var contract = GetContractStub(instrumentData);
+            return contract;
         }
         
         // ReSharper disable InconsistentNaming

@@ -53,65 +53,62 @@ namespace Polygon.Connector.InteractiveBrokers
         /// </param>
         async void ITransactionVisitor.Visit(NewOrderTransaction transaction)
         {
-            using (LogManager.Scope())
+            try
             {
-                try
+                var order = new IBOrder
                 {
-                    var order = new IBOrder
-                    {
-                        Account = transaction.Account,
-                        ClientId = connector.ClientId,
-                        Action = transaction.Operation == OrderOperation.Buy ? "BUY" : "SELL",
-                        TotalQuantity = (int)transaction.Quantity,
-                        OrderRef = !string.IsNullOrWhiteSpace(transaction.Comment)
-                            ? connector.IBOrderRouter.SessionUidInternal + transaction.Comment
-                            : connector.IBOrderRouter.SessionUidInternal,
-                        Transmit = true
-                    };
+                    Account = transaction.Account,
+                    ClientId = connector.ClientId,
+                    Action = transaction.Operation == OrderOperation.Buy ? "BUY" : "SELL",
+                    TotalQuantity = (int) transaction.Quantity,
+                    OrderRef = !string.IsNullOrWhiteSpace(transaction.Comment)
+                        ? connector.IBOrderRouter.SessionUidInternal + transaction.Comment
+                        : connector.IBOrderRouter.SessionUidInternal,
+                    Transmit = true
+                };
 
-                    switch (transaction.Type)
-                    {
-                        case OrderType.Limit:
-                            order.OrderType = "LMT";
-                            order.LmtPrice = (double)transaction.Price;
-                            break;
-
-                        case OrderType.Market:
-                            order.OrderType = "MKT";
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException("transaction.Type");
-                    }
-
-                    switch (transaction.ExecutionCondition)
-                    {
-                        case OrderExecutionCondition.PutInQueue:
-                            order.Tif = "GTC"; /* Good till cancelled */
-                            break;
-                        case OrderExecutionCondition.FillOrKill:
-                            order.Tif = "FOC"; /* Fill or cancel */
-                            break;
-                        case OrderExecutionCondition.KillBalance:
-                            order.Tif = "IOC"; /* Immediate or cancel */
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException("transaction.ExecutionCondition");
-                    }
-
-                    await connector.Adapter.PlaceOrderAsync(transaction, order);
-                }
-                catch (TransactionRejectedException exception) 
+                switch (transaction.Type)
                 {
-                    Reject(transaction, exception.Message);
+                    case OrderType.Limit:
+                        order.OrderType = "LMT";
+                        order.LmtPrice = (double) transaction.Price;
+                        break;
+
+                    case OrderType.Market:
+                        order.OrderType = "MKT";
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException("transaction.Type");
                 }
-                catch (Exception exception)
+
+                switch (transaction.ExecutionCondition)
                 {
-                    _Log.Error()
-                        .Print(exception, "Unable to send transaction", LogFields.Transaction(transaction),
-                            LogFields.Message(exception.Message));
-                    Reject(transaction, "Transaction execution failed: {0}", exception.Message);
+                    case OrderExecutionCondition.PutInQueue:
+                        order.Tif = "GTC"; /* Good till cancelled */
+                        break;
+                    case OrderExecutionCondition.FillOrKill:
+                        order.Tif = "FOC"; /* Fill or cancel */
+                        break;
+                    case OrderExecutionCondition.KillBalance:
+                        order.Tif = "IOC"; /* Immediate or cancel */
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("transaction.ExecutionCondition");
                 }
+
+                await connector.Adapter.PlaceOrderAsync(transaction, order);
+            }
+            catch (TransactionRejectedException exception)
+            {
+                Reject(transaction, exception.Message);
+            }
+            catch (Exception exception)
+            {
+                _Log.Error()
+                    .Print(exception, "Unable to send transaction", LogFields.Transaction(transaction),
+                        LogFields.Message(exception.Message));
+                Reject(transaction, "Transaction execution failed: {0}", exception.Message);
             }
         }
 

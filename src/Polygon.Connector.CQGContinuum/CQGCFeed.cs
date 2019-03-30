@@ -429,106 +429,103 @@ namespace Polygon.Connector.CQGContinuum
 
         private async Task<SubscriptionResult> SubscribeAsync(Instrument instrument, SubscriptionFlags flags)
         {
-            using (LogManager.Scope())
-            {
-                InstrumentSubscription subscription = null;
-                ContractMetadata metadata = null;
+            InstrumentSubscription subscription = null;
+            ContractMetadata metadata = null;
 
-                var hasSubscriptionLock = false;
-                try
+            var hasSubscriptionLock = false;
+            try
+            {
+                // Получаем параметры подписки на инструмент
+                using (subscriptionsLock.Lock())
                 {
-                    // Получаем параметры подписки на инструмент
+                    subscriptionsByInstrument.TryGetValue(instrument, out subscription);
+                }
+
+                if (subscription == null)
+                {
+                    // Получаем ID инструмента
+                    var contractId = await instrumentResolver.GetContractIdAsync(instrument);
+                    if (contractId == uint.MaxValue)
+                    {
+                        return SubscriptionResult.Error(instrument, "Symbol is not resolved in tree node for CQG");
+                    }
+
                     using (subscriptionsLock.Lock())
                     {
-                        subscriptionsByInstrument.TryGetValue(instrument, out subscription);
-                    }
-
-                    if (subscription == null)
-                    {
-                        // Получаем ID инструмента
-                        var contractId = await instrumentResolver.GetContractIdAsync(instrument);
-                        if (contractId == uint.MaxValue)
+                        if (!subscriptionsByInstrument.TryGetValue(instrument, out subscription))
                         {
-                            return SubscriptionResult.Error(instrument, "Symbol is not resolved in tree node for CQG");
-                        }
-
-                        using (subscriptionsLock.Lock())
-                        {
-                            if (!subscriptionsByInstrument.TryGetValue(instrument, out subscription))
+                            if (!subscriptionsByContractId.TryGetValue(contractId, out subscription))
                             {
-                                if (!subscriptionsByContractId.TryGetValue(contractId, out subscription))
-                                {
-                                    subscription = new InstrumentSubscription(instrumentResolver, instrument, contractId);
-                                    // Сразу захватываем блокировку
-                                    subscription.AcquireFlagsLock();
-                                    hasSubscriptionLock = true;
-                                    subscriptionsByContractId.Add(contractId, subscription);
+                                subscription = new InstrumentSubscription(instrumentResolver, instrument, contractId);
+                                // Сразу захватываем блокировку
+                                subscription.AcquireFlagsLock();
+                                hasSubscriptionLock = true;
+                                subscriptionsByContractId.Add(contractId, subscription);
 
-                                    contractMetadatas.TryGetValue(contractId, out metadata);
-                                }
-
-                                subscriptionsByInstrument.Add(instrument, subscription);
+                                contractMetadatas.TryGetValue(contractId, out metadata);
                             }
+
+                            subscriptionsByInstrument.Add(instrument, subscription);
                         }
                     }
-                    else
-                    {
-                        // Захватываем блокировку
-                        subscription.AcquireFlagsLock();
-                        hasSubscriptionLock = true;
-                    }
-
-                    // Подписываемся на инструмент с учетом флагов подписки
-                    if ((subscription.Flags & flags) != flags)
-                    {
-                        // Нужные флаги подписки не проставлены, требуется доподписаться
-                        MarketDataSubscription.Level? level = null;
-                        switch (subscription.Flags | flags)
-                        {
-                            case SubscriptionFlags.InstrumentParams:
-                                level = MarketDataSubscription.Level.TRADES_BBA_VOLUMES;
-                                break;
-                            case SubscriptionFlags.OrderBook:
-                                level = MarketDataSubscription.Level.TRADES_BBA_DOM;
-                                break;
-                            case SubscriptionFlags.InstrumentParams | SubscriptionFlags.OrderBook:
-                                level = MarketDataSubscription.Level.TRADES_BBA_DOM;
-                                break;
-                        }
-
-                        if (level != null)
-                        {
-                            subscription.Flags |= flags;
-                            RequestMarketDataSubscription(subscription, level.Value);
-                        }
-                    }
-
-                    // При необходимости обрабатываем метаданные и выбрасываем события
-                    if (metadata != null)
-                    {
-                        Process(subscription, metadata, (s, data) => s.Handle(data));
-                    }
-
-                    // Готово
-                    var result = SubscriptionResult.OK(instrument);
-                    return result;
                 }
-                catch (OperationCanceledException)
+                else
                 {
-                    _Log.Warn().Print($"Unable to subscribe to {instrument} (operation has been cancelled)");
-                    return SubscriptionResult.Error(instrument, "Operation has been cancelled");
+                    // Захватываем блокировку
+                    subscription.AcquireFlagsLock();
+                    hasSubscriptionLock = true;
                 }
-                catch (Exception e)
+
+                // Подписываемся на инструмент с учетом флагов подписки
+                if ((subscription.Flags & flags) != flags)
                 {
-                    _Log.Error().Print(e, $"Unable to subscribe to {instrument}");
-                    return SubscriptionResult.Error(instrument, e.Message);
-                }
-                finally
-                {
-                    if (subscription != null && hasSubscriptionLock)
+                    // Нужные флаги подписки не проставлены, требуется доподписаться
+                    MarketDataSubscription.Level? level = null;
+                    switch (subscription.Flags | flags)
                     {
-                        subscription.ReleaseFlagsLock();
+                        case SubscriptionFlags.InstrumentParams:
+                            level = MarketDataSubscription.Level.TRADES_BBA_VOLUMES;
+                            break;
+                        case SubscriptionFlags.OrderBook:
+                            level = MarketDataSubscription.Level.TRADES_BBA_DOM;
+                            break;
+                        case SubscriptionFlags.InstrumentParams | SubscriptionFlags.OrderBook:
+                            level = MarketDataSubscription.Level.TRADES_BBA_DOM;
+                            break;
                     }
+
+                    if (level != null)
+                    {
+                        subscription.Flags |= flags;
+                        RequestMarketDataSubscription(subscription, level.Value);
+                    }
+                }
+
+                // При необходимости обрабатываем метаданные и выбрасываем события
+                if (metadata != null)
+                {
+                    Process(subscription, metadata, (s, data) => s.Handle(data));
+                }
+
+                // Готово
+                var result = SubscriptionResult.OK(instrument);
+                return result;
+            }
+            catch (OperationCanceledException)
+            {
+                _Log.Warn().Print($"Unable to subscribe to {instrument} (operation has been cancelled)");
+                return SubscriptionResult.Error(instrument, "Operation has been cancelled");
+            }
+            catch (Exception e)
+            {
+                _Log.Error().Print(e, $"Unable to subscribe to {instrument}");
+                return SubscriptionResult.Error(instrument, e.Message);
+            }
+            finally
+            {
+                if (subscription != null && hasSubscriptionLock)
+                {
+                    subscription.ReleaseFlagsLock();
                 }
             }
         }

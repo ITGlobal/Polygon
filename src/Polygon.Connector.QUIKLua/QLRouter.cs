@@ -93,7 +93,6 @@ namespace Polygon.Connector.QUIKLua
         /// </summary>
         private void PendingMessagesProcessing()
         {
-            LogManager.BreakScope();
             Thread.CurrentThread.Name = "QL_PNDMS";
             Logger.Debug().Print("Start pending message processing task");
 
@@ -486,26 +485,23 @@ namespace Polygon.Connector.QUIKLua
 
         private async Task HandleAsync(QLPosition position)
         {
-            using (LogManager.Scope())
+            Logger.Debug().PrintFormat("Handle: {0}", position);
+
+            var instrument = await adapter.ResolveInstrumentAsync(position.sec_code);
+            if (instrument == null)
             {
-                Logger.Debug().PrintFormat("Handle: {0}", position);
-
-                var instrument = await adapter.ResolveInstrumentAsync(position.sec_code);
-                if (instrument == null)
-                {
-                    Logger.Error().Print($"Unable to resolve instrument for {position.sec_code}");
-                    return;
-                }
-
-                OnMessageReceived(new PositionMessage
-                {
-                    Account = position.trdaccid,
-                    ClientCode = position.trdaccid,
-                    Quantity = position.totalnet,
-                    //MorningQuantity = position.startnet,
-                    Instrument = instrument
-                });
+                Logger.Error().Print($"Unable to resolve instrument for {position.sec_code}");
+                return;
             }
+
+            OnMessageReceived(new PositionMessage
+            {
+                Account = position.trdaccid,
+                ClientCode = position.trdaccid,
+                Quantity = position.totalnet,
+                //MorningQuantity = position.startnet,
+                Instrument = instrument
+            });
         }
 
         private void Handle(QLMoneyPosition position)

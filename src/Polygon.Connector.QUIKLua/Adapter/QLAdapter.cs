@@ -74,26 +74,23 @@ namespace Polygon.Connector.QUIKLua.Adapter
 
         public async void Start()
         {
-            using (LogManager.Scope())
+            try
             {
-                try
-                {
-                    cancellationTokenSource = new CancellationTokenSource();
+                cancellationTokenSource = new CancellationTokenSource();
 
-                    CreateTcpClient();
+                CreateTcpClient();
 
-                    receivingTask = StartReceiving();
-                    deserializingTask = StartDeserializingReceivedMessages();
-                    sendingTask = StartSending();
+                receivingTask = StartReceiving();
+                deserializingTask = StartDeserializingReceivedMessages();
+                sendingTask = StartSending();
 
-                    SendMessage(new QLQuikSideSettings(receiveMarketdata));
+                SendMessage(new QLQuikSideSettings(receiveMarketdata));
 
-                    await Connect();
-                }
-                catch (Exception e)
-                {
-                    Log.Error().Print(e, "Failed to start adapter");
-                }
+                await Connect();
+            }
+            catch (Exception e)
+            {
+                Log.Error().Print(e, "Failed to start adapter");
             }
         }
 
@@ -225,7 +222,6 @@ namespace Polygon.Connector.QUIKLua.Adapter
         {
             return Task.Factory.StartNew(() =>
             {
-                LogManager.BreakScope();
                 Thread.CurrentThread.Name = "QL_CONN";
 
                 while (!cancellationTokenSource.Token.WaitHandle.WaitOne(1000))
@@ -307,7 +303,6 @@ namespace Polygon.Connector.QUIKLua.Adapter
         {
             return Task.Factory.StartNew(() =>
             {
-                LogManager.BreakScope();
                 Thread.CurrentThread.Name = "QL_RECV";
 
                 Log.Debug().Print("Thread started");
@@ -367,7 +362,6 @@ namespace Polygon.Connector.QUIKLua.Adapter
         {
             return Task.Factory.StartNew(() =>
             {
-                LogManager.BreakScope();
                 Thread.CurrentThread.Name = "QL_SEND";
 
                 Log.Debug().Print("Thread started");
@@ -413,7 +407,6 @@ namespace Polygon.Connector.QUIKLua.Adapter
         {
             return Task.Factory.StartNew(() =>
             {
-                LogManager.BreakScope();
                 Thread.CurrentThread.Name = "QL_DESER";
 
                 var jsonSettings = new JsonSerializerSettings
