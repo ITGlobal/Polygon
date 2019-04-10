@@ -31,7 +31,7 @@ namespace Polygon.Messages
             {
                 lock (syncRoot)
                 {
-                    return properties.ToList();
+                    return properties;
                 }
             }
             set
@@ -77,6 +77,7 @@ namespace Polygon.Messages
                 lock (syncRoot)
                 {
                     this[name].Value = value.Value;
+                    this[name].Type = value.Type;
                 }
             }
         }
